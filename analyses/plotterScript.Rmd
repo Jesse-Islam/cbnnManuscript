@@ -1,0 +1,1005 @@
+---
+title: "plottingScript"
+output: html_document
+---
+
+
+```{r setup, include=T}
+knitr::opts_chunk$set(echo = TRUE)
+library(casebase) #core
+library(keras) #core
+source("src/functions.R") #core
+library(data.table)#corecr
+library(mltools)#corecr
+
+library(survival)#compare
+library(survminer)#compare
+library(ggplot2)#compare
+library(colorspace)#compare
+library(DT)
+library(splines)
+library(reticulate)
+
+library(simsurv)
+library(flexsurv)
+library(survivalmodels)
+library(visreg)
+
+#library(tidyverse)
+library(riskRegression)
+library(pseudo)
+
+library(tensorflow)
+library(ggrepel)
+
+library(dplyr)
+library(flextable)
+
+library(cowplot)
+library(matrixStats)
+library(tableone)
+library(gridExtra)
+library(grid)
+library(gtable)
+#tf$config$threading$set_intra_op_parallelism_threads(1)
+#tf$config$threading$set_inter_op_parallelism_threads(1)
+
+
+
+#set.seed(2)
+set.seed(1)
+epo=2000
+bsize=512
+min_delta = 10^-7
+patience = 10
+iteration=50
+e_sup=F
+eval_firstSim<-F
+numSamp<-2000
+
+
+
+ pal <- function(col, border = "light gray", ...)  {
+   n <- length(col)
+   plot(0, 0, type="n", xlim = c(0, 1), ylim = c(0, 1),
+   axes = FALSE, xlab = "", ylab = "", ...)
+   rect(0:(n-1)/n, 0, 1:n/n, 1, col = col, border = border)
+   }
+statCalcSim<-function(metricSims){
+  
+toRemove <- which(apply(metricSims, 1, function(x){any(is.na(x))})==T)
+if(length(toRemove)>0){
+metricSims<-metricSims[-c(toRemove),]
+}
+  metricSummary<-data.frame(model=metricSims$model,times=metricSims$times)
+  metricSummary<-cbind(metricSummary,sds=rowSds(as.matrix(metricSims[,-c(1,2)])),means=rowMeans(as.matrix(metricSims[,-c(1,2)])))
+  
+  ci<-apply(as.matrix(metricSims[,-c(1,2)]), 1, function(x){mean(x)+c(-1.96,1.96)*sd(x)/sqrt(length(x))})
+  rownames(ci)<-c('cilower95','ciupper95')
+  pi<-apply(as.matrix(metricSims[,-c(1,2)]), 1, function(x){quantile(x,c(.025, .975))})
+  rownames(pi)<-c('pilower95','piupper95')
+  
+  metricSummary<-cbind(metricSummary,t(ci),t(pi))
+  
+  return(metricSummary)
+}
+
+plotPerformance<-function(metricSummary,xlab="Follow-up time",method='Metric',iterations='NA'){
+  
+  allModels<-data.frame(model=c("Null model","Cox_Lin",'CB_Logi','DeepSurv',
+                                'DeepHit','PMNN_Spline','PMNN_Poly','Optimal',
+                                "dsm"),
+                        color=qualitative_hcl(9,palette='Dark 3'),
+                        trueName=c("KM","Cox",'CBLR','DeepSurv',
+                                'DeepHit','PMNN_Spline','CBNN','Optimal',
+                                "DSM"))
+  allModels$color[1]="#bfc1c2"
+  allModels$color[2]="#FFED11"#"#7C4C74"
+  allModels$color[3]= "#80471C" #"#F9A602"
+  allModels$color[5]="#FF00AB"
+  allModels$color[8]="#000000"
+  allModels$color[9]="#8077D5"
+ allModels<- allModels[order(allModels$trueName),]
+    i <- sapply(metricSummary, is.factor)
+    metricSummary[i] <- lapply(metricSummary[i], as.character)
+    metricSummary<-metricSummary[complete.cases(metricSummary), ]
+    mainTitle<-""
+    metricSummary$color<-NA
+    for(i in 1:nrow(metricSummary)){
+      modelPos<-which(metricSummary$model[i] ==allModels$model)
+      metricSummary$model[i]<-allModels$trueName[modelPos]
+      metricSummary$color[i]<-allModels$color[modelPos]
+      
+    }
+    
+   colorsToUse<- sort(which(allModels$trueName %in% metricSummary$model))
+   
+    if(method=="C-Index"){
+    method=expression("c-ipcw")
+    }   
+ metricSummary<- metricSummary[-which(metricSummary$model=="PMNN_Spline"),]
+  #mainTitle<-paste(method,' : 95% P.I. over ', iterations, ' iterations',sep='')
+  colnames(metricSummary)[1]<-"Models"
+  a<-ggplot(data=metricSummary, aes(x=times,y=means,col=Models))+
+    geom_line() +
+    geom_ribbon(aes(ymin=cilower95,ymax=ciupper95,fill=Models),linetype=0,alpha=0.3) +
+    ggtitle(mainTitle) + 
+    xlab(xlab) +
+    ylab(method)+
+    theme_minimal()+
+    scale_color_manual(values=allModels$color[colorsToUse])+
+    scale_fill_manual(values=allModels$color[colorsToUse])
+   # scale_color_manual(labels = metricSummary$model, values = metricSummary$color)
+
+  return(a)
+}
+
+
+```
+
+
+
+
+
+```{r plotsupport,eval=T}
+
+#age, sex, race, number of comorbidities, presence of diabetes, presence of dementia, presence of cancer, mean arterial blood pressure, heart rate, respiration rate, temperature, white blood cell count, serum’s sodium, and serum’s creatinine
+BrierIPAList<-readRDS('results/100supBrier.rds')
+BrierIPAList[[1]]$times<-BrierIPAList[[1]]$times*(max(support$d.time, na.rm = T)-min(support$d.time, na.rm = T)) + min(support$d.time, na.rm = T)
+ipaSims=data.frame(model=BrierIPAList[[1]]$model,times=BrierIPAList[[1]]$times)
+brierSims=data.frame(model=BrierIPAList[[1]]$model,times=BrierIPAList[[1]]$times)
+ibsSims=data.frame(model=BrierIPAList[[1]]$model,times=BrierIPAList[[1]]$times)
+
+ibsTable<-as.data.frame(matrix(data=NA,nrow=100,ncol=length(unique(BrierIPAList[[1]]$model))))
+colnames(ibsTable)<-unique(BrierIPAList[[1]]$model)
+count=1
+for(sim in BrierIPAList){
+  ipaSims<-cbind(ipaSims, sim$IPA)
+  brierSims<-cbind(brierSims,sim$Brier)
+  ibsSims<-cbind(ibsSims,sim$IBS)
+  for(mod in colnames(ibsTable)){
+    
+    ibsTable[count,which(mod ==colnames(ibsTable))]<-sim$IBS[sim$model==mod & sim$time==max(sim$time)]
+    
+  }
+  count<-count+1
+}
+
+ibsOverall<-data.frame(mean=apply(ibsTable,2,mean),sd = apply(ibsTable,2,sd))
+ibsOverall
+
+ipaSummary<-statCalcSim(ipaSims)
+brierSummary<-statCalcSim(brierSims)
+ibsSummary<-statCalcSim(ibsSims)
+ipa<-plotPerformance(ipaSummary,method="IPA",iterations=iteration  )
+brier<-plotPerformance(brierSummary,method="BS",iterations=iteration )
+ibs<-plotPerformance(ibsSummary,method="IBS",iterations=iteration )
+data<-casebase::support
+covs<-colnames(data)
+catVars<-c('death','sex','dzgroup','dzclass','race','ca')
+
+
+data[,-which( covs%in%catVars )]<-as.data.frame(sapply(data[,-which( covs%in%catVars )], function(x) (x - min(x, na.rm = T)) / (max(x, na.rm = T) - min(x, na.rm=T))))
+
+
+
+
+colnames(data)[5]<-'time'
+colnames(data)[2]<-'status'
+ptPlot<-plot(popTime(data,time="time",event="status"),percentile_number=0.5)#+  theme(axis.text=element_text(size=8))
+#end_time-start_time
+
+
+
+
+pt <- plot_grid(ptPlot,
+          ipa+ theme(legend.position="none"),
+          brier+ theme(legend.position="none"),
+          ibs+ theme(legend.position="none"),
+          labels = c('A', 'B','C','D'))
+#https://wilkelab.org/cowplot/articles/shared_legends.html
+legend <- get_legend(
+  # create some space to the left of the legend
+  ipa  +
+    guides(color = guide_legend(nrow = 1)) +
+    theme(legend.position = "bottom")+
+   theme(legend.text=element_text(size=8))
+)
+
+
+pdf(file="figures/supportResult.pdf")
+plot_grid(pt, legend,ncol = 1, rel_heights = c(1, .1), rel_widths = c(3, .4))
+dev.off()
+
+myVars<-colnames(data)
+#catVars<-c('x4','x5','x6','x7','status')
+
+
+tab2 <- as.data.frame(print(CreateTableOne(vars = myVars, data = data, factorVars = catVars)))
+saveRDS(tab2,"figures/t1Support.rds")
+
+pdf("figures/t1Support.pdf", height = 50*nrow(tab2), width = 200*ncol(tab2))
+grid.table(tab2)
+dev.off()
+
+rm(pt)
+#min(support$d.time, na.rm = T)
+#max(support$d.time, na.rm = T)
+
+
+
+  
+ipaSu<-plotPerformance(ipaSummary,method="IPA",iterations=iteration  )
+brierSu<-plotPerformance(brierSummary,method="BS",iterations=iteration )
+ibsSu<-plotPerformance(ibsSummary,method="IBS",iterations=iteration )
+
+
+
+
+cidxList<-readRDS('results/100supcidx.rds')
+
+
+temp<-melt(setDT(as.data.frame(cidxList[[1]])), id.vars = c("times"), variable.name = "model")
+cidxSims=data.frame(model=temp$model,times=temp$times)
+
+
+count=1
+for(sim in cidxList){
+  cidxSims<-cbind(cidxSims, melt(setDT(as.data.frame(sim)), id.vars = c("times"), variable.name = "model")$value)
+
+  count<-count+1
+}
+
+cidxSummary<-statCalcSim(cidxSims)
+cidxSu<-plotPerformance(cidxSummary,method="C-Index",iterations=iteration  )
+cidxSu
+
+
+```
+
+```{r plotMetabric,fig.height=6,fig.width=6}
+
+
+
+BrierIPAList<-readRDS('results/100MetaBrier.rds')
+source_python("src/getMetabricData.py")
+metabric<-getMetabric()
+
+colnames(metabric)<-c('MK167','EGFR','PGR','ERBB2','Hormone treatment','radiotherapy','Chemotherapy','ER_positive','age at diagnosis','time','status')
+BrierIPAList[[1]]$times<-BrierIPAList[[1]]$times*(max(metabric$time, na.rm = T)-min(metabric$time, na.rm = T)) + min(metabric$time, na.rm = T)
+ipaSims=data.frame(model=BrierIPAList[[1]]$model,times=BrierIPAList[[1]]$times)
+brierSims=data.frame(model=BrierIPAList[[1]]$model,times=BrierIPAList[[1]]$times)
+ibsSims=data.frame(model=BrierIPAList[[1]]$model,times=BrierIPAList[[1]]$times)
+ibsTable<-as.data.frame(matrix(data=NA,nrow=100,ncol=length(unique(BrierIPAList[[1]]$model))))
+colnames(ibsTable)<-unique(BrierIPAList[[1]]$model)
+count=1
+for(sim in BrierIPAList){
+  ipaSims<-cbind(ipaSims, sim$IPA)
+  brierSims<-cbind(brierSims,sim$Brier)
+  ibsSims<-cbind(ibsSims,sim$IBS)
+  for(mod in colnames(ibsTable)){
+    
+    ibsTable[count,which(mod ==colnames(ibsTable))]<-sim$IBS[sim$model==mod & sim$time==max(sim$time)]
+    
+  }
+  count<-count+1
+}
+ibsTable<-na.omit(ibsTable)
+ibsOverall<-data.frame(mean=apply(ibsTable,2,mean),sd = apply(ibsTable,2,sd))
+ibsOverall
+ipaSummary<-statCalcSim(ipaSims)
+brierSummary<-statCalcSim(brierSims)
+ibsSummary<-statCalcSim(ibsSims)
+ipa<-plotPerformance(ipaSummary,method="IPA",iterations=iteration  )
+brier<-plotPerformance(brierSummary,method="BS",iterations=iteration )
+ibs<-plotPerformance(ibsSummary,method="IBS",iterations=iteration )
+
+
+
+colnames(metabric)[ncol(metabric)-1]<-'time'
+colnames(metabric)[ncol(metabric)]<-'status'
+data<-metabric
+#data<-as.data.frame(sapply(data, function(x) (x - min(x, na.rm = T)) / (max(x, na.rm = T) - min(x, na.rm=T))))
+covs<-colnames(data)
+
+ptPlot<-plot(popTime(data,time="time",event="status"),percentile_number=0.5)#+  theme(axis.text=element_text(size=8))
+#end_time-start_time
+
+
+
+
+pt <- plot_grid(ptPlot,
+          ipa+ theme(legend.position="none"),
+          brier+ theme(legend.position="none"),
+          ibs+ theme(legend.position="none"),
+          labels = c('A', 'B','C','D'))
+#https://wilkelab.org/cowplot/articles/shared_legends.html
+legend <- get_legend(
+  # create some space to the left of the legend
+  ipa  +
+    guides(color = guide_legend(nrow = 1)) +
+    theme(legend.position = "bottom")+
+   theme(legend.text=element_text(size=8))
+)
+
+pdf(file="figures/metabricResult.pdf")
+plot_grid(pt,ncol = 1, rel_heights = c(1, .1), rel_widths = c(3, .4))#, legend
+dev.off()
+
+
+myVars<-c('MK167','EGFR','PGR','ERBB2','Hormone treatment','radiotherapy','Chemotherapy','ER_positive','age at diagnosis','time','status')
+catVars<-c('Hormone treatment','radiotherapy','Chemotherapy','ER_positive','status')
+
+tab2 <- as.data.frame(print(CreateTableOne(vars = myVars, data = data, factorVars = catVars)))
+saveRDS(tab2,"figures/t1Metabric.rds")
+
+
+
+
+
+
+
+pdf("figures/t1metabric.pdf", height = 50*nrow(tab2), width = 200*ncol(tab2))
+grid.table(tab2)
+dev.off()
+rm(pt)
+
+
+  
+ipaM<-plotPerformance(ipaSummary,method="IPA",iterations=iteration  )
+brierM<-plotPerformance(brierSummary,method="BS",iterations=iteration )
+ibsM<-plotPerformance(ibsSummary,method="IBS",iterations=iteration )
+
+ipa
+ibs
+brier
+
+
+cidxList<-readRDS('results/100Metacidx.rds')
+
+
+temp<-melt(setDT(as.data.frame(cidxList[[1]])), id.vars = c("times"), variable.name = "model")
+cidxSims=data.frame(model=temp$model,times=temp$times)
+
+
+count=1
+for(sim in cidxList){
+  cidxSims<-cbind(cidxSims, melt(setDT(as.data.frame(sim)), id.vars = c("times"), variable.name = "model")$value)
+
+  count<-count+1
+}
+
+cidxSummary<-statCalcSim(cidxSims)
+cidxM<-plotPerformance(cidxSummary,method='C-Index',iterations=iteration  )
+cidxM
+```
+
+
+
+```{r plotsimple,eval=T}
+
+
+
+BrierIPAList<-readRDS('results/100easyBrier.rds')
+
+ipaSims=data.frame(model=BrierIPAList[[1]]$model,times=BrierIPAList[[1]]$times)
+brierSims=data.frame(model=BrierIPAList[[1]]$model,times=BrierIPAList[[1]]$times)
+ibsSims=data.frame(model=BrierIPAList[[1]]$model,times=BrierIPAList[[1]]$times)
+ibsTable<-as.data.frame(matrix(data=NA,nrow=100,ncol=length(unique(BrierIPAList[[1]]$model))))
+colnames(ibsTable)<-unique(BrierIPAList[[1]]$model)
+count=1
+for(sim in BrierIPAList){
+  ipaSims<-cbind(ipaSims, sim$IPA)
+  brierSims<-cbind(brierSims,sim$Brier)
+  ibsSims<-cbind(ibsSims,sim$IBS)
+  for(mod in colnames(ibsTable)){
+    
+    ibsTable[count,which(mod ==colnames(ibsTable))]<-sim$IBS[sim$model==mod & sim$time==max(sim$time)]
+    
+  }
+  count<-count+1
+}
+ibsTable<-na.omit(ibsTable)
+ibsOverall<-data.frame(mean=apply(ibsTable,2,mean),sd = apply(ibsTable,2,sd))
+ibsOverall
+ipaSummary<-statCalcSim(ipaSims)
+brierSummary<-statCalcSim(brierSims)
+ibsSummary<-statCalcSim(ibsSims)
+ipa<-plotPerformance(ipaSummary,method="IPA",iterations=iteration  )
+brier<-plotPerformance(brierSummary,method="BS",iterations=iteration )
+ibs<-plotPerformance(ibsSummary,method="IBS",iterations=iteration )
+
+
+
+  
+  
+  
+  
+  cov<-data.frame(id=1:numSamp,
+                z1=c(rep(1,numSamp/2),rep(0,numSamp/2)),
+                z2=c(rnorm(numSamp/2,10,0.5),rnorm(numSamp/2,0,0.5)),
+                z3=c(rnorm(numSamp/2,-3,0.5),rnorm(numSamp/2,8,0.5)))
+
+dat <- simsurv(dist = "exponential", lambdas = 1, betas = c(z1 = .1,z2=.1,z3=.1),
+                  x = cov, tdefunction = "log", maxt = 1)
+
+  colnames(dat)<-c("id","time","status")
+  samp<-sample(seq(1,nrow(dat),by=1), floor(nrow(dat)*(0.1))) #random censoring
+  dat$status[samp]<-0
+  # Merge the simulated event times onto covariate data frame
+  data <- merge(cov, dat)
+  
+ptPlot<-plot(popTime(data,time="time",event="status"),percentile_number=.01)#+  theme(axis.text=element_text(size=8))
+#end_time-start_time
+
+
+
+
+pt <- plot_grid(ptPlot,
+          ipa,
+          brier,#+ theme(legend.position="none"),
+          ibs,#+ theme(legend.position="none"),
+          labels = c('A', 'B','C','D'))
+#https://wilkelab.org/cowplot/articles/shared_legends.html
+legend <- get_legend(
+  # create some space to the left of the legend
+  ipa  +
+    guides(color = guide_legend(nrow = 1)) +
+    theme(legend.position = "bottom")+
+   theme(legend.text=element_text(size=8))
+)
+
+pdf(file="figures/simpleResult.pdf")
+plot_grid(pt, legend,ncol = 1, rel_heights = c(1, .1), rel_widths = c(3, .4))
+dev.off()
+
+myVars<-colnames(data)[-1]
+catVars<-c('z1','status')
+
+
+tab2 <- as.data.frame(print(CreateTableOne(vars = myVars, data = data, factorVars = catVars,strata='z1')))
+tab2<-tab2[,-c(3,4)]
+tab2[2,1]<-"0 (0.0)"
+tab2[2,2]<-"1000 (100.0)"
+tab2[3,1]<-"0 (0.50)"
+tab2[3,2]<-"10 (0.50)"
+tab2[4,1]<-"8 (0.50)"
+tab2[4,2]<-"-3 (0.50)"
+tab2<-tab2[-c(5,6),]
+tab2
+saveRDS(tab2,"figures/covariatesTable.rds")
+
+pdf("figures/t1Simple.pdf", height = 50*nrow(tab2), width = 200*ncol(tab2))
+grid.table(tab2[,-ncol(tab2)])
+dev.off()
+
+rm(pt)
+
+  
+ipaS<-plotPerformance(ipaSummary,method="IPA",iterations=iteration  )
+brierS<-plotPerformance(brierSummary,method="BS",iterations=iteration )
+ibsS<-plotPerformance(ibsSummary,method="IBS",iterations=iteration )
+
+
+
+cidxList<-readRDS('results/100easycidx.rds')
+
+
+temp<-melt(setDT(as.data.frame(cidxList[[1]])), id.vars = c("times"), variable.name = "model")
+cidxSims=data.frame(model=temp$model,times=temp$times)
+
+
+count=1
+for(sim in cidxList){
+  cidxSims<-cbind(cidxSims, melt(setDT(as.data.frame(sim)), id.vars = c("times"), variable.name = "model")$value)
+
+  count<-count+1
+}
+
+cidxSummary<-statCalcSim(cidxSims)
+cidxS<-plotPerformance(cidxSummary,method="C-Index",iterations=iteration  )
+
+```
+
+
+
+
+```{r complexPrep}
+
+# Define a function returning the log cum hazard at time t
+logcumhaz <- function(t, x, betas, knots) {
+  
+  # Obtain the basis terms for the spline-based log
+  # cumulative hazard (evaluated at time t)
+  basis <- flexsurv::basis(knots, log(t))
+  
+  # Evaluate the log cumulative hazard under the
+  # Royston and Parmar specification
+  res <-betas[["gamma0"]] * basis[[1]] + 
+    betas[["gamma1"]] * basis[[2]] +
+    betas[["gamma2"]] * basis[[3]] +
+    betas[["gamma3"]] * basis[[4]] +
+    betas[["gamma4"]] * basis[[5]] +
+    betas[["z1"]] * x[["z1"]]+
+    betas[["z2"]] * x[["z2"]]+
+    betas[["z3"]] * x[["z3"]]+
+    betas[["term1"]] * x[["z1"]]*x[["z2"]]*t+
+    betas[["term2"]] * x[["z1"]]*x[["z3"]]+
+    betas[["term3"]] * x[["z2"]]*(x[["z3"]])
+  #
+  # Return the log cumulative hazard at time t
+  res
+}
+
+
+pyProcess<-function(predictions,times=times){
+  # test<-t(data.frame(a=seq(0,100,length.out = 200),b=seq(0,100,length.out = 200),c=seq(0,100,length.out = 200)))
+  #predictions[is.na(predictions)] <- 0
+  interpolated <- apply(predictions, 1, function(x) approx(as.numeric(colnames(predictions)), y=x, method = "linear", xout=times)$y)
+  
+  class(interpolated)<-c("tunnel",class(interpolated))
+  interpolated<-1-interpolated
+  
+  interpolated[is.na(interpolated)] <- 0
+  return(t(interpolated))
+}
+
+
+
+url<-'app.txt'
+ds <- read.table(url, sep = '',header = TRUE)
+
+ds$years.at.risk=pmin(ds$agein80,ds$onset)
+
+
+
+#cov <- data.frame(id = 1:2000, hormon = rbinom(2000, 1, 0.5))
+
+
+
+#ds$years.at.risk<-ds$years.at.risk/max(ds$years.at.risk)
+#true_mod <- flexsurv::flexsurvspline(Surv(years.at.risk, app) ~ 1, data = ds, k = 3) #appendicitis from hanley
+
+  
+  cov<-data.frame(id=1:numSamp,
+                z1=c(rep(1,numSamp/2),rep(0,numSamp/2)),
+                z2=c(rnorm(numSamp/2,10,0.5),rnorm(numSamp/2,0,0.5)),
+                z3=c(rnorm(numSamp/2,-3,0.5),rnorm(numSamp/2,8,0.5)))
+  brcancer$rectime<-brcancer$rectime/max(brcancer$rectime)
+  true_mod <- flexsurv::flexsurvspline(Surv(rectime, censrec) ~ 1, data = brcancer, k = 3) #from flexsurv
+  
+  
+  
+  
+  
+  
+  
+  # Simulate the event times
+  coefficients<-true_mod$coefficients
+  coefficients<-c(coefficients,z1=1,z2=1,z3=1,term1=10,term2=2,term3=2)
+  #names(coefficients)<-c("shape",names(coefficients[-1]))
+  
+```
+
+
+
+
+```{r plotComplex}
+
+
+
+BrierIPAList<-readRDS('results/100hardBrier.rds')
+
+ipaSims=data.frame(model=BrierIPAList[[1]]$model,times=BrierIPAList[[1]]$times)
+brierSims=data.frame(model=BrierIPAList[[1]]$model,times=BrierIPAList[[1]]$times)
+ibsSims=data.frame(model=BrierIPAList[[1]]$model,times=BrierIPAList[[1]]$times)
+ibsTable<-as.data.frame(matrix(data=NA,nrow=100,ncol=length(unique(BrierIPAList[[1]]$model))))
+colnames(ibsTable)<-unique(BrierIPAList[[1]]$model)
+count=1
+for(sim in BrierIPAList){
+  ipaSims<-cbind(ipaSims, sim$IPA)
+  brierSims<-cbind(brierSims,sim$Brier)
+  ibsSims<-cbind(ibsSims,sim$IBS)
+  for(mod in colnames(ibsTable)){
+    
+    ibsTable[count,which(mod ==colnames(ibsTable))]<-sim$IBS[sim$model==mod & sim$time==max(sim$time)]
+    
+  }
+  count<-count+1
+}
+ibsTable<-na.omit(ibsTable)
+ibsOverall<-data.frame(mean=apply(ibsTable,2,mean),sd = apply(ibsTable,2,sd))
+ibsOverall
+ipaSummary<-statCalcSim(ipaSims)
+brierSummary<-statCalcSim(brierSims)
+ibsSummary<-statCalcSim(ibsSims)
+ipa<-plotPerformance(ipaSummary,method="IPA",iterations=iteration  )
+brier<-plotPerformance(brierSummary,method="BS",iterations=iteration )
+ibs<-plotPerformance(ibsSummary,method="IBS",iterations=iteration )
+
+
+#end_time-start_time
+
+
+  
+  
+  cov<-data.frame(id=1:numSamp,
+                z1=c(rep(1,numSamp/2),rep(0,numSamp/2)),
+                z2=c(rnorm(numSamp/2,10,0.5),rnorm(numSamp/2,0,0.5)),
+                z3=c(rnorm(numSamp/2,-3,0.5),rnorm(numSamp/2,8,0.5)))
+
+
+  
+  
+  
+  dat <- simsurv(betas = coefficients, # "true" parameter values
+                 x = cov,                   # covariate data for 200 individuals
+                 knots = true_mod$knots,    # knot locations for splines
+                 logcumhazard = logcumhaz,  # definition of log cum hazard
+                 maxt = 1,               # no right-censoring
+                 interval = c(0,10000000)) # interval for root finding
+  colnames(dat)<-c("id","time","status")
+  samp<-sample(seq(1,nrow(dat),by=1), floor(nrow(dat)*(0.1))) #random censoring
+  dat$status[samp]<-0
+  # Merge the simulated event times onto covariate data frame
+  data <- merge(cov, dat)
+  
+ptPlot<-plot(popTime(data,time="time",event="status"),percentile_number=.01)#+  theme(axis.text=element_text(size=8))
+#end_time-start_time
+
+
+
+
+pt <- plot_grid(ptPlot,
+          ipa+ theme(legend.position="none"),
+          brier+ theme(legend.position="none"),
+          ibs+ theme(legend.position="none"),
+          labels = c('A', 'B','C','D'))
+#https://wilkelab.org/cowplot/articles/shared_legends.html
+legend <- get_legend(
+  # create some space to the left of the legend
+  ipa  +
+    guides(color = guide_legend(nrow = 1)) +
+    theme(legend.position = "bottom")+
+   theme(legend.text=element_text(size=8))
+)
+
+pdf(file="figures/complexResult.pdf")
+plot_grid(pt, legend,ncol = 1, rel_heights = c(1, .1), rel_widths = c(3, .4))
+dev.off()
+
+
+myVars<-colnames(data)[-1]
+catVars<-c('z1','status')
+
+tab2 <- as.data.frame(print(CreateTableOne(vars = myVars, data = data, factorVars = catVars,strata='z1')))
+saveRDS(tab2,"figures/t1Complex.rds")
+
+pdf("figures/t1Complex.pdf", height = 50*nrow(tab2), width = 200*ncol(tab2))
+grid.table(tab2[,-ncol(tab2)])
+dev.off()
+rm(pt)
+
+
+ipaC<-plotPerformance(ipaSummary,method="IPA",iterations=iteration  )
+brierC<-plotPerformance(brierSummary,method="BS",iterations=iteration )
+ibsC<-plotPerformance(ibsSummary,method="IBS",iterations=iteration )
+
+
+
+cidxList<-readRDS('results/100hardcidx.rds')
+
+
+temp<-melt(setDT(as.data.frame(cidxList[[1]])), id.vars = c("times"), variable.name = "model")
+cidxSims=data.frame(model=temp$model,times=temp$times)
+
+
+count=1
+for(sim in cidxList){
+  cidxSims<-cbind(cidxSims, melt(setDT(as.data.frame(sim)), id.vars = c("times"), variable.name = "model")$value)
+
+  count<-count+1
+}
+
+cidxSummary<-statCalcSim(cidxSims)
+cidxC<-plotPerformance(cidxSummary,method="C-Index",iterations=iteration  )
+cidxC
+
+```
+
+
+
+```{r megaplot,eval=T,fig.height=12,fig.width=12}
+
+
+
+
+
+pt <- plot_grid(
+          ipaS+ theme(legend.position="none")+ ggtitle("Simple simulation")+ labs(x = "")+coord_cartesian(ylim=c(-0.5,0.1)),
+          ipaC+ theme(legend.position="none")+ ggtitle("Complex simulation")+ labs(x = "",y="")+coord_cartesian(ylim=c(-.6,1)),
+          ipaSu+ theme(legend.position="none")+ ggtitle("SUPPORT")+ labs(x = "",y="")+coord_cartesian(ylim=c(-0.20,.1)),
+          ipaM+ theme(legend.position="none")+ ggtitle("METABRIC")+ labs(x = "",y="")+coord_cartesian(ylim=c(-0.8,.25)),
+          #brierS+ theme(legend.position="none")+ labs(x = ""),
+          #brierC+ theme(legend.position="none")+ labs(x = "",y=""),
+          #brierSu+ theme(legend.position="none")+ labs(x = "",y=""),
+          #brierM+ theme(legend.position="none")+ labs(x = "",y=""),
+          #ibsS+ theme(legend.position="none")+ labs(x = ""),
+          #ibsC+ theme(legend.position="none")+ labs(x = "",y=""),
+          #ibsSu+ theme(legend.position="none")+ labs(x = "",y=""),
+          #ibsM+ theme(legend.position="none")+ labs(x = "",y=""), 
+          cidxS+ theme(legend.position="none")+coord_cartesian(ylim=c(.45,.6)),
+          cidxC+ theme(legend.position="none")+ labs(y="")+coord_cartesian(ylim=c(0.3,.9)),
+          cidxSu+ theme(legend.position="none")+ labs(y="")+coord_cartesian(ylim=c(0.48,.6)),
+          cidxM+ theme(legend.position="none")+ labs(y="")+coord_cartesian(ylim=c(0.3,.65)),
+          #labels = c('A', 'E','I','M',"B",'F','J','N','C','G','K','O','D','H','L','P'))
+          labels = c('A',"C","E","G",'B','D','F','H'),
+          ncol=4)
+#https://wilkelab.org/cowplot/articles/shared_legends.html
+legend <- get_legend(
+  # create some space to the left of the legend
+  ipaS  +
+    guides(color = guide_legend(nrow = 2)) +
+    theme(legend.position = "bottom")+
+   theme(legend.text=element_text(size=8))
+)
+
+g<-plot_grid(pt, legend,ncol = 1, rel_heights = c(1, .1), rel_widths = c(3, .4))
+
+pdf(file="figures/megaPlot.pdf",width=12,height=6)
+g
+dev.off()
+
+saveRDS(g,"figures/megaPlot.rds")
+
+```
+
+
+```{r megaplotSupplemental,fig.height=12,fig.width=12}
+pt <- plot_grid(
+          #ipaS+ theme(legend.position="none")+ ggtitle("Simple simulation")+ labs(x = ""),
+          #ipaC+ theme(legend.position="none")+ ggtitle("Complex simulation")+ labs(x = "",y=""),
+          #ipaSu+ theme(legend.position="none")+ ggtitle("SUPPORT")+ labs(x = "",y=""),
+          #ipaM+ theme(legend.position="none")+ ggtitle("METABRIC")+ labs(x = "",y=""),
+          brierS+ theme(legend.position="none")+ labs(x = "")+coord_cartesian(ylim=c(0,.4))+ ggtitle("Simple simulation"),
+          brierC+ theme(legend.position="none")+ labs(x = "",y="")+coord_cartesian(ylim=c(0,.3))+ ggtitle("Complex simulation"),
+          brierSu+ theme(legend.position="none")+ labs(x = "",y="")+coord_cartesian(ylim=c(0.1,.3))+ ggtitle("SUPPORT"),
+          brierM+ theme(legend.position="none")+ labs(x = "",y="")+coord_cartesian(ylim=c(0,.4))+ ggtitle("METABRIC"),
+          ibsS+ theme(legend.position="none")+ labs(x = "")+coord_cartesian(ylim=c(0,.3)),
+          ibsC+ theme(legend.position="none")+ labs(x = "",y="")+coord_cartesian(ylim=c(0,.3)),
+          ibsSu+ theme(legend.position="none")+ labs(x = "",y="")+coord_cartesian(ylim=c(0,.3)),
+          ibsM+ theme(legend.position="none")+ labs(x = "",y="")+coord_cartesian(ylim=c(0,.3)), 
+          #cidxS+ theme(legend.position="none"),
+          #cidxC+ theme(legend.position="none")+ labs(y=""),
+          #cidxSu+ theme(legend.position="none")+ labs(y=""),
+          #cidxM+ theme(legend.position="none")+ labs(y=""),
+          #labels = c('A', 'E','I','M',"B",'F','J','N','C','G','K','O','D','H','L','P'))
+          labels = c('A',"C","E","G",'B','D','F','H'),
+          ncol=4)
+#https://wilkelab.org/cowplot/articles/shared_legends.html
+legend <- get_legend(
+  # create some space to the left of the legend
+  ipaS  +
+    guides(color = guide_legend(nrow = 2)) +
+    theme(legend.position = "bottom")+
+   theme(legend.text=element_text(size=8))
+)
+
+g<-plot_grid(pt, legend,ncol = 1, rel_heights = c(1, .1), rel_widths = c(3, .4))
+
+pdf(file="figures/megaPlotSupplement.pdf",width=12,height=6)
+g
+dev.off()
+
+saveRDS(g,"figures/megaPlotSupplement.rds")
+
+```
+
+
+
+
+```{r flextableTablePrep,fig.height=46,fig.width=26}
+
+edit_cell <- function(table, row, col, name="core-fg", ...){
+  l <- table$layout
+  ids <- which(l$t %in% row & l$l %in% col & l$name==name)
+  for (id in ids){
+  newgrob <- editGrob(table$grobs[id][[1]], ...)
+  table$grobs[id][[1]] <- newgrob
+  }
+  table
+}
+
+
+#SUMMARY DATA ORDER, IPA BS IBS CIDX
+makeTable<-function(summaryData,study="study"){
+   allModels<-data.frame(model=c("Null model","Cox_Lin",'CB_Logi','DeepSurv',
+                                'DeepHit','PMNN_Spline','PMNN_Poly','Optimal',
+                                "dsm"),
+                        color=rainbow_hcl(9, start = 30, end = 300),
+                        trueName=c("KM","Cox",'CBLR','DeepSurv',
+                                'DeepHit','PMNN_Spline','CBNN','Optimal',
+                                "DSM"))
+   
+  wantedScores<-c(0.25,0.5,0.75,1)
+  
+  tableResults<-as.data.frame(matrix(NA,nrow=nrow(allModels)+2,ncol=16))
+  tableResults[1,]<-c("IPA","IPA","IPA","IPA",
+                      "BS","BS","BS","BS",
+                      "IBS","IBS","IBS","IBS",
+                      "C-Index","C-Index","C-Index","C-Index"
+                      )
+  tableResults[2,]<-c(0.25,0.5,0.75,1,0.25,0.5,0.75,1,0.25,0.5,0.75,1,0.25,0.5,0.75,1)*100
+  indexer<-1
+  rownames(tableResults)<-c(study,"% of time",allModels$trueName)
+  for (i in 1:length(summaryData)){ #IPA BRIER IBS CIDX is indexed by i
+    
+    tempPos<-which(rownames(tableResults) %in% unique(summaryData[[i]]$Models)  )
+    tempModels<-rownames(tableResults)[ tempPos]
+    for(j in 1:length(tempModels)){ #indexes model
+      offset<-(i-1)*4
+      indexer=1+offset
+      for(k in 1:length(wantedScores)){ #indexes .25 .5 .75 1.0
+        tempTime<-unique(summaryData[[i]]$times)[(floor(length(unique(summaryData[[i]]$times))*wantedScores[k]))]
+        tempResRow<-which(summaryData[[i]]$Models==rownames(tableResults)[ tempPos[j]] & summaryData[[i]]$times==tempTime)
+        if(length(round(summaryData[[i]]$means[tempResRow],2))<1){
+          tableResults[tempPos[j],indexer]<-"-0.23 (-0.25,-0.23)" #note that this is grabbed directly from the last estimate of Cox, as its the only time we don't get a value. So we extrapolate from the last available survival time.
+        }
+        else{tableResults[tempPos[j],indexer]<-paste(round(summaryData[[i]]$means[tempResRow],2),
+              " (",round(summaryData[[i]]$cilower95[tempResRow],2),
+              ",",round(summaryData[[i]]$ciupper95[tempResRow],2),")",sep="")
+        }
+        indexer<-indexer+1
+        
+      }
+    }
+    
+    
+  }
+  
+  
+  
+  return(tableResults)
+}
+
+
+
+
+cleantables<-function(tab){
+  toRemove<-which(rowSums(is.na(tab))==ncol(tab))
+      tab[is.na(tab)]<-"-"
+  if(length(toRemove)>0){
+
+    return(tab[-toRemove,])
+  }
+  return(tab)
+}
+
+
+
+
+quickEdit<-function(grob,rows,columns){
+  return(edit_cell(grob, rows, columns, "core-fg", 
+               gp=gpar(fontsize=12, fontface="bold")))
+}
+
+addBorders<-function(grob){
+grob$layout[1:2 , c("l", "r")] <- list(c(5, 9),c(2,6))
+grob<- gtable_add_grob(grob,
+        grobs = rectGrob(gp = gpar(fill = NA, lwd = 2)),
+        t = 2, b = nrow(grob), l = 1, r = ncol(grob))
+grob <- gtable_add_grob(grob,
+        grobs = rectGrob(gp = gpar(fill = NA, lwd = 2)),
+        t = 1, l = 1, r = ncol(grob))
+grob <- gtable_add_grob(grob,
+        grobs = rectGrob(gp = gpar(fill = NA, lwd = 2)),
+        t = 1, l = 2,r=5,b= nrow(grob))
+return(grob)
+}
+
+
+flexMaker<-function(tab,boldPicks=NA,title){
+  boldPicks$col=boldPicks$col+1 #makes finding the correct ones easier.
+bord<-fp_border_default(color="black",style="solid")
+bord2<-fp_border_default(color="black",style="solid",width = 2)
+tab<-cbind(rownames(tab),tab)
+ft<-delete_part(flextable(tab[-c(1,2),],cwidth=5,cheight=1), part = "header")
+
+ft <- add_header_row(x = ft, values = c(title,"IPA", "c-ipcw"),
+  colwidths = c(1,4,4))
+#ft<-bold(ft, bold = TRUE, part = "header")
+
+#ft$header$styles$text$bold$data
+ft <- add_header_row(x = ft,top=F, values = c("Method", 25,50,75,100,25,50,75,100),
+  colwidths = c(1,1,1,1,1,1,1,1,1))
+ft$header$styles$text$bold$data[1,1]<-T
+#ft <- add_header_row(
+#  x = ft, values = c(title),
+#  colwidths = c(9))
+ft <- align(ft, i = c(1,2), part = "header", align = "center")
+ft<-vline(ft, j = c(1,5), border = bord2, part = "body")
+ft<-hline(ft,i=c(1,2),border=bord2,part="header")
+#ft<-hline(ft,i=c(1),border=bord,part="body")
+ft<-fontsize(ft, i = NULL, j = NULL, size =7.5, part = "all")
+ft<-fontsize(ft, i = NULL, j = NULL, size =10, part = "header")
+ft <- align(ft, i = NULL, part = "body", align = "center")
+ft$body$styles$text$font.size$data[,1]<-10
+
+if(is.data.frame(boldPicks)){
+  for(i in 1:nrow(boldPicks)){
+    ft$body$styles$text$bold$data[boldPicks$row[i],boldPicks$col[i]]<-T
+  }
+}
+return(rasterGrob(as_raster(autofit(ft))))
+}
+
+```
+
+```{r flexTableMain,fig.height=46,fig.width=26}
+
+        
+sTab<-makeTable(list(ipaS$data,brierS$data,ibsS$data,cidxS$data),study="Simple")[-3,-c(5:12)]
+#[-3,-c(1,2,3,4,13,14,15,16)] for the supplemental
+cTab<-makeTable(list(ipaC$data,brierC$data,ibsC$data,cidxC$data),study="Complex")[-3,-c(5:12)]
+suTab<-makeTable(list(ipaSu$data,brierSu$data,ibsSu$data,cidxSu$data),study="SUPPORT")[-3,-c(5:12)]
+mTab<-makeTable(list(ipaM$data,brierM$data,ibsM$data,cidxM$data),study="METABRIC")[-3,-c(5:12)]
+sTab<-cleantables(sTab)
+cTab<-cleantables(cTab)
+suTab<-cleantables(suTab)
+mTab<-cleantables(mTab)
+tempNames<-rownames(mTab)
+mTab<-as.data.frame(lapply(mTab, function(x){gsub("0 ","0.00 ", x,fixed=T)}))
+mTab<-as.data.frame(lapply(mTab, function(x){gsub('(0,',"(0.00,", x,fixed=T)}))
+mTab<-as.data.frame(lapply(mTab, function(x) gsub(",0)",",0.00)", x,fixed=T)))
+rownames(mTab)<-tempNames
+sPicks<-data.frame(row=c(1,2,6,1,2,6,1,2,6,1,2,6,1,2,6,1,2,6,1,2,6,1,2,6),
+                   col=c(1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8))
+cPicks<-data.frame(row=c(6,6,6,6,5,5,5,2),
+                   col=c(1,2,3,4,5,6,7,8))
+suPicks<-data.frame(row=c(1,2,1,2,5,1,2,3,1,2,5,1,2,5,1,2,5,1,2,5),
+                    col=c(1,1,2,2,2,3,3,4,5,5,5,6,6,6,7,7,7,8,8,8))
+mPicks<-data.frame(row=c(2,4,5,1,2,1,2,4,5,4,4,5),
+                   col=c(1,1,1,2,2,3,3,4,5,6,7,8))
+
+
+sFlex<-flexMaker(tab=sTab,boldPicks = sPicks,title="A: Simple")
+suFlex<-flexMaker(tab=suTab,boldPicks = suPicks,title="C: SUPPORT")
+cFlex<-flexMaker(tab=cTab,boldPicks = cPicks,title="B: Complex")
+mFlex<-flexMaker(tab=mTab,boldPicks = mPicks,title="D: METABRIC")
+
+pdf(file="figures/megaTable.pdf",width=18,height=19.5)
+cowplot::plot_grid(sFlex,cFlex, suFlex,mFlex, nrow = 4, ncol = 1)
+dev.off()
+
+
+```
+
+```{r getMeans,fig.height=8,fig.width=16}
+
+
+meanAndSort<-function(scores){
+  meanScores<-aggregate(means~Models, data=scores, mean)
+  return(tableGrob(meanScores[order(meanScores$means,decreasing=T),]))
+}
+
+
+simpleIPAMean<-meanAndSort(ipaS$data)
+simplecidxMean<-meanAndSort(cidxS$data)
+
+
+supportIPAMean<-meanAndSort(ipaSu$data)
+supportcidxMean<-meanAndSort(cidxSu$data)
+
+complexIPAMean<-meanAndSort(ipaC$data)
+complexcidxMean<-meanAndSort(cidxC$data)
+
+metaIPAMean<-meanAndSort(ipaM$data)
+metacidxMean<-meanAndSort(cidxM$data)
+
+
+pdf(file="figures/averageScores.pdf",width=16,height=8)
+grid.arrange(simpleIPAMean,complexIPAMean,supportIPAMean,metaIPAMean,simplecidxMean,complexcidxMean,supportcidxMean,metacidxMean,nrow=2,ncol=4,top = "simple,complex,support,metabric")
+dev.off()
+
+```
+

@@ -1,0 +1,132 @@
+---
+title: "realData"
+output: html_document
+---
+
+
+
+```{r,eval=T}
+
+library(reticulate)
+```
+
+```{python,eval=T}
+
+import os
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID" 
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+#os.environ["OM_NUM_THREADS"]="2"
+
+```
+
+
+
+```{r setup, include=T}
+set.seed(1)
+knitr::opts_chunk$set(echo = TRUE)
+source("src/packages.R")
+source("src/functions.R")
+source_python("src/cIndex.py")
+source_python("src/dsmScript.py")
+source_python('src/deephitter.py')
+source_python("src/cIndex.py")
+#tf$config$threading$set_intra_op_parallelism_threads(1)
+#tf$config$threading$set_inter_op_parallelism_threads(1)
+
+
+
+#set.seed(2)
+
+epo=2
+bsize=512
+min_delta = 10^-7
+patience = 1
+iteration=5
+########################
+###sharedHyperparams
+########################
+
+layer1<-50
+layer2<-50
+layer3<-25
+layer4<-25
+drpt<-0.5
+
+```
+
+
+
+
+
+```{r ERSPCproofofconcept,eval=T}
+##originally used 1 sample ,now using all data
+data<-ERSPC
+colnames(data)<-c("ScrArm","time","status")
+  data<-as.data.frame(model.matrix(~.,data)[,-1])
+mod_cb_glm <- fitSmoothHazard(status~.,
+                              data =data,
+                              time = "time",
+                              event="status",
+                              ratio = 100
+)
+
+
+
+
+covars_input<-layer_input(shape=c(length(colnames(mod_cb_glm$data))-2),
+                          name = 'main_input')
+
+covars_output<-covars_input%>% #layer_batch_normalization()%>%
+  layer_dense(units=1,use_bias = T)
+
+pmnn<-pmnnModel(features=colnames(mod_cb_glm$data)[-ncol(mod_cb_glm$data)],
+                feature_input = covars_input,
+                feature_output = covars_output,
+                originalData = mod_cb_glm$data,
+                offset=mod_cb_glm$offset,
+                timeVar = "time",
+                eventVar= "status",
+                optimizer= 'adam'
+)
+
+
+fit<-fitSmoothHaz(pmnn,epochs=12000,#15000
+                  batch_size = 1024,#159893,#
+                  verbose=0,monitor = "loss",val_split=0)
+times<-seq(0,max(data$time),length.out=100)
+get_weights(fit$model)
+coef(mod_cb_glm)
+
+startOG <- Sys.time()
+annPreds<-aarOld(fit,
+              times=times,
+              x_test=data[1:100,]
+)
+endOG <- Sys.time()
+startq <- Sys.time()
+annQuick<-aar(fit,times=times,x_test=data[1:100,])
+endq <- Sys.time()
+
+startOG-endOG
+startq-endq
+
+plot(annPreds,type="l")
+lines(absoluteRisk(mod_cb_glm,time=times,newdata=data[1,],type="CI"))
+
+results<-data.frame(intercept=c(coef(mod_cb_glm)[1],get_weights(fit$model)[[2]][1]),
+                    ScrArm=c(coef(mod_cb_glm)[2],get_weights(fit$model)[[1]][1,1]),
+                    time=c(coef(mod_cb_glm)[3],get_weights(fit$model)[[1]][2,1]))
+rownames(results)<-c("Casebase","PMNN")
+results<-round(results,2)
+
+#saveRDS(results,"../paper/figures/proofOfConceptWeights.rds")
+
+```
+
+
+
+```{r}
+
+sessionInfo()
+
+```
