@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.5.20)  25 MAY 2022 15:39
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.5.20)  1 JUN 2022 14:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -960,39 +960,39 @@ Package hyperref Info: Link coloring OFF on input line 28.
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 \c@lstlisting=\count439
-LaTeX Font Info:    Trying to load font information for LS1+stixscr on input line 80.
+LaTeX Font Info:    Trying to load font information for LS1+stixscr on input line 81.
 (/home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/tex/latex/stix/ls1stixscr.fd
 File: ls1stixscr.fd 2015/04/17 v1.1.2-latex STIX script LS1 font definitions
 )
-LaTeX Font Info:    Trying to load font information for LS2+stixex on input line 80.
+LaTeX Font Info:    Trying to load font information for LS2+stixex on input line 81.
 (/home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/tex/latex/stix/ls2stixex.fd
 File: ls2stixex.fd 2015/04/17 v1.1.2-latex STIX extentions LS2 font definitions
 )
-LaTeX Font Info:    Trying to load font information for LS1+stixfrak on input line 80.
+LaTeX Font Info:    Trying to load font information for LS1+stixfrak on input line 81.
 (/home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/tex/latex/stix/ls1stixfrak.fd
 File: ls1stixfrak.fd 2015/04/17 v1.1.2-latex STIX fraktur LS1 font definitions
 )
-LaTeX Font Info:    Trying to load font information for LS1+stixbb on input line 80.
+LaTeX Font Info:    Trying to load font information for LS1+stixbb on input line 81.
 (/home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/tex/latex/stix/ls1stixbb.fd
 File: ls1stixbb.fd 2015/04/17 v1.1.2-latex STIX blackboard LS1 font definitions
 )
-LaTeX Font Info:    Trying to load font information for LS2+stixcal on input line 80.
+LaTeX Font Info:    Trying to load font information for LS2+stixcal on input line 81.
 (/home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/tex/latex/stix/ls2stixcal.fd
 File: ls2stixcal.fd 2015/04/17 v1.1.2-latex STIX calligraphic LS2 font definitions
 )
-LaTeX Font Info:    Trying to load font information for LS1+stixsf on input line 80.
+LaTeX Font Info:    Trying to load font information for LS1+stixsf on input line 81.
 (/home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/tex/latex/stix/ls1stixsf.fd
 File: ls1stixsf.fd 2015/04/17 v1.1.2-latex STIX sans-serif LS1 font definitions
 )
-LaTeX Font Info:    Trying to load font information for LS2+stixtt on input line 80.
+LaTeX Font Info:    Trying to load font information for LS2+stixtt on input line 81.
 (/home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/tex/latex/stix/ls2stixtt.fd
 File: ls2stixtt.fd 2015/04/17 v1.1.2-latex STIX typewriter LS2 font definitions
 )
-Overfull \hbox (346.99213pt too wide) in paragraph at lines 80--80
+Overfull \hbox (346.99213pt too wide) in paragraph at lines 81--81
 [][] | || []|[][] 
  []
 
-LaTeX Font Info:    Calculating math sizes for size <10.03749> on input line 80.
+LaTeX Font Info:    Calculating math sizes for size <10.03749> on input line 81.
 
 Overfull \vbox (6.46347pt too high) has occurred while \output is active []
 
@@ -1001,42 +1001,38 @@ Overfull \vbox (6.46347pt too high) has occurred while \output is active []
 \openout3 = `sbpaper.pag'.
 
 ] [2]
-LaTeX Font Info:    Calculating math sizes for size <7.5> on input line 204.
-</home/bhatnagar-lab/jislam/cbnnManuscript/figures/nnarch2.png, id=65, 1927.2pt x 678.28406pt>
+LaTeX Font Info:    Calculating math sizes for size <7.5> on input line 206.
+</home/bhatnagar-lab/jislam/cbnnManuscript/figures/nnarch2.png, id=69, 1927.2pt x 678.28406pt>
 File: /home/bhatnagar-lab/jislam/cbnnManuscript/figures/nnarch2.png Graphic file (type png)
 <use /home/bhatnagar-lab/jislam/cbnnManuscript/figures/nnarch2.png>
-Package pdftex.def Info: /home/bhatnagar-lab/jislam/cbnnManuscript/figures/nnarch2.png  used on input line 251.
+Package pdftex.def Info: /home/bhatnagar-lab/jislam/cbnnManuscript/figures/nnarch2.png  used on input line 252.
 (pdftex.def)             Requested size: 507.50787pt x 178.61629pt.
 [3] [4 </home/bhatnagar-lab/jislam/cbnnManuscript/figures/nnarch2.PNG>] [5]
-</home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaPlot.pdf, id=155, 867.24pt x 433.62pt>
+</home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaPlot.pdf, id=159, 867.24pt x 433.62pt>
 File: /home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaPlot.pdf Graphic file (type pdf)
 <use /home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaPlot.pdf>
 Package pdftex.def Info: /home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaPlot.pdf  used on input line 458.
 (pdftex.def)             Requested size: 507.50787pt x 253.756pt.
 [6]
-</home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaTable.pdf, id=177, 1300.86pt x 1409.265pt>
+</home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaTable.pdf, id=181, 1300.86pt x 1409.265pt>
 File: /home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaTable.pdf Graphic file (type pdf)
 <use /home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaTable.pdf>
 Package pdftex.def Info: /home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaTable.pdf  used on input line 514.
 (pdftex.def)             Requested size: 507.50787pt x 549.80469pt.
-[7 </home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaPlot.pdf>] [8 </home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaTable.pdf>]
-LaTeX Font Info:    Trying to load font information for T1+cmss on input line 525.
-(/home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/tex/latex/base/t1cmss.fd
-File: t1cmss.fd 2019/12/16 v2.5j Standard LaTeX font definitions
-) [9] [10] (./sbpaper.bbl [11]) [12] (./sbpaper.aux) ) 
+[7 </home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaPlot.pdf>] [8 </home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaTable.pdf>] [9] (./sbpaper.bbl [10] [11]) [12] (./sbpaper.aux) ) 
 Here is how much of TeX's memory you used:
- 20210 strings out of 480260
- 313530 string characters out of 5893094
+ 20198 strings out of 480260
+ 313000 string characters out of 5893094
  586637 words of memory out of 5000000
- 37709 multiletter control sequences out of 15000+600000
- 587112 words of font info for 170 fonts, out of 8000000 for 9000
+ 37702 multiletter control sequences out of 15000+600000
+ 592783 words of font info for 181 fonts, out of 8000000 for 9000
  40 hyphenation exceptions out of 8191
- 87i,13n,91p,1086b,501s stack positions out of 10000i,1000n,20000p,200000b,200000s
- </home/bhatnagar-lab/jislam/.TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss1000.600pk>{/home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/enc/dvips/stix/stix-t1.enc}</home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/STIXGeneral-Bold.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/STIXGeneral-Italic.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/STIXGeneral-Regular.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathbb.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathcal.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathex.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathit.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathrm.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathscr.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathsf.pfb>
-Output written on sbpaper.pdf (12 pages, 729148 bytes).
+ 87i,13n,91p,1086b,521s stack positions out of 10000i,1000n,20000p,200000b,200000s
+{/home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/enc/dvips/stix/stix-t1.enc}</home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/STIXGeneral-Bold.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/STIXGeneral-Italic.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/STIXGeneral-Regular.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathcal.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathex.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathit.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathrm.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathscr.pfb>
+Output written on sbpaper.pdf (12 pages, 711157 bytes).
 PDF statistics:
- 442 PDF objects out of 1000 (max. 8388607)
- 350 compressed objects within 4 object streams
- 90 named destinations out of 1000 (max. 500000)
+ 391 PDF objects out of 1000 (max. 8388607)
+ 343 compressed objects within 4 object streams
+ 89 named destinations out of 1000 (max. 500000)
  184 words of extra memory for PDF output out of 10000 (max. 10000000)
 

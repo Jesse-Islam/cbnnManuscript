@@ -47,32 +47,33 @@ higher-order interactions}
 
 
 \abstract{Neural network-based survival methods have been developed to
-model data-driven covariate interactions. While this flexibility has led
-to methods with better predictive performance than regression-based
-approaches, current neural networks cannot model both time-varying
-interactions and complex baseline hazards. To address this, we propose
-Case-Base Neural Networks (CBNN) as a new approach that combines the
-case-base sampling framework with flexible architectures. Our method
-naturally accounts for censoring, does not require additional
-hyperparameters and uses binary cross-entropy as the loss function.
-Using a novel sampling scheme and data augmentation, we incorporate time
-directly into a feed-forward neural network. CBNN predicts the
-probability of an event occurring at a given moment and estimates the
-hazard function. We compare the performance of CBNN to survival methods
-based on regression and neural networks in two simulations and two real
-data applications. We report two time-dependent metrics for each model.
-In the simulations and real data applications, CBNN provides a more
-consistent predictive performance across time and outperforms the
-competing neural network approaches. For a simple simulation with an
-exponential hazard model, CBNN consistently outperforms the other neural
-network methods. For a complex simulation, which highlights the ability
-of CBNN to model both a complex baseline hazard and time-varying
-interactions, CBNN outperforms all competitors. The first real data
-application shows CBNN outperforming all neural network competitors,
-while a second real data application shows competitive performance. This
-study highlights the benefit of combining case-base sampling with deep
-learning to provide a simple and flexible modeling framework for
-data-driven, time-varying interaction modeling of survival outcomes.}
+model data-driven covariate interactions. While these methods have led
+to better predictive performance than regression-based approaches, they
+cannot model both time-varying interactions and complex baseline
+hazards. To address this, we propose Case-Base Neural Networks (CBNN) as
+a new approach that combines the case-base sampling framework with
+flexible architectures. Our method naturally accounts for censoring,
+does not require additional hyperparameters and uses binary
+cross-entropy as the loss function. Using a novel sampling scheme and
+data augmentation, we incorporate time directly into a feed-forward
+neural network. CBNN predicts the probability of an event occurring at a
+given moment and estimates the hazard function. We compare the
+performance of CBNN to survival methods based on regression and neural
+networks in two simulations and two real data applications. We report
+two time-dependent metrics for each model. In the simulations and real
+data applications, CBNN provides a more consistent predictive
+performance across time and outperforms the competing neural network
+approaches. For a simple simulation with an exponential hazard model,
+CBNN outperforms the other neural network methods. For a complex
+simulation, which highlights the ability of CBNN to model both a complex
+baseline hazard and time-varying interactions, CBNN outperforms all
+competitors. The first real data application shows CBNN outperforming
+all neural network competitors, while a second real data application
+shows competitive performance. This study highlights the benefit of
+combining case-base sampling with deep learning to provide a simple and
+flexible modeling framework for data-driven, time-varying interaction
+modeling of survival outcomes. An R package is available at
+\url{https://github.com/Jesse-Islam/cbnn}.}
 
 \keywords{survival analysis, machine learning, case-base, neural
 network}
@@ -83,20 +84,20 @@ network}
 \section{Introduction}\label{introduction}}
 
 Smooth-in-time accelerated failure time (AFT) models can estimate
-absolute risks by modeling the hazard directly through user-specified
+absolute risks by modeling the hazard directly through a user-specified
 baseline hazard distribution \citep{kleinbaum2012survival}. Cox
 proportional hazards models are used more often than AFT models, causing
 analyses to be based on hazard ratios and relative risks rather than on
 survival curves and absolute risks \citep{hanley2009}. The
 identification of an appropriate distribution for the baseline hazard in
 an AFT model may be difficult for common diseases that have many
-interacting risk factors or a Cox model whose pathogenesis may change
-with age, making it difficult to maintain the proportional hazards
-assumption. For example, previous studies of breast cancer incidence
-have discovered time-varying interactions with covariates of interest,
-including tumor size \citep{coradini2000time}. One approach to resolve
-this involves using the basis of splines on time to provide flexibility
-in the baseline hazard \citep{royston2002flexible}. However,
+interacting risk factors, or a Cox model where the disease pathogenesis
+may change with age, making it difficult to maintain the proportional
+hazards assumption. For example, previous studies of breast cancer
+incidence have discovered time-varying interactions with covariates of
+interest, such as tumor size \citep{coradini2000time}. One approach to
+provide flexibility in the baseline hazard involves using the basis of
+splines on time in our model \citep{royston2002flexible}. However,
 regression-based models are limited in that they require prior knowledge
 about potential time-varying interactions and their quantitative
 effects.
@@ -131,9 +132,9 @@ time-varying interactions.
 
 We note that these alternative neural network approaches all require
 custom loss functions \citep{katzman2018DeepSurv} \citep{lee2018DeepHit}
-\citep{dsmPaper}. DeepHit introduces a new hyperparameter weighing its
-two loss functions (negative log-likelihood and ranking losses) while
-DSM requires a two-phase learning process and user implementations for
+\citep{dsmPaper}. DeepHit introduces a hyperparameter weighing its two
+loss functions (negative log-likelihood and ranking losses) while DSM
+requires a two-phase learning process and user implementations for
 distributions beyond Log-Normal or Weibull \citep{lee2018DeepHit}
 \citep{dsmPaper}. Regression-based approaches require prior
 specification of all interaction terms, which makes it challenging to
@@ -151,8 +152,8 @@ time as a feature (covariate) to specify different baseline hazards. For
 example, by including splines of time as covariates, we can approximate
 the Royston-Parmar flexible baseline hazard model
 \citep{royston2002flexible}, however, this still requires explicit use
-of time-varying interactions. CBNN can model both without user
-specification; only a sufficiently deep network is required.
+of time-varying interactions. CBNN can model both without extra tuning
+parameters.
 
 In Section \ref{methods}, we describe how case-base sampling and neural
 networks are combined both conceptually and algebraically, along with
@@ -172,10 +173,11 @@ In this section, we define case-base sampling, which converts the total
 survival time into discrete person-specific moments (person-moments).
 Then, we detail how neural networks can be used within this framework,
 explicitly incorporating time as a feature while adjusting for the
-sampling bias. Finally, we report on the software versions used. A
-package is available for use at {[}GITHUBLINK{]}. The entire code base
-to generate the analyses in this paper is available at {[}GITHUB
-LINK{]}.
+sampling bias. Finally, we report on the software versions used. An R
+package is available for use at
+\url{https://github.com/Jesse-Islam/cbnn}. The entire code base to
+generate the analyses in this paper is available at
+\url{https://github.com/Jesse-Islam/cbnnManuscript}.
 
 \hypertarget{case-base-sampling}{%
 \subsection{Case-base sampling}\label{case-base-sampling}}
@@ -223,12 +225,11 @@ odds.
 function}\label{neural-networks-to-model-the-hazard-function}}
 
 After case-base sampling, we pass all features, including time, into any
-user-defined feed-forward component, to which an offset term (to adjust
-for bias from case-base sampling) is added, then passed through a
-sigmoid activation function (Figure \ref{fig:NNarch}). We use the
-sigmoid function as its inverse is the odds, which we can use to
-calculate the hazard. The general form for the neural network using CBNN
-is:
+user-defined feed-forward component, to which an offset term is added,
+then passed through a sigmoid activation function (Figure
+\ref{fig:NNarch}). We use the sigmoid function as its inverse is the
+odds, which we can use to calculate the hazard. The general form for the
+neural network using CBNN is:
 
 \begin{align}\label{eqn:nnProb}
 P\left(Y=1|X,T\right)&=\mathrm{sigmoid}\left(f_{\theta}(X, T) + \log\left(\frac{B}{b}\right) \right),
@@ -243,8 +244,8 @@ represents any feed-forward neural network architecture,
 higher-order polynomial of time using a neural network, the baseline
 hazard specification is now data-driven, where user-defined
 hyperparameters such as regularization, number of layers and nodes
-control the flexibility of the model. We provide a detailed description
-of the choices we made in the next sub-section.
+control the flexibility of the fukk hazard function. We provide a
+detailed description of the choices we made in the next sub-section.
 
 \begin{figure}
 
@@ -302,11 +303,10 @@ to determine if CBNN can learn complex interactions in practice. We set
 a max number of epochs to be \(2000\), batch size as \(512\), learning
 rate as \(10^{-3}\), decay as \(10^{-7}\), patience as \(10\) epochs,
 \(\{50,50,25,25\}\) nodes in each hidden layer with \(50\%\) dropout at
-each layer, a validation split of \(20\%\), a testing split of \(10%
-\), a minimum delta loss on the validation set of \(10^{-7}\) over 10
-epochs and Adam \citep{gulli2017} as our optimizer. These choices may
-permit the model to approximate higher-order interactions while
-preventing over-fitting \citep{srivastava2014dropout}. We fix a
+each layer, a minimum delta loss on the validation set of \(10^{-7}\)
+over 10 epochs and Adam \citep{gulli2017} as our optimizer. These
+choices may permit the model to approximate higher-order interactions
+while preventing over-fitting \citep{srivastava2014dropout}. We fix a
 train-validation-test split that allows us to update the weights with a
 subset of the data (training), assess performance at each epoch
 (validation) and gauge performance of the final model (test) for each
@@ -328,7 +328,7 @@ the \textbf{keras} \citep{keras} package for our neural network
 architecture. The \textbf{simsurv} package \citep{simsurv} is used for
 our simulation studies, while \textbf{flexsurv} \citep{flexsurv} is used
 to fit a flexible baseline hazard using splines for our complex
-simulation. We use the implementation of \(C_{IPCW}\)??? from the python
+simulation. We use the implementation of \(C_{IPCW}\) from the python
 package \textbf{sksurv} \citep{sksurv}. The \textbf{riskRegression}
 package \citep{riskRegression} is used to get the Index of Prediction
 Accuracy (IPA metric). Both metrics are described in detail in the
@@ -519,21 +519,12 @@ model as follows: \begin{align}
 where
 \(\gamma_{1}=3.9, \gamma_{2}=3, \gamma_{3}=-0.43, \gamma_{4}=1.33,\gamma_{5}=-0.86, \beta_{{1}}=1, \beta_{{2}}=1, \beta_{{3}}=1, \tau_{1}=10, \tau_{2}=2, \tau_{3}=2\)
 and \(\psi\) are basis splines. To generate the \(gamma\) coefficients,
-let \(g\): \(\mathbb{R} \rightarrow \mathbb{R}\) be a smoothing method
-for variable \(t\) by a projection on to a set of basis functions on
-splines:
-\srb{i used gt as the function for splines. Specifically, natural cubic spline function of log time https://www.rdocumentation.org/packages/flexsurv/versions/2.1/topics/flexsurvspline . therefore, should i use g(log(t)) and and replace "smoothing method" with natural cubic spline? SAHIR: will fix any issues in this section in the final version.}
-\begin{align}
-g(t)=\sum^{m}_{l=1}\psi_{l} (t)\gamma_{l}.
-\end{align}
-
-An initial model with three knots (\(m=5\)) is fit using the
+an initial cubic splines model with three knots is fit using the
 \emph{flexsurvspline} function with an intercept-only model on the data,
-which returns the coefficients (\(\gamma\)) and basis of time (\(\psi\))
-we use in our model. Note that we fix these values for the analysis. The
-\(\beta\) coefficients represent direct effects, \(\tau_{2}\) and
-\({\tau_3}\) represent interactions and \(\tau_{1}\) is a time-varying
-interaction.
+which returns the coefficients (\(\gamma\)) we use in our model. Note
+that we fix these values for the analysis. The \(\beta\) coefficients
+represent direct effects, \(\tau_{2}\) and \({\tau_3}\) represent
+interactions and \(\tau_{1}\) is a time-varying interaction.
 
 \hypertarget{performance-comparison-in-complex-simulation}{%
 \subsubsection{Performance comparison in complex
