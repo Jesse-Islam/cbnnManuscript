@@ -19,9 +19,7 @@
 
 \received{2022-04-29}
 
-\revised{2022-06-01}
 
-\accepted{2022-07-01}
 
 \raggedbottom
 
@@ -46,16 +44,15 @@ higher-order interactions}
 \corres{\email{jesse.islam@mail.mcgill.ca}}
 
 
-\abstract{Neural network-based survival methods have been developed to
-model data-driven covariate interactions. While these methods have led
-to better predictive performance than regression-based approaches, they
-cannot model both time-varying interactions and complex baseline
-hazards. To address this, we propose Case-Base Neural Networks (CBNN) as
-a new approach that combines the case-base sampling framework with
-flexible architectures. Our method naturally accounts for censoring,
-does not require additional hyperparameters and uses binary
-cross-entropy as the loss function. Using a novel sampling scheme and
-data augmentation, we incorporate time directly into a feed-forward
+\abstract{Neural network-based survival methods can model data-driven
+covariate interactions. While these methods have led to better
+predictive performance than regression-based approaches, they cannot
+model both time-varying interactions and complex baseline hazards. To
+address this, we propose Case-Base Neural Networks (CBNN) as a new
+approach that combines the case-base sampling framework with flexible
+architectures. Our method naturally accounts for censoring and does not
+require method specific hyperparameters. Using a novel sampling scheme
+and data augmentation, we incorporate time directly into a feed-forward
 neural network. CBNN predicts the probability of an event occurring at a
 given moment and estimates the hazard function. We compare the
 performance of CBNN to survival methods based on regression and neural
@@ -706,15 +703,32 @@ the simplicity in its implementation and by extension user experience,
 CBNN is both a user-friendly approach to data-driven survival analysis
 and is easily extendable to any feed-forward neural network framework.
 
+\hypertarget{data-and-code-availability-statement}{%
+\section*{Data and code availability
+statement}\label{data-and-code-availability-statement}}
+\addcontentsline{toc}{section}{Data and code availability statement}
+
+The pre-processed data for the SUPPORT case study can be found at
+\url{https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data/support}.
+The pre-processed data for the METABRIC case study can be found at
+\url{https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data/metabric}.
+The data is accessed using \url{https://github.com/havakv/pycox}. The
+code for this manuscript and its analyses can be found at
+\url{https://github.com/Jesse-Islam/cbnnManuscript}. The software
+package making CBNN easier to use can be found at
+\url{https://github.com/Jesse-Islam/cbnn}.
+
 \hypertarget{acknowledgements}{%
 \section*{Acknowledgements}\label{acknowledgements}}
 \addcontentsline{toc}{section}{Acknowledgements}
 
 This work was supported by subcontracts from UM1DK078616 and R01HL151855
 to RS. We would like to thank Dr.~James Meigs, Project Leader of these
-awards, for his support and helpful discussions. We would also like to
-Thank Dr.~James Hanley for his support and discussions while extending
-the case-base methodology.
+awards, for his support and helpful discussions. The work was also
+supported as part of the Congressionally Directed Medical Research
+Programs (CDMRP) award W81XWH-17-1-0347. We would also like to Thank
+Dr.~James Hanley for his support and discussions while extending the
+case-base methodology.
 
 \bibliography{bibfile.bib}
 
