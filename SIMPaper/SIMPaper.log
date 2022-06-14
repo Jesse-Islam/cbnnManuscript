@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.5.20)  2 JUN 2022 10:42
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.5.20)  14 JUN 2022 12:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1027,12 +1027,12 @@ Here is how much of TeX's memory you used:
  37705 multiletter control sequences out of 15000+600000
  592783 words of font info for 181 fonts, out of 8000000 for 9000
  40 hyphenation exceptions out of 8191
- 87i,13n,91p,1087b,513s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 87i,13n,91p,1087b,509s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {/home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/enc/dvips/stix/stix-t1.enc}</home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/STIXGeneral-Bold.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/STIXGeneral-Italic.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/STIXGeneral-Regular.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathcal.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathex.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathit.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathrm.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathscr.pfb>
-Output written on SIMPaper.pdf (12 pages, 711368 bytes).
+Output written on SIMPaper.pdf (12 pages, 711558 bytes).
 PDF statistics:
- 397 PDF objects out of 1000 (max. 8388607)
- 349 compressed objects within 4 object streams
+ 398 PDF objects out of 1000 (max. 8388607)
+ 350 compressed objects within 4 object streams
  90 named destinations out of 1000 (max. 500000)
  200 words of extra memory for PDF output out of 10000 (max. 10000000)
 

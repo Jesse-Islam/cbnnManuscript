@@ -69,10 +69,10 @@ simulation, which highlights the ability of CBNN to model both a complex
 baseline hazard and time-varying interactions, CBNN outperforms all
 competitors. The first real data application shows CBNN outperforming
 all neural network competitors, while a second real data application
-shows competitive performance. This study highlights the benefit of
-combining case-base sampling with deep learning to provide a simple and
-flexible modeling framework for data-driven, time-varying interaction
-modeling of survival outcomes. An R package is available at
+shows competitive performance. We highlight the benefit of combining
+case-base sampling with deep learning to provide a simple and flexible
+modeling framework for data-driven, time-varying interaction modeling of
+survival outcomes. An R package is available at
 \url{https://github.com/Jesse-Islam/cbnn}.}
 
 \keywords{survival analysis, machine learning, case-base, neural
@@ -518,13 +518,13 @@ model as follows: \begin{align}
 
 where
 \(\gamma_{1}=3.9, \gamma_{2}=3, \gamma_{3}=-0.43, \gamma_{4}=1.33,\gamma_{5}=-0.86, \beta_{{1}}=1, \beta_{{2}}=1, \beta_{{3}}=1, \tau_{1}=10, \tau_{2}=2, \tau_{3}=2\)
-and \(\psi\) are basis splines. To generate the \(gamma\) coefficients,
-an initial cubic splines model with three knots is fit using the
-\emph{flexsurvspline} function with an intercept-only model on the data,
-which returns the coefficients (\(\gamma\)) we use in our model. Note
-that we fix these values for the analysis. The \(\beta\) coefficients
-represent direct effects, \(\tau_{2}\) and \({\tau_3}\) represent
-interactions and \(\tau_{1}\) is a time-varying interaction.
+and \(\psi\) are basis splines. The \(gamma\) coefficients are obtained
+from an intercept-only cubic splines model with three knots using the
+\emph{flexsurvspline} function from the \textbf{flexsurv} package
+\citep{flexsurv}. Note that we fix these values for the analysis. The
+\(\beta\) coefficients represent direct effects, \(\tau_{2}\) and
+\({\tau_3}\) represent interactions and \(\tau_{1}\) is a time-varying
+interaction.
 
 \hypertarget{performance-comparison-in-complex-simulation}{%
 \subsubsection{Performance comparison in complex
@@ -710,8 +710,11 @@ and is easily extendable to any feed-forward neural network framework.
 \section*{Acknowledgements}\label{acknowledgements}}
 \addcontentsline{toc}{section}{Acknowledgements}
 
-This work is supported through 5-UM1-DK078616‐14 and R01-HL151855-01
-grants.
+This work was supported by subcontracts from UM1DK078616 and R01HL151855
+to RS. We would like to thank Dr.~James Meigs, Project Leader of these
+awards, for his support and helpful discussions. We would also like to
+Thank Dr.~James Hanley for his support and discussions while extending
+the case-base methodology.
 
 \bibliography{bibfile.bib}
 
