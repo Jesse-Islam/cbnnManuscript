@@ -1,0 +1,263 @@
+\begin{thebibliography}{}
+
+\bibitem [\protect \citeauthoryear {%
+Allen%
+}{%
+Allen%
+}{%
+{\protect \APACyear {2011}}%
+}]{%
+Allen2011}
+\APACinsertmetastar {%
+Allen2011}%
+\begin{APACrefauthors}%
+Allen, T\BPBI T.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYear{2011}.
+\newblock
+\APACrefbtitle {Introduction to {D}iscrete {E}vent {S}imulation and
+  {A}gent-based {M}odeling: {V}oting {S}ystems{,} {H}ealth {C}are{,}
+  {M}ilitary{,} and {M}anufacturing} {Introduction to {D}iscrete {E}vent
+  {S}imulation and {A}gent-based {M}odeling: {V}oting {S}ystems{,} {H}ealth
+  {C}are{,} {M}ilitary{,} and {M}anufacturing}.
+\newblock
+\APACaddressPublisher{New York}{Springer}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Ballen%
+}{%
+Ballen%
+}{%
+{\protect \APACyear {2011}}%
+}]{%
+Ballen2011}
+\APACinsertmetastar {%
+Ballen2011}%
+\begin{APACrefauthors}%
+Ballen, T\BPBI T.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYear{2011}.
+\newblock
+\APACrefbtitle {Introduction to {D}iscrete {E}vent {S}imulation and
+  {A}gent-based {M}odeling: {V}oting {S}ystems{,} {H}ealth {C}are{,}
+  {M}ilitary{,} and {M}anufacturing} {Introduction to {D}iscrete {E}vent
+  {S}imulation and {A}gent-based {M}odeling: {V}oting {S}ystems{,} {H}ealth
+  {C}are{,} {M}ilitary{,} and {M}anufacturing}\ (\PrintOrdinal{2}\ \BEd).
+\newblock
+\APACaddressPublisher{New York}{Springer}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Blanchard%
+\ \BBA {} Loubere%
+}{%
+Blanchard%
+\ \BBA {} Loubere%
+}{%
+{\protect \APACyear {2015}}%
+}]{%
+Blanchard2015}
+\APACinsertmetastar {%
+Blanchard2015}%
+\begin{APACrefauthors}%
+Blanchard, G.%
+\BCBT {}\ \BBA {} Loubere, R.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2015}{}{}.
+\newblock
+\APACrefbtitle {High-Order {C}onservative {R}emapping with a posteriori {MOOD}
+  stabilization on polygonal meshes.} {High-order {C}onservative {R}emapping
+  with a posteriori {MOOD} stabilization on polygonal meshes.}
+\newblock
+\APACrefnote{Available from: \url{http://www.emn.fr/z-info/choco-solver/} [last
+  accessed {M}ay 2011]}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Boggs%
+, Bozman%
+\BCBL {}\ \BBA {} Perry%
+}{%
+Boggs%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2002}}%
+}]{%
+Boggs2002}
+\APACinsertmetastar {%
+Boggs2002}%
+\begin{APACrefauthors}%
+Boggs, R.%
+, Bozman, J.%
+\BCBL {}\ \BBA {} Perry, R.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2002}{}{}.
+\newblock
+\APACrefbtitle {Reducing downtime and business loss: {A}dressing business risk
+  with effective technology} {Reducing downtime and business loss: {A}dressing
+  business risk with effective technology}\ \APACbVolEdTR{}{\BTR{}\ \BNUM\
+  Technical report 91-18}.
+\newblock
+\APACaddressInstitution{Sernageomin}{International {D}ata {C}orporation
+  ({IDC})}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Elbaum%
+, Malishevsky%
+\BCBL {}\ \BBA {} Rothermel%
+}{%
+Elbaum%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {February 2002}}%
+}]{%
+Elbaum2002}
+\APACinsertmetastar {%
+Elbaum2002}%
+\begin{APACrefauthors}%
+Elbaum, S.%
+, Malishevsky, A\BPBI G.%
+\BCBL {}\ \BBA {} Rothermel, G.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{February 2002}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Test case prioritization: a family of empirical studies}
+  {Test case prioritization: a family of empirical studies}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{IEEE {T}ransactions on {S}oftware
+  {E}ngineering}{28}{2}{159--182}.
+\newblock
+\begin{APACrefDOI} 12345.2345 \end{APACrefDOI}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Rothermel%
+}{%
+Rothermel%
+}{%
+{\protect \APACyear {1997}}%
+}]{%
+Rothermel1997}
+\APACinsertmetastar {%
+Rothermel1997}%
+\begin{APACrefauthors}%
+Rothermel, G.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{1997}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {A safe efficient regression test selection technique} {A
+  safe efficient regression test selection technique}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{ACM {T}ransactions on {S}oftware {E}ngineering and
+  {M}ethodology}{6}{2}{173--210}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Rothermel%
+, Harrold%
+, Hirt%
+, Amsden%
+\BCBL {}\ \BBA {} Cook%
+}{%
+Rothermel%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {1998}}%
+}]{%
+Rothermel1998}
+\APACinsertmetastar {%
+Rothermel1998}%
+\begin{APACrefauthors}%
+Rothermel, G.%
+, Harrold, M\BPBI J.%
+, Hirt, C\BPBI W.%
+, Amsden, A\BPBI A.%
+\BCBL {}\ \BBA {} Cook, J\BPBI L.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{1998}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {A safe efficient regression test selection technique} {A
+  safe efficient regression test selection technique}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{{ACM} {T}ransactions on {S}oftware {E}ngineering and
+  {M}ethodology}{6}{2}{173--210}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Schulz%
+\ \BBA {} Doblhammer%
+}{%
+Schulz%
+\ \BBA {} Doblhammer%
+}{%
+{\protect \APACyear {2012}}%
+}]{%
+Schulz2012}
+\APACinsertmetastar {%
+Schulz2012}%
+\begin{APACrefauthors}%
+Schulz, A.%
+\BCBT {}\ \BBA {} Doblhammer, G.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2012}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Aktueller und zuk{\"{u}}nftiger {K}rankenbestand von
+  {D}emenz in {D}eutschland auf basis der outinedaten der {AOK}. ({C}urrent and
+  future number of people suffering from dementia in {G}ermany based on routine
+  data from the {AOK}.)} {Aktueller und zuk{\"{u}}nftiger {K}rankenbestand von
+  {D}emenz in {D}eutschland auf basis der outinedaten der {AOK}. ({C}urrent and
+  future number of people suffering from dementia in {G}ermany based on routine
+  data from the {AOK}.)}.{\BBCQ}
+\newblock
+\BIn{} C.~Gnster, J.~Klose\BCBL {}\ \BBA {} N.~Schmacke\ (\BEDS),
+  \APACrefbtitle {Versorgungs-Report} {Versorgungs-report}\ (\BPGS\ 161--175).
+\newblock
+\APACaddressPublisher{Piscataway, NJ, USA}{IEEE {P}ress}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Yoo%
+\ \BBA {} Harman%
+}{%
+Yoo%
+\ \BBA {} Harman%
+}{%
+{\protect \APACyear {2007}}%
+}]{%
+Yoo2007}
+\APACinsertmetastar {%
+Yoo2007}%
+\begin{APACrefauthors}%
+Yoo, S.%
+\BCBT {}\ \BBA {} Harman, M.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2007}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Pareto efficient multi-objective test case selection}
+  {Pareto efficient multi-objective test case selection}.{\BBCQ}
+\newblock
+\BIn{} \APACrefbtitle {Proceedings of the {I}nternational {C}onference on
+  {S}oftware {T}esting and {A}nalysis} {Proceedings of the {I}nternational
+  {C}onference on {S}oftware {T}esting and {A}nalysis}\ (\BPGS\ 140--150).
+\newblock
+\APACaddressPublisher{London, UK}{}.
+\PrintBackRefs{\CurrentBib}
+
+\end{thebibliography}
