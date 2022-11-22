@@ -1,58 +1,56 @@
-This is BibTeX, Version 0.99d
+This is BibTeX, Version 0.99d (TeX Live 2022)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: wileyNJD-APA.aux
-Reallocating 'name_of_file' (item size: 1) to 13 items.
 The style file: WileyNJD-APA.bst
-Reallocating 'name_of_file' (item size: 1) to 13 items.
-Reallocating 'glb_str_end' (item size: 4) to 20 items.
-Reallocating 'glb_str_ptr' (item size: 4) to 20 items.
-Reallocating 'global_strs' (item size: 1) to 4000000 items.
-Reallocating 'singl_function' (item size: 4) to 100 items.
-Reallocating 'wiz_functions' (item size: 4) to 6000 items.
-Reallocating 'singl_function' (item size: 4) to 100 items.
-Reallocating 'singl_function' (item size: 4) to 100 items.
-Reallocating 'wiz_functions' (item size: 4) to 9000 items.
-Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
+Reallocated global_strs (elt_size=200001) to 20 items from 10.
+Reallocated glb_str_end (elt_size=4) to 20 items from 10.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: wileyNJD-APA.bib
 apacite.bst [2013/07/21 v6.03 APA bibliography style]
-You've used 9 entries,
+You've used 36 entries,
             6949 wiz_defined-function locations,
-            1329 strings with 12478 characters,
-and the built_in function-call counts, 20486 in all, are:
-= -- 2565
-> -- 171
-< -- 1078
-+ -- 1111
-- -- 18
-* -- 1351
-:= -- 4025
-add.period$ -- 41
-call.type$ -- 9
-change.case$ -- 155
+            1491 strings with 17569 characters,
+and the built_in function-call counts, 72810 in all, are:
+= -- 8843
+> -- 655
+< -- 3582
++ -- 3804
+- -- 82
+* -- 4776
+:= -- 13392
+add.period$ -- 142
+call.type$ -- 36
+change.case$ -- 612
 chr.to.int$ -- 0
-cite$ -- 18
-duplicate$ -- 461
-empty$ -- 703
-format.name$ -- 237
-if$ -- 3782
+cite$ -- 72
+duplicate$ -- 2118
+empty$ -- 2820
+format.name$ -- 1170
+if$ -- 13653
 int.to.chr$ -- 0
-int.to.str$ -- 27
+int.to.str$ -- 108
 missing$ -- 0
-newline$ -- 232
-num.names$ -- 74
-pop$ -- 411
+newline$ -- 966
+num.names$ -- 288
+pop$ -- 1402
 preamble$ -- 1
-purify$ -- 36
+purify$ -- 144
 quote$ -- 0
-skip$ -- 1149
+skip$ -- 4246
 stack$ -- 0
-substring$ -- 1270
-swap$ -- 287
-text.length$ -- 53
+substring$ -- 4116
+swap$ -- 1198
+text.length$ -- 79
 text.prefix$ -- 0
 top$ -- 1
-type$ -- 848
+type$ -- 2880
 warning$ -- 0
-while$ -- 86
+while$ -- 384
 width$ -- 0
-write$ -- 286
+write$ -- 1240

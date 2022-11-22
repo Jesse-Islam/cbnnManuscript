@@ -1,263 +1,1039 @@
 \begin{thebibliography}{}
 
 \bibitem [\protect \citeauthoryear {%
-Allen%
+Allaire%
+\ \BBA {} Chollet%
 }{%
-Allen%
+Allaire%
+\ \BBA {} Chollet%
 }{%
-{\protect \APACyear {2011}}%
+{\protect \APACyear {2021}}%
 }]{%
-Allen2011}
+keras}
 \APACinsertmetastar {%
-Allen2011}%
+keras}%
 \begin{APACrefauthors}%
-Allen, T\BPBI T.%
+Allaire, J.%
+\BCBT {}\ \BBA {} Chollet, F.%
 \end{APACrefauthors}%
 \unskip\
 \newblock
-\APACrefYear{2011}.
+\APACrefYearMonthDay{2021}{}{}.
 \newblock
-\APACrefbtitle {Introduction to {D}iscrete {E}vent {S}imulation and
-  {A}gent-based {M}odeling: {V}oting {S}ystems{,} {H}ealth {C}are{,}
-  {M}ilitary{,} and {M}anufacturing} {Introduction to {D}iscrete {E}vent
-  {S}imulation and {A}gent-based {M}odeling: {V}oting {S}ystems{,} {H}ealth
-  {C}are{,} {M}ilitary{,} and {M}anufacturing}.
+{\BBOQ}\APACrefatitle {keras: R Interface to 'Keras'} {keras: R interface to
+  'keras'}{\BBCQ}\ [\bibcomputersoftwaremanual].
 \newblock
-\APACaddressPublisher{New York}{Springer}.
+\begin{APACrefURL} \url{https://CRAN.R-project.org/package=keras}
+  \end{APACrefURL}
+\newblock
+\APACrefnote{R package version 2.7.0}
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
-Ballen%
+Allaire%
+\ \BBA {} Tang%
 }{%
-Ballen%
+Allaire%
+\ \BBA {} Tang%
 }{%
-{\protect \APACyear {2011}}%
+{\protect \APACyear {2021}}%
 }]{%
-Ballen2011}
+tf}
 \APACinsertmetastar {%
-Ballen2011}%
+tf}%
 \begin{APACrefauthors}%
-Ballen, T\BPBI T.%
+Allaire, J.%
+\BCBT {}\ \BBA {} Tang, Y.%
 \end{APACrefauthors}%
 \unskip\
 \newblock
-\APACrefYear{2011}.
+\APACrefYearMonthDay{2021}{}{}.
 \newblock
-\APACrefbtitle {Introduction to {D}iscrete {E}vent {S}imulation and
-  {A}gent-based {M}odeling: {V}oting {S}ystems{,} {H}ealth {C}are{,}
-  {M}ilitary{,} and {M}anufacturing} {Introduction to {D}iscrete {E}vent
-  {S}imulation and {A}gent-based {M}odeling: {V}oting {S}ystems{,} {H}ealth
-  {C}are{,} {M}ilitary{,} and {M}anufacturing}\ (\PrintOrdinal{2}\ \BEd).
+{\BBOQ}\APACrefatitle {tensorflow: R Interface to 'TensorFlow'} {tensorflow: R
+  interface to 'tensorflow'}{\BBCQ}\ [\bibcomputersoftwaremanual].
 \newblock
-\APACaddressPublisher{New York}{Springer}.
+\begin{APACrefURL} \url{https://CRAN.R-project.org/package=tensorflow}
+  \end{APACrefURL}
+\newblock
+\APACrefnote{R package version 2.7.0}
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
-Blanchard%
-\ \BBA {} Loubere%
+Bhatnagar%
+, Turgeon%
+, Islam%
+, Hanley%
+\BCBL {}\ \BBA {} Saarela%
 }{%
-Blanchard%
-\ \BBA {} Loubere%
-}{%
-{\protect \APACyear {2015}}%
-}]{%
-Blanchard2015}
-\APACinsertmetastar {%
-Blanchard2015}%
-\begin{APACrefauthors}%
-Blanchard, G.%
-\BCBT {}\ \BBA {} Loubere, R.%
-\end{APACrefauthors}%
-\unskip\
-\newblock
-\APACrefYearMonthDay{2015}{}{}.
-\newblock
-\APACrefbtitle {High-Order {C}onservative {R}emapping with a posteriori {MOOD}
-  stabilization on polygonal meshes.} {High-order {C}onservative {R}emapping
-  with a posteriori {MOOD} stabilization on polygonal meshes.}
-\newblock
-\APACrefnote{Available from: \url{http://www.emn.fr/z-info/choco-solver/} [last
-  accessed {M}ay 2011]}
-\PrintBackRefs{\CurrentBib}
-
-\bibitem [\protect \citeauthoryear {%
-Boggs%
-, Bozman%
-\BCBL {}\ \BBA {} Perry%
-}{%
-Boggs%
+Bhatnagar%
 \ \protect \BOthers {.}}{%
-{\protect \APACyear {2002}}%
+{\protect \APACyear {2020}}%
 }]{%
-Boggs2002}
+cbpkg}
 \APACinsertmetastar {%
-Boggs2002}%
+cbpkg}%
 \begin{APACrefauthors}%
-Boggs, R.%
-, Bozman, J.%
-\BCBL {}\ \BBA {} Perry, R.%
+Bhatnagar, S\BPBI R.%
+, Turgeon, M.%
+, Islam, J.%
+, Hanley, J\BPBI A.%
+\BCBL {}\ \BBA {} Saarela, O.%
 \end{APACrefauthors}%
 \unskip\
 \newblock
-\APACrefYearMonthDay{2002}{}{}.
+\APACrefYearMonthDay{2020}{}{}.
 \newblock
-\APACrefbtitle {Reducing downtime and business loss: {A}dressing business risk
-  with effective technology} {Reducing downtime and business loss: {A}dressing
-  business risk with effective technology}\ \APACbVolEdTR{}{\BTR{}\ \BNUM\
-  Technical report 91-18}.
+{\BBOQ}\APACrefatitle {casebase: An Alternative Framework For Survival Analysis
+  and Comparison of Event Rates} {casebase: An alternative framework for
+  survival analysis and comparison of event rates}.{\BBCQ}
 \newblock
-\APACaddressInstitution{Sernageomin}{International {D}ata {C}orporation
-  ({IDC})}.
+\APACjournalVolNumPages{arXiv preprint arXiv:2009.10264}{}{}{}.
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
-Elbaum%
-, Malishevsky%
-\BCBL {}\ \BBA {} Rothermel%
+Blanche%
+, Kattan%
+\BCBL {}\ \BBA {} Gerds%
 }{%
-Elbaum%
+Blanche%
 \ \protect \BOthers {.}}{%
-{\protect \APACyear {February 2002}}%
+{\protect \APACyear {2019}}%
 }]{%
-Elbaum2002}
+cindexfails2019}
 \APACinsertmetastar {%
-Elbaum2002}%
+cindexfails2019}%
 \begin{APACrefauthors}%
-Elbaum, S.%
-, Malishevsky, A\BPBI G.%
-\BCBL {}\ \BBA {} Rothermel, G.%
+Blanche, P.%
+, Kattan, M\BPBI W.%
+\BCBL {}\ \BBA {} Gerds, T\BPBI A.%
 \end{APACrefauthors}%
 \unskip\
 \newblock
-\APACrefYearMonthDay{February 2002}{}{}.
+\APACrefYearMonthDay{2019}{}{}.
 \newblock
-{\BBOQ}\APACrefatitle {Test case prioritization: a family of empirical studies}
-  {Test case prioritization: a family of empirical studies}.{\BBCQ}
+{\BBOQ}\APACrefatitle {The c-index is not proper for the evaluation of-year
+  predicted risks} {The c-index is not proper for the evaluation of-year
+  predicted risks}.{\BBCQ}
 \newblock
-\APACjournalVolNumPages{IEEE {T}ransactions on {S}oftware
-  {E}ngineering}{28}{2}{159--182}.
-\newblock
-\begin{APACrefDOI} 12345.2345 \end{APACrefDOI}
+\APACjournalVolNumPages{Biostatistics}{20}{2}{347--357}.
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
-Rothermel%
+Bozinovski%
 }{%
-Rothermel%
+Bozinovski%
 }{%
-{\protect \APACyear {1997}}%
+{\protect \APACyear {2020}}%
 }]{%
-Rothermel1997}
+bozinovski2020reminder}
 \APACinsertmetastar {%
-Rothermel1997}%
+bozinovski2020reminder}%
 \begin{APACrefauthors}%
-Rothermel, G.%
+Bozinovski, S.%
 \end{APACrefauthors}%
 \unskip\
 \newblock
-\APACrefYearMonthDay{1997}{}{}.
+\APACrefYearMonthDay{2020}{}{}.
 \newblock
-{\BBOQ}\APACrefatitle {A safe efficient regression test selection technique} {A
-  safe efficient regression test selection technique}.{\BBCQ}
+{\BBOQ}\APACrefatitle {Reminder of the first paper on transfer learning in
+  neural networks, 1976} {Reminder of the first paper on transfer learning in
+  neural networks, 1976}.{\BBCQ}
 \newblock
-\APACjournalVolNumPages{ACM {T}ransactions on {S}oftware {E}ngineering and
-  {M}ethodology}{6}{2}{173--210}.
+\APACjournalVolNumPages{Informatica}{44}{3}{}.
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
-Rothermel%
-, Harrold%
-, Hirt%
-, Amsden%
-\BCBL {}\ \BBA {} Cook%
+Brilleman%
+, Wolfe%
+, Moreno-Betancur%
+\BCBL {}\ \BBA {} Crowther%
 }{%
-Rothermel%
+Brilleman%
 \ \protect \BOthers {.}}{%
-{\protect \APACyear {1998}}%
+{\protect \APACyear {2020}}%
 }]{%
-Rothermel1998}
+simsurv}
 \APACinsertmetastar {%
-Rothermel1998}%
+simsurv}%
 \begin{APACrefauthors}%
-Rothermel, G.%
-, Harrold, M\BPBI J.%
-, Hirt, C\BPBI W.%
-, Amsden, A\BPBI A.%
-\BCBL {}\ \BBA {} Cook, J\BPBI L.%
+Brilleman, S\BPBI L.%
+, Wolfe, R.%
+, Moreno-Betancur, M.%
+\BCBL {}\ \BBA {} Crowther, M\BPBI J.%
 \end{APACrefauthors}%
 \unskip\
 \newblock
-\APACrefYearMonthDay{1998}{}{}.
+\APACrefYearMonthDay{2020}{}{}.
 \newblock
-{\BBOQ}\APACrefatitle {A safe efficient regression test selection technique} {A
-  safe efficient regression test selection technique}.{\BBCQ}
+{\BBOQ}\APACrefatitle {Simulating Survival Data Using the {simsurv} {R}
+  Package} {Simulating survival data using the {simsurv} {R} package}.{\BBCQ}
 \newblock
-\APACjournalVolNumPages{{ACM} {T}ransactions on {S}oftware {E}ngineering and
-  {M}ethodology}{6}{2}{173--210}.
+\APACjournalVolNumPages{Journal of Statistical Software}{97}{3}{1--27}.
+\newblock
+\begin{APACrefDOI} 10.18637/jss.v097.i03 \end{APACrefDOI}
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
-Schulz%
-\ \BBA {} Doblhammer%
-}{%
-Schulz%
-\ \BBA {} Doblhammer%
-}{%
+Coradini%
+\ \protect \BOthers {.}}{%
+Coradini%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2000}}%
+}]{%
+coradini2000time}
+\APACinsertmetastar {%
+coradini2000time}%
+\begin{APACrefauthors}%
+Coradini, D.%
+, Daidone, M\BPBI G.%
+, Boracchi, P.%
+, Biganzoli, E.%
+, Oriana, S.%
+, Bresciani, G.%
+\BDBL {}Marubini, E.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2000}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Time-dependent relevance of steroid receptors in breast
+  cancer} {Time-dependent relevance of steroid receptors in breast
+  cancer}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Journal of clinical oncology}{18}{14}{2702--2709}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Curtis%
+\ \protect \BOthers {.}}{%
+Curtis%
+\ \protect \BOthers {.}}{%
 {\protect \APACyear {2012}}%
 }]{%
-Schulz2012}
+curtis2012genomic}
 \APACinsertmetastar {%
-Schulz2012}%
+curtis2012genomic}%
 \begin{APACrefauthors}%
-Schulz, A.%
-\BCBT {}\ \BBA {} Doblhammer, G.%
+Curtis, C.%
+, Shah, S\BPBI P.%
+, Chin, S\BHBI F.%
+, Turashvili, G.%
+, Rueda, O\BPBI M.%
+, Dunning, M\BPBI J.%
+\BDBL {}others%
 \end{APACrefauthors}%
 \unskip\
 \newblock
 \APACrefYearMonthDay{2012}{}{}.
 \newblock
-{\BBOQ}\APACrefatitle {Aktueller und zuk{\"{u}}nftiger {K}rankenbestand von
-  {D}emenz in {D}eutschland auf basis der outinedaten der {AOK}. ({C}urrent and
-  future number of people suffering from dementia in {G}ermany based on routine
-  data from the {AOK}.)} {Aktueller und zuk{\"{u}}nftiger {K}rankenbestand von
-  {D}emenz in {D}eutschland auf basis der outinedaten der {AOK}. ({C}urrent and
-  future number of people suffering from dementia in {G}ermany based on routine
-  data from the {AOK}.)}.{\BBCQ}
+{\BBOQ}\APACrefatitle {The genomic and transcriptomic architecture of 2,000
+  breast tumours reveals novel subgroups} {The genomic and transcriptomic
+  architecture of 2,000 breast tumours reveals novel subgroups}.{\BBCQ}
 \newblock
-\BIn{} C.~Gnster, J.~Klose\BCBL {}\ \BBA {} N.~Schmacke\ (\BEDS),
-  \APACrefbtitle {Versorgungs-Report} {Versorgungs-report}\ (\BPGS\ 161--175).
-\newblock
-\APACaddressPublisher{Piscataway, NJ, USA}{IEEE {P}ress}.
+\APACjournalVolNumPages{Nature}{486}{7403}{346--352}.
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
-Yoo%
-\ \BBA {} Harman%
+Faraggi%
+\ \BBA {} Simon%
 }{%
-Yoo%
-\ \BBA {} Harman%
+Faraggi%
+\ \BBA {} Simon%
 }{%
-{\protect \APACyear {2007}}%
+{\protect \APACyear {1995}}%
 }]{%
-Yoo2007}
+faraggi1995neural}
 \APACinsertmetastar {%
-Yoo2007}%
+faraggi1995neural}%
 \begin{APACrefauthors}%
-Yoo, S.%
-\BCBT {}\ \BBA {} Harman, M.%
+Faraggi, D.%
+\BCBT {}\ \BBA {} Simon, R.%
 \end{APACrefauthors}%
 \unskip\
 \newblock
-\APACrefYearMonthDay{2007}{}{}.
+\APACrefYearMonthDay{1995}{}{}.
 \newblock
-{\BBOQ}\APACrefatitle {Pareto efficient multi-objective test case selection}
-  {Pareto efficient multi-objective test case selection}.{\BBCQ}
+{\BBOQ}\APACrefatitle {A neural network model for survival data} {A neural
+  network model for survival data}.{\BBCQ}
 \newblock
-\BIn{} \APACrefbtitle {Proceedings of the {I}nternational {C}onference on
-  {S}oftware {T}esting and {A}nalysis} {Proceedings of the {I}nternational
-  {C}onference on {S}oftware {T}esting and {A}nalysis}\ (\BPGS\ 140--150).
+\APACjournalVolNumPages{Statistics in medicine}{14}{1}{73--82}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Gerds%
+\ \BBA {} Kattan%
+}{%
+Gerds%
+\ \BBA {} Kattan%
+}{%
+{\protect \APACyear {2021}}%
+}]{%
+riskRegression}
+\APACinsertmetastar {%
+riskRegression}%
+\begin{APACrefauthors}%
+Gerds, T\BPBI A.%
+\BCBT {}\ \BBA {} Kattan, M\BPBI W.%
+\end{APACrefauthors}%
+\unskip\
 \newblock
-\APACaddressPublisher{London, UK}{}.
+\APACrefYear{2021}.
+\newblock
+\APACrefbtitle {Medical Risk Prediction Models: With Ties to Machine Learning
+  (1st ed.)} {Medical risk prediction models: With ties to machine learning
+  (1st ed.)}.
+\newblock
+\APACaddressPublisher{}{Chapman and Hall/CRC}.
+\newblock
+\begin{APACrefURL} \url{https://doi.org/10.1201/9781138384484} \end{APACrefURL}
+\newblock
+\APACrefnote{R package version 2021.10.10}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Graf%
+, Schmoor%
+, Sauerbrei%
+\BCBL {}\ \BBA {} Schumacher%
+}{%
+Graf%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {1999}}%
+}]{%
+graf1999}
+\APACinsertmetastar {%
+graf1999}%
+\begin{APACrefauthors}%
+Graf, E.%
+, Schmoor, C.%
+, Sauerbrei, W.%
+\BCBL {}\ \BBA {} Schumacher, M.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{1999}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Assessment and comparison of prognostic classification
+  schemes for survival data} {Assessment and comparison of prognostic
+  classification schemes for survival data}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Statistics in medicine}{18}{17-18}{2529--2545}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Gulli%
+\ \BBA {} Pal%
+}{%
+Gulli%
+\ \BBA {} Pal%
+}{%
+{\protect \APACyear {2017}}%
+}]{%
+gulli2017}
+\APACinsertmetastar {%
+gulli2017}%
+\begin{APACrefauthors}%
+Gulli, A.%
+\BCBT {}\ \BBA {} Pal, S.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYear{2017}.
+\newblock
+\APACrefbtitle {Deep learning with Keras} {Deep learning with keras}.
+\newblock
+\APACaddressPublisher{}{Packt Publishing Ltd}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Hanley%
+\ \BBA {} Miettinen%
+}{%
+Hanley%
+\ \BBA {} Miettinen%
+}{%
+{\protect \APACyear {2009}}%
+}]{%
+hanley2009}
+\APACinsertmetastar {%
+hanley2009}%
+\begin{APACrefauthors}%
+Hanley, J\BPBI A.%
+\BCBT {}\ \BBA {} Miettinen, O\BPBI S.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2009}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Fitting {smooth-in-time} prognostic risk functions via
+  logistic regression} {Fitting {smooth-in-time} prognostic risk functions via
+  logistic regression}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{The International Journal of Biostatistics}{5}{1}{}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Hilsenbeck%
+\ \protect \BOthers {.}}{%
+Hilsenbeck%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {1998}}%
+}]{%
+hilsenbeck1998time}
+\APACinsertmetastar {%
+hilsenbeck1998time}%
+\begin{APACrefauthors}%
+Hilsenbeck, S\BPBI G.%
+, Ravdin, P\BPBI M.%
+, Moor, C\BPBI A\BPBI d.%
+, Chamness, G\BPBI C.%
+, Osborne, C\BPBI K.%
+\BCBL {}\ \BBA {} Clark, G\BPBI M.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{1998}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Time-dependence of hazard ratios for prognostic factors
+  in primary breast cancer} {Time-dependence of hazard ratios for prognostic
+  factors in primary breast cancer}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Breast cancer research and treatment}{52}{1}{227--237}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Hughes-Hallett%
+, Gleason%
+\BCBL {}\ \BBA {} McCallum%
+}{%
+Hughes-Hallett%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2020}}%
+}]{%
+hughes2020calculus}
+\APACinsertmetastar {%
+hughes2020calculus}%
+\begin{APACrefauthors}%
+Hughes-Hallett, D.%
+, Gleason, A\BPBI M.%
+\BCBL {}\ \BBA {} McCallum, W\BPBI G.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYear{2020}.
+\newblock
+\APACrefbtitle {Calculus: Single and multivariable} {Calculus: Single and
+  multivariable}.
+\newblock
+\APACaddressPublisher{}{John Wiley \& Sons}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Jackson%
+}{%
+Jackson%
+}{%
+{\protect \APACyear {2016}}%
+}]{%
+flexsurv}
+\APACinsertmetastar {%
+flexsurv}%
+\begin{APACrefauthors}%
+Jackson, C.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2016}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {{flexsurv}: A Platform for Parametric Survival Modeling
+  in {R}} {{flexsurv}: A platform for parametric survival modeling in
+  {R}}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Journal of Statistical Software}{70}{8}{1--33}.
+\newblock
+\APACrefnote{R package version 2.0}
+\newblock
+\begin{APACrefDOI} 10.18637/jss.v070.i08 \end{APACrefDOI}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Kattan%
+\ \BBA {} Gerds%
+}{%
+Kattan%
+\ \BBA {} Gerds%
+}{%
+{\protect \APACyear {2018}}%
+}]{%
+kattan2018index}
+\APACinsertmetastar {%
+kattan2018index}%
+\begin{APACrefauthors}%
+Kattan, M\BPBI W.%
+\BCBT {}\ \BBA {} Gerds, T\BPBI A.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2018}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {The index of prediction accuracy: an intuitive measure
+  useful for evaluating risk prediction models} {The index of prediction
+  accuracy: an intuitive measure useful for evaluating risk prediction
+  models}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Diagnostic and prognostic research}{2}{1}{1--7}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Katzman%
+\ \protect \BOthers {.}}{%
+Katzman%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2018}}%
+}]{%
+katzman2018DeepSurv}
+\APACinsertmetastar {%
+katzman2018DeepSurv}%
+\begin{APACrefauthors}%
+Katzman, J\BPBI L.%
+, Shaham, U.%
+, Cloninger, A.%
+, Bates, J.%
+, Jiang, T.%
+\BCBL {}\ \BBA {} Kluger, Y.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2018}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {DeepSurv: personalized treatment recommender system
+  using a Cox proportional hazards deep neural network} {Deepsurv: personalized
+  treatment recommender system using a cox proportional hazards deep neural
+  network}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{BMC Medical Research Methodology}{18}{1}{24}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Kleinbaum%
+\ \BBA {} Klein%
+}{%
+Kleinbaum%
+\ \BBA {} Klein%
+}{%
+{\protect \APACyear {2012}}%
+}]{%
+kleinbaum2012survival}
+\APACinsertmetastar {%
+kleinbaum2012survival}%
+\begin{APACrefauthors}%
+Kleinbaum, D\BPBI G.%
+\BCBT {}\ \BBA {} Klein, M.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYear{2012}.
+\newblock
+\APACrefbtitle {Survival analysis: a self-learning text} {Survival analysis: a
+  self-learning text}\ (\BVOL~3).
+\newblock
+\APACaddressPublisher{}{Springer}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Knaus%
+\ \protect \BOthers {.}}{%
+Knaus%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {1995}}%
+}]{%
+knaus1995SUPPORT}
+\APACinsertmetastar {%
+knaus1995SUPPORT}%
+\begin{APACrefauthors}%
+Knaus, W\BPBI A.%
+, Harrell, F\BPBI E.%
+, Lynn, J.%
+, Goldman, L.%
+, Phillips, R\BPBI S.%
+, Connors, A\BPBI F.%
+\BDBL {}others%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{1995}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {The SUPPORT prognostic model: Objective estimates of
+  survival for seriously ill hospitalized adults} {The support prognostic
+  model: Objective estimates of survival for seriously ill hospitalized
+  adults}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Annals of Internal Medicine}{122}{3}{191--203}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Lee%
+, Zame%
+, Yoon%
+\BCBL {}\ \BBA {} Schaar%
+}{%
+Lee%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2018}}%
+}]{%
+lee2018DeepHit}
+\APACinsertmetastar {%
+lee2018DeepHit}%
+\begin{APACrefauthors}%
+Lee, C.%
+, Zame, W\BPBI R.%
+, Yoon, J.%
+\BCBL {}\ \BBA {} Schaar, M\BPBI v\BPBI d.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2018}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {DeepHit: A Deep Learning Approach to Survival Analysis
+  With Competing Risks.} {Deephit: A deep learning approach to survival
+  analysis with competing risks.}{\BBCQ}
+\newblock
+\APACjournalVolNumPages{AAAI Conference on Artificial
+  Intelligence}{}{}{2314--2321}.
+\newblock
+\APACrefnote{Software from pycox version 0.2.2}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Nagpal%
+, Li%
+\BCBL {}\ \BBA {} Dubrawski%
+}{%
+Nagpal%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2021}}%
+}]{%
+dsmPaper}
+\APACinsertmetastar {%
+dsmPaper}%
+\begin{APACrefauthors}%
+Nagpal, C.%
+, Li, X\BPBI R.%
+\BCBL {}\ \BBA {} Dubrawski, A.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2021}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Deep survival machines: Fully parametric survival
+  regression and representation learning for censored data with competing
+  risks} {Deep survival machines: Fully parametric survival regression and
+  representation learning for censored data with competing risks}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{IEEE Journal of Biomedical and Health
+  Informatics}{}{}{}.
+\newblock
+\APACrefnote{Software downloaded March 10, 2021}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+P{\"o}lsterl%
+}{%
+P{\"o}lsterl%
+}{%
+{\protect \APACyear {2020}}%
+}]{%
+sksurv}
+\APACinsertmetastar {%
+sksurv}%
+\begin{APACrefauthors}%
+P{\"o}lsterl, S.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2020}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {scikit-survival: A Library for Time-to-Event Analysis
+  Built on Top of scikit-learn} {scikit-survival: A library for time-to-event
+  analysis built on top of scikit-learn}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Journal of Machine Learning Research}{21}{212}{1-6}.
+\newblock
+\begin{APACrefURL} \url{http://jmlr.org/papers/v21/20-729.html}
+  \end{APACrefURL}
+\newblock
+\APACrefnote{Version 0.14.0}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+{R Core Team}%
+}{%
+{R Core Team}%
+}{%
+{\protect \APACyear {2021}}%
+}]{%
+Rsoft}
+\APACinsertmetastar {%
+Rsoft}%
+\begin{APACrefauthors}%
+{R Core Team}.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2021}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {R: A Language and Environment for Statistical Computing}
+  {R: A language and environment for statistical computing}{\BBCQ}\
+  [\bibcomputersoftwaremanual].
+\newblock
+\APACaddressPublisher{Vienna, Austria}{}.
+\newblock
+\begin{APACrefURL} \url{https://www.R-project.org/} \end{APACrefURL}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Ribeiro%
+, Singh%
+\BCBL {}\ \BBA {} Guestrin%
+}{%
+Ribeiro%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2016}}%
+}]{%
+ribeiro2016model}
+\APACinsertmetastar {%
+ribeiro2016model}%
+\begin{APACrefauthors}%
+Ribeiro, M\BPBI T.%
+, Singh, S.%
+\BCBL {}\ \BBA {} Guestrin, C.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2016}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Model-agnostic interpretability of machine learning}
+  {Model-agnostic interpretability of machine learning}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{arXiv preprint arXiv:1606.05386}{}{}{}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Ripley%
+, Harris%
+\BCBL {}\ \BBA {} Tarassenko%
+}{%
+Ripley%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2004}}%
+}]{%
+ripley2004non}
+\APACinsertmetastar {%
+ripley2004non}%
+\begin{APACrefauthors}%
+Ripley, R\BPBI M.%
+, Harris, A\BPBI L.%
+\BCBL {}\ \BBA {} Tarassenko, L.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2004}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Non-linear survival analysis using neural networks}
+  {Non-linear survival analysis using neural networks}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Statistics in medicine}{23}{5}{825--842}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Royston%
+\ \BBA {} Parmar%
+}{%
+Royston%
+\ \BBA {} Parmar%
+}{%
+{\protect \APACyear {2002}}%
+}]{%
+royston2002flexible}
+\APACinsertmetastar {%
+royston2002flexible}%
+\begin{APACrefauthors}%
+Royston, P.%
+\BCBT {}\ \BBA {} Parmar, M\BPBI K.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2002}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Flexible parametric proportional-hazards and
+  proportional-odds models for censored survival data, with application to
+  prognostic modelling and estimation of treatment effects} {Flexible
+  parametric proportional-hazards and proportional-odds models for censored
+  survival data, with application to prognostic modelling and estimation of
+  treatment effects}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Statistics in medicine}{21}{15}{2175--2197}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Saarela%
+\ \BBA {} Hanley%
+}{%
+Saarela%
+\ \BBA {} Hanley%
+}{%
+{\protect \APACyear {2015}}%
+}]{%
+saarela2015}
+\APACinsertmetastar {%
+saarela2015}%
+\begin{APACrefauthors}%
+Saarela, O.%
+\BCBT {}\ \BBA {} Hanley, J\BPBI A.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2015}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Case-base methods for studying vaccination safety}
+  {Case-base methods for studying vaccination safety}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Biometrics}{71}{1}{42--52}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Sonabend%
+}{%
+Sonabend%
+}{%
+{\protect \APACyear {2021}}%
+}]{%
+survmods}
+\APACinsertmetastar {%
+survmods}%
+\begin{APACrefauthors}%
+Sonabend, R.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2021}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {survivalmodels: Models for Survival Analysis}
+  {survivalmodels: Models for survival analysis}{\BBCQ}\
+  [\bibcomputersoftwaremanual].
+\newblock
+\begin{APACrefURL} \url{https://CRAN.R-project.org/package=survivalmodels}
+  \end{APACrefURL}
+\newblock
+\APACrefnote{R package version 0.1.9}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Srivastava%
+, Hinton%
+, Krizhevsky%
+, Sutskever%
+\BCBL {}\ \BBA {} Salakhutdinov%
+}{%
+Srivastava%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2014}}%
+}]{%
+srivastava2014dropout}
+\APACinsertmetastar {%
+srivastava2014dropout}%
+\begin{APACrefauthors}%
+Srivastava, N.%
+, Hinton, G.%
+, Krizhevsky, A.%
+, Sutskever, I.%
+\BCBL {}\ \BBA {} Salakhutdinov, R.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2014}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Dropout: A simple way to prevent neural networks from
+  overfitting} {Dropout: A simple way to prevent neural networks from
+  overfitting}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{The Journal of Machine Learning
+  Research}{15}{1}{1929--1958}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Sun%
+, Wei%
+, Chen%
+\BCBL {}\ \BBA {} Ding%
+}{%
+Sun%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2020}}%
+}]{%
+sun2020genome}
+\APACinsertmetastar {%
+sun2020genome}%
+\begin{APACrefauthors}%
+Sun, T.%
+, Wei, Y.%
+, Chen, W.%
+\BCBL {}\ \BBA {} Ding, Y.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2020}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Genome-wide association study-based deep learning for
+  survival prediction} {Genome-wide association study-based deep learning for
+  survival prediction}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Statistics in medicine}{39}{30}{4605--4620}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+{Terry M. Therneau}%
+\ \BBA {} {Patricia M. Grambsch}%
+}{%
+{Terry M. Therneau}%
+\ \BBA {} {Patricia M. Grambsch}%
+}{%
+{\protect \APACyear {2000}}%
+}]{%
+survpkg}
+\APACinsertmetastar {%
+survpkg}%
+\begin{APACrefauthors}%
+{Terry M. Therneau}%
+\BCBT {}\ \BBA {} {Patricia M. Grambsch}.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYear{2000}.
+\newblock
+\APACrefbtitle {Modeling Survival Data: Extending the {C}ox Model} {Modeling
+  survival data: Extending the {C}ox model}.
+\newblock
+\APACaddressPublisher{New York}{Springer}.
+\newblock
+\APACrefnote{R package version 3.2-11}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Uno%
+, Cai%
+, Pencina%
+, D'Agostino%
+\BCBL {}\ \BBA {} Wei%
+}{%
+Uno%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2011}}%
+}]{%
+uno2011}
+\APACinsertmetastar {%
+uno2011}%
+\begin{APACrefauthors}%
+Uno, H.%
+, Cai, T.%
+, Pencina, M\BPBI J.%
+, D'Agostino, R\BPBI B.%
+\BCBL {}\ \BBA {} Wei, L\BHBI J.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2011}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {On the C-statistics for evaluating overall adequacy of
+  risk prediction procedures with censored survival data} {On the c-statistics
+  for evaluating overall adequacy of risk prediction procedures with censored
+  survival data}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Statistics in medicine}{30}{10}{1105--1117}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Ushey%
+, Allaire%
+\BCBL {}\ \BBA {} Tang%
+}{%
+Ushey%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2021}}%
+}]{%
+reticulate}
+\APACinsertmetastar {%
+reticulate}%
+\begin{APACrefauthors}%
+Ushey, K.%
+, Allaire, J.%
+\BCBL {}\ \BBA {} Tang, Y.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2021}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {reticulate: Interface to 'Python'} {reticulate:
+  Interface to 'python'}{\BBCQ}\ [\bibcomputersoftwaremanual].
+\newblock
+\begin{APACrefURL} \url{https://CRAN.R-project.org/package=reticulate}
+  \end{APACrefURL}
+\newblock
+\APACrefnote{R package version 1.22}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Van~Rossum%
+\ \BBA {} Drake%
+}{%
+Van~Rossum%
+\ \BBA {} Drake%
+}{%
+{\protect \APACyear {2009}}%
+}]{%
+py}
+\APACinsertmetastar {%
+py}%
+\begin{APACrefauthors}%
+Van~Rossum, G.%
+\BCBT {}\ \BBA {} Drake, F\BPBI L.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYear{2009}.
+\newblock
+\APACrefbtitle {Python 3 Reference Manual} {Python 3 reference manual}.
+\newblock
+\APACaddressPublisher{Scotts Valley, CA}{CreateSpace}.
+\newblock
+\APACrefnote{Version 3.6.13}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Wang%
+\ \BBA {} Li%
+}{%
+Wang%
+\ \BBA {} Li%
+}{%
+{\protect \APACyear {2019}}%
+}]{%
+wang2019extreme}
+\APACinsertmetastar {%
+wang2019extreme}%
+\begin{APACrefauthors}%
+Wang, H.%
+\BCBT {}\ \BBA {} Li, G.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2019}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Extreme learning machine Cox model for high-dimensional
+  survival analysis} {Extreme learning machine cox model for high-dimensional
+  survival analysis}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Statistics in medicine}{38}{12}{2139--2156}.
 \PrintBackRefs{\CurrentBib}
 
 \end{thebibliography}
