@@ -186,7 +186,7 @@ predictRisk.tunnel <- function(object, newdata, times, cause, ...){
 #########################################################
 
 
-pmnnModel<-function(features, feature_input, feature_output, originalData=originalData,offset, timeVar,eventVar, ratio=100, compRisk=FALSE,censored.indicator=0,optimizer=optimizer_adam(lr = 0.001,decay=10^-7)){
+pmnnModel<-function(features, feature_input, feature_output, originalData=originalData,offset, timeVar,eventVar, ratio=100, compRisk=FALSE,censored.indicator=0,optimizer=optimizer_adam(learning_rate = 0.001,decay=10^-7)){
   if(class(originalData)[1]=="cbData"){
     data<-originalData
   }else{

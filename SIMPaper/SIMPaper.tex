@@ -200,22 +200,60 @@ let \(B\) be the sum of all follow-up times for the individuals in the
 study. If we sample the \emph{base series} uniformly across the study
 base, then the hazard function of the sampling process is equal to
 \(b/B\). Therefore, we have the following equality
-\footnote{We are abusing notation here, conflating hazards with probabilities. For a rigorous treatment, see Saarela \& Hanley (2015) section 3 \cite{saarela2015} .}:
+\footnote{We are abusing notation here, conflating hazards with probabilities. For a rigorous treatment, see Saarela \& Hanley (2015) section 3 \cite{saarela2015}.}:
 \begin{align}\label{eqn:main}
 \frac{P\left(Y_i=1 \mid X_i, T_i\right)}{P\left(Y_i = 0 \mid X_i, T_i\right)} = \frac{h\left(T_i \mid X_i\right)}{b/B}.
-\end{align} The odds of a person-moment being a part of the \emph{case
-series} is the ratio of the hazard \(h(T_i \mid X_i)\) and the uniform
-rate \(b/B\). Using \eqref{eqn:main}, we can see how the log-hazard
-function can be estimated from the log-odds arising from case-base
-sampling: \begin{align}\label{eqn:offset}
+\end{align}
+
+To provide some intuition for this equation, the hazard is the rate at
+which the event (\(Y_{i}=1\)) occurs at a given time, conditional on
+your survival up to the follow-up-time of interest. As we are looking at
+person-moments, we may retrieve the rate at which an event does not
+occur (\(Y_{i}=0)\) at a given time by taking the number of samples in
+\(b\) and dividing it by the total number of moments in the study base
+\(B\) at the current follow-up-time. Though an intuitive approach is
+used to describe this equation, a complete derivation of this equation
+can be found at \citep{saarela2015}.
+
+The odds of a person-moment being a part of the \emph{case series} is
+the ratio of the hazard \(h(T_i \mid X_i)\) and the uniform rate
+\(b/B\). Sampling techniques are known to result in a loss of
+information. To address this concern, the original case-base methodology
+paper for logistic regression uses a measure for relative information
+when comparing two averages, based on the size of our base-series and
+case-series. If we let the size of \(b=100c\), then the variances and
+covariances are expected to be proportional to
+\(\frac{1}{c}+\frac{1}{100c}\) rather than
+\(\frac{1}{c}+\frac{1}{\inf}\), about 1 percent larger. Concerns were
+raised about dependency due to multiple person-moments coming from each
+individual, the information loss was studied in Saarela 2015, where they
+found a ratio of 100:1, b:c, give an efficiency comparable to
+Mantel-Haenszel and conditional logistic regression methods (Saarela
+2015). Using \eqref{eqn:main}, we can see how the log-hazard function
+can be estimated from the log-odds arising from case-base sampling:
+\begin{align}\label{eqn:offset}
 \log \left( h\left(t \mid X_i\right)\right) = \log \left(\frac{P\left(Y_i = 1 \mid X_i, t\right)}{P\left(Y_i = 0 \mid X_i, t\right)}\right) + \log\left(\frac{b}{B}\right).
 \end{align}
 
+Sampling techniques are known to result in a loss of information. To
+address this concern, the original case-base methodology paper uses a
+measure for relative information when comparing two averages, based on
+the size of our base-series and case-series. If we let the size of
+\(b=100c\), then the variances and covariances are expected to be
+proportional to \(\frac{1}{c}+\frac{1}{100c}\) rather than
+\(\frac{1}{c}+\frac{1}{\inf}\), about 1 percent larger. If there is a
+concern with a 1 percent inflation of these estimates, a larger ratio
+than 100 may be used. As there are concerns about dependency due
+multiple person-moments coming from each individual, the information
+loss was studied in Saarela 2015 (\citep{saarela2015}), where they found
+a ratio of 100:1 base-series to case series gives an efficiency
+comparable to Mantel-Haenszel and conditional logistic regression
+methods \citep{saarela2015}.
+
 To estimate the correct hazard function, we adjusting for the bias
-introduced when sampling a fraction of the study base \(B\) by adding
-the offset term \(\log\left(\frac{b}{B} \right)\) as in
-\eqref{eqn:offset}. Next, we propose using neural networks to model the
-odds.
+introduced when sampling a fraction of the study base \(B\) by adding an
+offset term \(\log\left(\frac{B}{b} \right)\) \eqref{eqn:offset}. Next,
+we propose using neural networks to model the odds.
 
 \hypertarget{neural-networks-to-model-the-hazard-function}{%
 \subsection{Neural networks to model the hazard
@@ -224,9 +262,11 @@ function}\label{neural-networks-to-model-the-hazard-function}}
 After case-base sampling, we pass all features, including time, into any
 user-defined feed-forward component, to which an offset term is added,
 then passed through a sigmoid activation function (Figure
-\ref{fig:NNarch}). We use the sigmoid function as its inverse is the
-odds, which we can use to calculate the hazard. The general form for the
-neural network using CBNN is:
+\ref{fig:NNarch}). We use the sigmoid activation function as it is the
+inverse of the log-odds and commonly available in popular neural network
+packages (tensorflow, keras, pytorch, etc) {[}REF?{]}. which we can use
+to calculate the hazard. The general form for the neural network using
+CBNN is:
 
 \begin{align}\label{eqn:nnProb}
 P\left(Y=1|X,T\right)&=\mathrm{sigmoid}\left(f_{\theta}(X, T) + \log\left(\frac{B}{b}\right) \right),
@@ -246,7 +286,7 @@ description of the choices we made in the next sub-section.
 
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/home/bhatnagar-lab/jislam/cbnnManuscript/figures/nnarch2} 
+{\centering \includegraphics[width=1\linewidth]{../figures/nnarch2} 
 
 }
 
@@ -385,9 +425,14 @@ calculate our \(C_{IPCW}\) and IPA scores.
 We use two metrics to assess the performance of the different methods of
 interest: 1) (IPA) \citep{kattan2018index} and 2) inverse probability
 censoring weights-adjusted concordance index (\(C_{IPCW}\))
-\citep{uno2011}, which we define below. Both these time-dependent
-metrics provide transparency as to when in follow-up time each model may
-perform better than the others.
+\citep{uno2011}, which we define below. We may be interested in an
+absolute risk a specific number of years in the future. For the sake of
+comparison, we plot each metric over time \(t\) so that the performance
+is transparent. As we go further along follow-up-time, we expect the
+performance of all models to drop as there are fewer individuals left in
+the study by then. For \(C_{IPCW}\), the score demonstrates performance
+up to time \(t\) \citep{uno2011}, while IPA is performance at time
+\(t\).
 
 \hypertarget{index-of-prediction-accuracy-ipa}{%
 \subsubsection{Index of prediction accuracy
@@ -452,11 +497,11 @@ population concordance measure because of the IPCW adjustment
 
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaPlot} 
+{\centering \includegraphics[width=1\linewidth]{../analyses/figures/megaPlot} 
 
 }
 
-\caption{Summarizes the simple simulation (A, B), complex simulation (C, D), SUPPORT case study (E, F) and METABRIC case study (G, H) results. The first row shows the IPA score for each model in each study over follow-up time. Negative values mean our model performs worse than the null model and positive values mean the model performs better. The second row demonstrates the $C_{IPCW}$ score for each model in each study over follow-up time. A score of 1 is the maximum performance for either metric. Each model-specific metric in each study shows a 95-percent confidence interval over 100 iterations. The models of interest are case-base with logistic regression (CBLR), Case-Base Neural Networks (CBNN), Cox, DeepHit, DeepSurv, Deep Survival Machines (DSM), Optimal (a CBLR model with the exact interaction terms and baseline hazard specified) and Kaplan-Meier (to serve as a baseline, predicting the average for all individuals).}\label{fig:megaPlot}
+\caption{Summarizes the simple simulation (A, B), complex simulation (C, D), SUPPORT case study (E, F) and METABRIC case study (G, H) results. The first row shows the IPA score for each model in each study over follow-up time. Negative values mean our model performs worse than the null model and positive values mean the model performs better. The second row demonstrates the $C_{IPCW}$ score for each model in each study over follow-up time. A score of 1 is the maximum performance for either metric. Each model-specific metric in each study shows a 95-percent confidence interval over 100 iterations. The models of interest are case-base with logistic regression (CBLR), Case-Base Neural Networks (CBNN), Cox, DeepHit, DeepSurv, Deep Survival Machines (DSM), Optimal (a CBLR model with the exact interaction terms and baseline hazard specified) and Kaplan-Meier (to serve as a baseline, predicting the average for all individuals). Note than Cox and CBLR are superimposed.}\label{fig:megaPlot}
 \end{figure}
 
 \hypertarget{simple-simulation-constant-baseline-hazard}{%
@@ -508,7 +553,7 @@ model as follows: \begin{align}
 \caption{Four tables representing performance at certain follow-up times for the simple simulation, complex simulation, SUPPORT and METABRIC. Each table shows performance for each method in each study at $25\%$, $50\%$. $75\%$ and $100\%$ of follow-up time. The bold elements show the best model for each study, at each follow-up time of interest. These tables are included to provide exact measures at certain intervals. The models of interest are: Cox, case-base with logistic regression (CBLR), DeepSurv, DeepHit, Case-Base Neural Network (CBNN), Optimal and Deep Survival Machines (DSM).}
 \label{tab:megaTable}
 
-\begin{center}\includegraphics[width=1\linewidth]{/home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaTable} \end{center}
+\begin{center}\includegraphics[width=1\linewidth]{../analyses/figures/megaTable} \end{center}
 
 \end{table}
 \FloatBarrier
@@ -688,6 +733,23 @@ comparison. Over-fitting is also unlikely given the tight confidence
 intervals. Further research is required to determine the cause of the
 drop in performance seen in the METABRIC case study. In both case
 studies, CBNN outperforms the competing neural network methods.
+
+The way neural networks are used in this paper are not directly
+interpretable. This is by design, as we only wish to compare to
+competitors based on predictive ability. All feed-forward neural network
+models can make use of different architectures to improve performance or
+interpretability. While a deep neural network as used in this paper is
+not directly interpretable, techniques such as Local Interpretable
+Model-Agnostic Explanations (LIME) \citep{ribeiro2016model} may be used
+to interpret the relevance of each feature to a given prediction. An
+example of architectural interpretability is a convolutional neural
+network for images, which provide positional information about the
+relevant pixels in an image \citep{keras}. Note that neither of these
+are specific to CBNN. As CBNN is concerned with learning time-varying
+interactions, a concern may be interpreting which time-varying
+interactions have been learned. Other secondary methods after the
+fitting process may be used to retrieve said information
+\url{https://ui.adsabs.harvard.edu/abs/2017arXiv170504977T/abstract}.
 
 Taken together, CBNN outperforms all competitors in the complex
 simulation, demonstrating its value in survival settings that may

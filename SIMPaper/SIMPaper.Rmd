@@ -38,7 +38,6 @@ header-includes:
 ---
 
 
-
 # Introduction
 Smooth-in-time accelerated failure time (AFT) models can estimate absolute risks by modeling the hazard directly through a user-specified baseline hazard distribution [@kleinbaum2012survival]. Cox proportional hazards models are used more often than AFT models, causing analyses to be based on hazard ratios and relative risks rather than on survival curves and absolute risks [@hanley2009]. The identification of an appropriate distribution for the baseline hazard in an AFT model may be difficult for common diseases that have many interacting risk factors, or a Cox model where the disease pathogenesis may change with age, making it difficult to maintain the proportional hazards assumption. For example, previous studies of breast cancer incidence have discovered time-varying interactions with covariates of interest, such as tumor size [@coradini2000time]. One approach to provide flexibility in the baseline hazard involves using the basis of splines on time in our model [@royston2002flexible]. However, regression-based models are limited in that they require prior knowledge about potential time-varying interactions and their quantitative effects.
 

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.5.20)  15 JUN 2022 15:47
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.5.20)  25 NOV 2022 12:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1002,37 +1002,39 @@ Overfull \vbox (6.46347pt too high) has occurred while \output is active []
 
 ] [2]
 LaTeX Font Info:    Calculating math sizes for size <7.5> on input line 203.
-</home/bhatnagar-lab/jislam/cbnnManuscript/figures/nnarch2.png, id=68, 1927.2pt x 678.28406pt>
-File: /home/bhatnagar-lab/jislam/cbnnManuscript/figures/nnarch2.png Graphic file (type png)
-<use /home/bhatnagar-lab/jislam/cbnnManuscript/figures/nnarch2.png>
-Package pdftex.def Info: /home/bhatnagar-lab/jislam/cbnnManuscript/figures/nnarch2.png  used on input line 249.
+<../figures/nnarch2.png, id=71, 1927.2pt x 678.28406pt>
+File: ../figures/nnarch2.png Graphic file (type png)
+<use ../figures/nnarch2.png>
+Package pdftex.def Info: ../figures/nnarch2.png  used on input line 289.
 (pdftex.def)             Requested size: 507.50787pt x 178.61629pt.
-[3] [4 </home/bhatnagar-lab/jislam/cbnnManuscript/figures/nnarch2.PNG>] [5]
-</home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaPlot.pdf, id=158, 867.24pt x 433.62pt>
-File: /home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaPlot.pdf Graphic file (type pdf)
-<use /home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaPlot.pdf>
-Package pdftex.def Info: /home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaPlot.pdf  used on input line 455.
+[3] [4 <../figures/nnarch2.PNG>] [5]
+<../analyses/figures/megaPlot.pdf, id=154, 867.24pt x 433.62pt>
+File: ../analyses/figures/megaPlot.pdf Graphic file (type pdf)
+<use ../analyses/figures/megaPlot.pdf>
+Package pdftex.def Info: ../analyses/figures/megaPlot.pdf  used on input line 500.
 (pdftex.def)             Requested size: 507.50787pt x 253.756pt.
 [6]
-</home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaTable.pdf, id=180, 1300.86pt x 1409.265pt>
-File: /home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaTable.pdf Graphic file (type pdf)
-<use /home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaTable.pdf>
-Package pdftex.def Info: /home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaTable.pdf  used on input line 511.
+<../analyses/figures/megaTable.pdf, id=178, 1300.86pt x 1409.265pt>
+File: ../analyses/figures/megaTable.pdf Graphic file (type pdf)
+<use ../analyses/figures/megaTable.pdf>
+Package pdftex.def Info: ../analyses/figures/megaTable.pdf  used on input line 556.
 (pdftex.def)             Requested size: 507.50787pt x 549.80469pt.
-[7 </home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaPlot.pdf>] [8 </home/bhatnagar-lab/jislam/cbnnManuscript/analyses/figures/megaTable.pdf>] [9] [10] (./SIMPaper.bbl [11]) [12] (./SIMPaper.aux) ) 
+[7 <../analyses/figures/megaPlot.pdf>] [8 <../analyses/figures/megaTable.pdf>] [9
+
+] [10] (./SIMPaper.bbl [11]) [12] (./SIMPaper.aux) ) 
 Here is how much of TeX's memory you used:
- 20206 strings out of 480260
- 313147 string characters out of 5893094
- 586650 words of memory out of 5000000
- 37708 multiletter control sequences out of 15000+600000
+ 20210 strings out of 480260
+ 312148 string characters out of 5893094
+ 585707 words of memory out of 5000000
+ 37711 multiletter control sequences out of 15000+600000
  592783 words of font info for 181 fonts, out of 8000000 for 9000
  40 hyphenation exceptions out of 8191
- 87i,13n,91p,1087b,491s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 87i,13n,91p,1128b,467s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {/home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/enc/dvips/stix/stix-t1.enc}</home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/STIXGeneral-Bold.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/STIXGeneral-Italic.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/STIXGeneral-Regular.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathcal.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathex.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathit.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathrm.pfb></home/bhatnagar-lab/jislam/.TinyTeX/texmf-dist/fonts/type1/public/stix/stix-mathscr.pfb>
-Output written on SIMPaper.pdf (12 pages, 712835 bytes).
+Output written on SIMPaper.pdf (12 pages, 717049 bytes).
 PDF statistics:
- 414 PDF objects out of 1000 (max. 8388607)
- 366 compressed objects within 4 object streams
- 91 named destinations out of 1000 (max. 500000)
+ 423 PDF objects out of 1000 (max. 8388607)
+ 375 compressed objects within 4 object streams
+ 92 named destinations out of 1000 (max. 500000)
  216 words of extra memory for PDF output out of 10000 (max. 10000000)
 
