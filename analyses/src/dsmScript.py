@@ -7,7 +7,7 @@ from dsm import DeepSurvivalMachines
 ##dsm/dsm_torch.py, line 89 dropout(0.5) layer was added
 
 
-def dsmfitter(train,fullTest,bsize,epochs,tPos=3,ePos=4):
+def dsmfitter(train,fullTest,bsize,epochs,val,times,tPos=3,ePos=4,lay1=50,lay2=50,lay3=25,lay4=25):
   
   ###############################
   ###Prepare data
@@ -15,21 +15,21 @@ def dsmfitter(train,fullTest,bsize,epochs,tPos=3,ePos=4):
   tPos=int(tPos)
   ePos=int(ePos)
   train2=train.to_numpy()#@np.random.shuffle(train) 
-  np.random.shuffle(train2) 
+  #np.random.shuffle(train2) 
   n= np.shape(train2)[0]
-  vl_size = int(n*0.80)
+  #vl_size = int(n*0.80)
 
   
-  t_train = np.asarray( train2[:vl_size,tPos])
-  e_train = np.asarray( train2[:vl_size,ePos]).astype(int)
-  x_train = train2[:vl_size,:]
+  t_train = np.asarray( train2[:,tPos])
+  e_train = np.asarray( train2[:,ePos]).astype(int)
+  x_train = train2
   x_train = np.delete(x_train, [tPos,ePos], 1)
-  
-  t_val = np.asarray( train2[-vl_size:,tPos])
-  e_val = np.asarray( train2[-vl_size:,ePos]).astype(int)
-  x_val = train2[-vl_size:,:]
+  val=val.to_numpy()
+  t_val = np.asarray( val[:,tPos])
+  e_val = np.asarray( val[:,ePos]).astype(int)
+  x_val = val
   x_val = np.delete(x_val, [tPos,ePos], 1)
-
+  #print("hi")
   test=fullTest.to_numpy()
   t_test = np.asarray( test[:,tPos])
   e_test = np.asarray( test[:,ePos]).astype(int)
@@ -46,8 +46,8 @@ def dsmfitter(train,fullTest,bsize,epochs,tPos=3,ePos=4):
   #I fix the parameter grid
   param_grid = {'k' : [6],
                 'distribution' : ['Weibull'],
-                'learning_rate' : [ 0.001],
-                'layers' : [ [50,50,25,25] ]
+                'learning_rate' : [ 0.0001],
+                'layers' : [ [int(lay1),int(lay2),int(lay3),int(lay4)] ]
                }
   params = ParameterGrid(param_grid)
   

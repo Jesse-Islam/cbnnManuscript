@@ -4,12 +4,12 @@ output: html_document
 params:
   epo: 2000
   patience: 10
-  iteration: 10
+  iteration: 1
   layer1: 50
   layer2: 50
   layer3: 25
   layer4: 25
-  drpt: 0.5
+  drpt: 0.1
 ---
 
 
@@ -44,7 +44,7 @@ source_python('src/deephitter.py')
 ###Shared Hyperparameters
 ##########################
 bsize=512
-min_delta = 10^-7
+min_delta = 0
 epo=as.numeric(params$epo)
 patience = as.numeric(params$patience)
 iteration=as.numeric(params$iteration)
@@ -80,11 +80,39 @@ data<-as.data.frame(model.matrix(~.,metabric)[,-1])
 data<-as.data.frame(sapply(data, function(x) (x - min(x, na.rm = T)) / (max(x, na.rm = T) - min(x, na.rm=T))))
 covs<-colnames(data)
 
-samp<-sample(seq(1,nrow(data),by=1), floor(nrow(data)*.80)) 
-trainOG<-data[samp,]
-test<-data[-samp,-c(ncol(data))]
 
-fullTest<-data[-samp,,drop=F]
+ spec = c(train = .7, test = .1, validate = .2)
+ 
+ g = sample(cut(
+   seq(nrow(data)), 
+   nrow(data)*cumsum(c(0,spec)),
+   labels = names(spec)
+ ))
+ 
+ res = split(data, g)
+
+
+trainOG<-res$train
+
+test<-res$test[,-c(ncol(data))]
+
+fullTest<-res$test
+
+val<-res$validate
+
+valcb<-sampleCaseBase(data = val,time="time",event="status",ratio=100)
+valcb$offset<-0
+valcbtensor<-list(list(as.matrix(valcb[,-c(ncol(valcb)-1,ncol(valcb))]),as.matrix(valcb[,ncol(valcb),drop=F])),as.matrix(valcb[,ncol(valcb)-1,drop=F]))
+
+  times<-seq(from=min(test$time)+0.000001,
+             to=max(test$time)-0.000001,
+             length.out = 100
+  )
+
+
+
+
+
 
 ############################
 ###Prep Loop
@@ -101,91 +129,120 @@ while (pos <= iteration) {
   ############################  
   samp<-sample(seq(1,nrow(trainOG),by=1) , nrow(trainOG),replace = T) 
   train<-trainOG[samp,]
-  
-  times<-seq(from=min(test$time),
-             to=max(test$time),
-             length.out = 200
-  )
-  
-  times<-times[-c(1,length(times))]
-  times<-unique(times)
-  
-  ############################
+  sds<-sapply(train, function(x) (sd(x)))
+means<-sapply(train, function(x) (mean(x)))
+test<-normalizer(res$test,means,sds)[,-c(ncol(data))]
+fullTest<-normalizer(res$test,means,sds)
+val<-normalizer(res$validate,means,sds)
+
+train<-normalizer(train,means,sds)
+
+  ##########################
   ###DSM
-  ############################  
+  ##########################
   source_python('src/dsmScript.py')
-  dsmSurv<-dsmfitter(train=train,fullTest=fullTest,bsize=bsize,epochs=epo,tPos=ncol(train)-2,ePos=ncol(train)-1)
-  #sometimes, dsm fails to converge so we keep trying until it succeeds
+  dsmSurv<-dsmfitter(train=train,fullTest=fullTest,bsize=bsize,epochs=epo,val=val,times=times,tPos=ncol(train)-2,ePos=ncol(train)-1)
   if((sum(is.na(dsmSurv))==ncol(dsmSurv)*nrow(dsmSurv))){
-    dsmSurv<-dsmfitter(train=train,fullTest=fullTest,bsize=bsize,epochs=epo,tPos=ncol(train)-2,ePos=ncol(train)-1)
+    
+    dsmSurv<-dsmfitter(train=train,fullTest=fullTest,bsize=bsize,epochs=epo,val=val,times=times)
     py_run_string("del dsmfitter")
     rm(dsmfitter)
-    iteration<-iteration+1
     next
   }
-  colnames(dsmSurv) <-seq(0.01,1,by=0.01)
+  dsmSurv<-as.data.frame(dsmSurv)
+  colnames(dsmSurv) <-times
   dsmSurvProper<-pyProcess(dsmSurv,times=times)
   colnames(dsmSurvProper) <-seq(0,1,length.out = ncol(dsmSurvProper))
   py_run_string("del dsmfitter")
   rm(dsmfitter)
   
-  ############################
-  ###casebase + splines
-  ############################  
-  mod_cb_glm <- fitSmoothHazard(status~bs(time)+.-time,
+ 
+  #########################
+  ###casebase+splines
+ ##########################
+    mod_cb_glm <- fitSmoothHazard(status~bs(time)+.-time,
                                 data = train,
                                 time = "time",
                                 event="status",
                                 ratio = 100
   )
   
-  glmAbsRisk<-absoluteRisk(mod_cb_glm,time=times,newdata=test,type="CI")
-  glmAbsRisk<-as.data.frame(glmAbsRisk)
+  glmAbsRisk<-as.data.frame(absoluteRisk(mod_cb_glm,time=times,newdata=test,type="CI"))
   rownames(glmAbsRisk)<-glmAbsRisk$time
+  #prepare to run through riskRegression
   glmProper<- t(glmAbsRisk[-1,-1])
   class(glmProper)<-c("tunnel",class(glmProper))
   
   
-  ############################
-  ###DeepSurv
-  ############################  
-  coxnn<-deepsurv(Surv(time, status) ~ .,data = train, frac = 0.2, activation = "relu",
-                  num_nodes = c(layer1,layer2,layer3,layer4), dropout = drpt,
-                  early_stopping = TRUE, epochs = epo,
-                  batch_size = bsize,device = "cpu",best_weights=T,
-                  patience = patience,min_delta=min_delta,batch_norm = F,
-                  learning_rate = 0.001,lr_decay=10^-7)
+  # 
+  # 
+  # ############################
+  # ###DeepSurv
+  # ############################  
+   
   
-  coxnnsurv<- predict(coxnn,newdata = test,type="survival")
-  colnames(coxnnsurv)<-seq(0,1,length.out = ncol(coxnnsurv))
+  source_python('src/dsurv.py')
+  #need to break ties
+  tiebreakTrain<-train
+  
+  #while(length(unique(tiebreakTrain$time))/length(tiebreakTrain$time)!=1 ){
+  #tiebreakTrain<-train
+  #tiebreakTrain$time<-tiebreakTrain$time+runif(nrow(tiebreakTrain),0,1/10000000000)
+  #}
+  
+  coxnnsurv=fitDeepSurv(tiebreakTrain,fullTest,bsize,epochs=epo,valida=val,patience=patience,min_delta=min_delta,drpt=drpt,lay1=layer1,lay2=layer2,lay3=layer3,lay4=layer4)
+  coxnnsurv<-t(coxnnsurv)
+  #colnames(coxnnsurv)<-seq(0,1,length.out = ncol(coxnnsurv))
   cnnCleaned<-pyProcess(coxnnsurv,times=times)
-  colnames(cnnCleaned)<-seq(0,1,length.out = ncol(cnnCleaned))
+  colnames(cnnCleaned)<-times#seq(0,1,length.out = ncol(cnnCleaned))
+  py_run_string("del fitDeepSurv")
+  rm(fitDeepSurv)
+  
+  # coxnn<-deepsurv(Surv(time, status) ~ .,data = train, frac = 0.2, activation = "relu",
+  #                 num_nodes = c(layer1,layer2,layer3,layer4), dropout = drpt,
+  #                 early_stopping = TRUE, epochs = epo,
+  #                 batch_size = bsize,device = "cpu",best_weights=T,
+  #                 patience = patience,min_delta=min_delta,batch_norm = F,
+  #                 learning_rate = 0.001,lr_decay=10^-7)
+  # 
+  # coxnnsurv<- predict(coxnn,newdata = test,type="survival")
+  # colnames(coxnnsurv)<-seq(0,1,length.out = ncol(coxnnsurv))
+  # cnnCleaned<-pyProcess(coxnnsurv,times=times)
+  # colnames(cnnCleaned)<-seq(0,1,length.out = ncol(cnnCleaned))
   ############################
   ###Deephit
   ############################  
-  source_python('src/deephitter.py')
-  hitnnSurv=fitDeephit(train,fullTest,bsize,epo,patience=patience,min_delta=min_delta,drpt=drpt)
+    source_python('src/deephitter.py')
+  hitnnSurv=fitDeephit(train,fullTest,bsize,epo,valida=val,patience=patience,min_delta=min_delta,drpt=drpt,lay1=layer1,lay2=layer2,lay3=layer3,lay4=layer4)
   hitnnSurv<-t(hitnnSurv)
-  colnames(hitnnSurv)<-seq(0,1,length.out = ncol(hitnnSurv))
+  #colnames(hitnnSurv)<-seq(0,1,length.out = ncol(hitnnSurv))
   deephitCleaned<-pyProcess(hitnnSurv,times=times)
   colnames(deephitCleaned)<-seq(0,1,length.out = ncol(deephitCleaned))
   py_run_string("del fitDeephit")
   rm(fitDeephit)
-  
+  # source_python('src/deephitter.py')
+  # hitnnSurv=fitDeephit(train,fullTest,bsize,epo,patience=patience,min_delta=min_delta,drpt=drpt)
+  # hitnnSurv<-t(hitnnSurv)
+  # colnames(hitnnSurv)<-seq(0,1,length.out = ncol(hitnnSurv))
+  # deephitCleaned<-pyProcess(hitnnSurv,times=times)
+  # colnames(deephitCleaned)<-seq(0,1,length.out = ncol(deephitCleaned))
+  # py_run_string("del fitDeephit")
+  # rm(fitDeephit)
+  # 
   ############################
   ###PMNNsplines
   ############################  
   covars_input<-layer_input(shape=c(length(colnames(mod_cb_glm$data))-2+3),
                             name = 'main_input'
   )
-  covars_output<-covars_input%>% 
-    layer_dense(units=layer1,use_bias = T,activation = 'relu')%>%
+  covars_output<-covars_input%>% #layer_batch_normalization()%>%
+    layer_dense(units=layer1,use_bias = T,activation = 'tanh')%>%
     layer_dropout(drpt)%>%
-    layer_dense(units=layer2,use_bias = T,activation = 'relu')%>%
+    layer_dense(units=layer2,use_bias = T,activation = 'tanh')%>%
     layer_dropout(drpt)%>%
-    layer_dense(units=layer3,use_bias = T,activation = 'relu')%>%
+    layer_dense(units=layer3,use_bias = T,activation = 'tanh')%>%
     layer_dropout(drpt)%>%
-    layer_dense(units=layer4,use_bias = T,activation = 'relu')%>%
+    layer_dense(units=layer4,use_bias = T,activation = 'tanh')%>%
     layer_dropout(drpt)%>%
     layer_dense(units=1,use_bias = T)
   
@@ -195,22 +252,23 @@ while (pos <= iteration) {
                   originalData = mod_cb_glm$data,
                   offset=mod_cb_glm$offset,
                   timeVar = "time",
-                  eventVar= "status"
+                  eventVar= "status",optimizer=optimizer_adam(learning_rate = 0.0001)
   )
-  
+
+
   fit<-fitSmoothHazSpline(pmnn,
                           epochs=epo,
                           batch_size=bsize,
                           verbose=0,
                           monitor="val_loss",
-                          val_split=0.2,
+                          #val_split=0.2,
                           min_delta=min_delta,
-                          patience=patience)
-  annPreds<-aarSplines(fit,
+                          patience=patience,val=valcbtensor)
+  
+   annPreds<-aarSplines(fit,
                        times=times,
                        x_test=test
   )
-  
   rownames(annPreds)<-annPreds[,1]
   annProper<- t(annPreds[,-1])
   class(annProper)<-c("tunnel",class(annProper))
@@ -223,20 +281,21 @@ while (pos <= iteration) {
   ############################  
   cox<-coxph(Surv(time, status) ~ ., data = train,x=T)
   
-  ############################
-  ###PMNN
-  ############################  
+   
+  ######################
+  ###PMNN  
+  ######################
   covars_input<-layer_input(shape=c(length(colnames(mod_cb_glm$data))-2),
                             name = 'main_input')
   
   covars_output<-covars_input%>% #layer_batch_normalization()%>%
-    layer_dense(units=layer1,use_bias = T,activation = 'relu')%>%
+    layer_dense(units=layer1,use_bias = T,activation = 'tanh')%>%
     layer_dropout(drpt)%>%
-    layer_dense(units=layer2,use_bias = T,activation = 'relu')%>%
+    layer_dense(units=layer2,use_bias = T,activation = 'tanh')%>%
     layer_dropout(drpt)%>%
-    layer_dense(units=layer3,use_bias = T,activation = 'relu')%>%
+    layer_dense(units=layer3,use_bias = T,activation = 'tanh')%>%
     layer_dropout(drpt)%>%
-    layer_dense(units=layer4,use_bias = T,activation = 'relu')%>%
+    layer_dense(units=layer4,use_bias = T,activation = 'tanh')%>%
     layer_dropout(drpt)%>%
     layer_dense(units=1,use_bias = T)
   
@@ -246,8 +305,9 @@ while (pos <= iteration) {
                   originalData = mod_cb_glm$data,
                   offset=mod_cb_glm$offset,
                   timeVar = "time",
-                  eventVar= "status"
+                  eventVar= "status",optimizer=optimizer_adam(learning_rate = 0.0001)
   )
+  
   fit<-fitSmoothHaz(pmnn,
                     epochs=epo,
                     batch_size=bsize,
@@ -255,11 +315,12 @@ while (pos <= iteration) {
                     monitor="val_loss",
                     val_split=0.2,
                     min_delta=min_delta,
-                    patience=patience)
+                    patience=patience,val=valcbtensor)
   annPreds<-aar(fit,
                 times=times,
                 x_test=test
   )
+  
   rownames(annPreds)<-annPreds[,1]
   annProperpoly<- t(annPreds[,-1])
   class(annProperpoly)<-c("tunnel",class(annProperpoly)) 
@@ -303,8 +364,8 @@ while (pos <= iteration) {
   tempTims<-head(tempTims, -1)
   tempTims<-tail(tempTims, -1)
   cScoreTemp<-matrix(NA,nrow=length(tempTims),ncol=length(riskList)+1)
-  et_train<-as.matrix(train)[,c(5,4)]
-  et_test<-as.matrix(fullTest[,c(5,4)])
+  et_train<-as.matrix(train)[,c(11,10)]
+  et_test<-as.matrix(fullTest[,c(11,10)])
   colnames(cScoreTemp)<-c('times', "Cox_Lin",'CB_Logi','DeepSurv','DeepHit',
                           'PMNN_Spline','PMNN_Poly','dsm')
   cScoreTemp[,1]<- tempTims
@@ -332,6 +393,14 @@ ggplot(data=brierFinalResults$Brier$score, aes(x=times,y=IPA,col=model))+
 
 
 
+
+```{r}
+
+  ggplot(data=brierFinalResults$Brier$score, aes(x=times,y=IPA,col=model))+
+  geom_line()+coord_cartesian(ylim=c(-1,1))
+
+
+```
 
 
 ```{r}

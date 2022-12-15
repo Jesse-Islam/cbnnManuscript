@@ -30,8 +30,8 @@ plotPerformance<-function(metricSummary,xlab="Follow-up-time",method='Metric',it
 }
 
 
-pyProcess<-function(predictions,times=times){
-  interpolated <- apply(predictions, 1, function(x) approx(as.numeric(colnames(predictions)), y=x, method = "linear", xout=times)$y)
+pyProcess<-function(predictions,times=times,apr="constant"){
+  interpolated <- apply(predictions, 1, function(x) approx(as.numeric(colnames(predictions)), y=x, method = apr, xout=times)$y)
   class(interpolated)<-c("tunnel",class(interpolated))
   interpolated<-1-interpolated
   interpolated[is.na(interpolated) & is.na(interpolated)>50] <- 0
@@ -61,6 +61,7 @@ calcCidx<-function(et_train,et_test,risk,times){
 cIndexSummary<-function(et_train, et_test,riskList,cScore){
   
   for (i in 1:length(riskList)){
+    #print(i)
     cScore[,i+1]<-calcCidx(et_train=et_train,et_test=et_test,risk=riskList[[i]],
                            times = as.numeric(colnames(riskList[[i]])))[,2]
   }
@@ -225,7 +226,7 @@ pmnnModel<-function(features, feature_input, feature_output, originalData=origin
 
 
 
-fitSmoothHaz<-function(pmnn,epochs=20000,batch_size=500,verbose=0,monitor="val_loss",val_split=0.2,min_delta=10^-7,patience=10){
+fitSmoothHaz<-function(pmnn,epochs=20000,batch_size=500,verbose=0,monitor="val_loss",val_split=0.2,min_delta=10^-7,patience=10,val){
   #pmnn$casebaseData
   
   offset<-as.matrix(pmnn$offset)
@@ -240,7 +241,8 @@ fitSmoothHaz<-function(pmnn,epochs=20000,batch_size=500,verbose=0,monitor="val_l
     y = y_train,
     epochs = epochs,#30000,
     batch_size = batch_size,#54540,
-    validation_split = val_split,
+    #validation_split = val_split,
+    validation_data=val,
     shuffle=T,
     verbose=verbose,callbacks=list(callback_early_stopping(
       monitor = monitor,
@@ -266,7 +268,7 @@ fitSmoothHaz<-function(pmnn,epochs=20000,batch_size=500,verbose=0,monitor="val_l
 
 
 
-fitSmoothHazSpline<-function(pmnn,epochs=20000,batch_size=500,verbose=0,monitor="val_loss",val_split=0.2,min_delta=10^-7,patience=10){
+fitSmoothHazSpline<-function(pmnn,epochs=20000,batch_size=500,verbose=0,monitor="val_loss",val_split=0.2,min_delta=10^-7,patience=10,val){
   #pmnn$casebaseData
   
   offset<-as.matrix(pmnn$offset)
@@ -278,13 +280,16 @@ fitSmoothHazSpline<-function(pmnn,epochs=20000,batch_size=500,verbose=0,monitor=
   x_train<-as.matrix(cbind(x_train,bs(x_train$time)))
   y_train<-as.matrix(pmnn$casebaseData[,pmnn$eventVar])
   xTensor<-list(x_train, offset)
+
+  val[[1]][[1]]<-as.matrix(cbind(val[[1]][[1]][,c(pmnn$features)],bs(val[[1]][[1]][,ncol(val[[1]][[1]])])))
   
   resultOfFit<-pmnn$model %>% fit(
     x = xTensor,
     y = y_train,
     epochs = epochs,#30000,
     batch_size = batch_size,#54540,
-    validation_split = 0.2,
+    #validation_split = val_split,
+    validation_data=val,
     shuffle=T,
     verbose=verbose,callbacks=list(callback_early_stopping(
       monitor = monitor,
@@ -456,4 +461,18 @@ aarOld<-function(pmnn, times=times,x_test=x_test){
   }
   results<-as.data.frame(results)
   return(results)
+}
+
+
+
+normalizer<-function(data,means,sds){
+  normalized<-data
+  for (i in 1:ncol(data)){
+    if(length(unique(data[,i]))>2){
+    normalized[,i]<-(data[,i]-means[i])/sds[i]
+    }
+  }
+  normalized$status<-data$status
+  normalized$time<-data$time
+  return(normalized)
 }

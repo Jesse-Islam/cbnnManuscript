@@ -5,7 +5,7 @@ params:
   epo: 2000
   patience: 10
   iteration: 1
-  layer1: 200
+  layer1: 50
   layer2: 20
   layer3: 25
   layer4: 25
@@ -44,7 +44,7 @@ source_python('src/oldmortDeephitter.py')
 ###Shared Hyperparameters
 ##########################
 bsize=512
-min_delta = 10^-9
+min_delta = 10^-8
 epo=as.numeric(params$epo)
 patience = as.numeric(params$patience)
 iteration=as.numeric(params$iteration)
@@ -72,28 +72,49 @@ preData<-data.frame(sex=oldmort$sex,
                  civ=oldmort$civ,
                  ses=oldmort$ses.50,
                  birthplace=oldmort$birthplace,
-                 ageAtDeath=oldmort$exit,
+                 ageAtEntry=oldmort$enter,
                  imrAtBirth=oldmort$imr.birth,
                  region=oldmort$region,
                  birthdate=oldmort$birthdate,
                  time=oldmort$exit-oldmort$enter,
                  status=as.numeric(oldmort$event))
 
-preData$time<-preData$time+runif(nrow(preData),-1,1)/1000000
+preData$time<-preData$time+runif(nrow(preData),0,1)/100000000
 
 data<-as.data.frame((model.matrix(~.,preData)[,-1]))
 
 #data<-as.data.frame(sapply(data, function(x) (x - min(x, na.rm = T)) / (max(x, na.rm = T) - min(x, na.rm=T))))
 covs<-colnames(data)
 
-samp<-sample(seq(1,nrow(data),by=1), floor(nrow(data)*.80)) 
-trainOG<-data[samp,]
-test<-data[-samp,-c(ncol(data))]
-
-fullTest<-data[-samp,,drop=F]
+#samp<-sample(seq(1,nrow(data),by=1), floor(nrow(data)*.80)) 
 
 
 
+
+
+ spec = c(train = .75, test = .10, validate = .15)
+ 
+ g = sample(cut(
+   seq(nrow(data)), 
+   nrow(data)*cumsum(c(0,spec)),
+   labels = names(spec)
+ ))
+ 
+ res = split(data, g)
+
+
+trainOG<-res$train
+
+test<-res$test[,-c(ncol(data))]
+
+fullTest<-res$test
+
+val<-res$validate
+
+valcb<-sampleCaseBase(data = val,time="time",event="status",ratio=100)
+valcb$offset<-0
+valcbtensor<-list(list(as.matrix(valcb[,-c(ncol(valcb)-1,ncol(valcb))]),as.matrix(valcb[,ncol(valcb),drop=F])),as.matrix(valcb[,ncol(valcb)-1,drop=F]))
+ #valcbtensor<-list(list(as.matrix(val[,-c(ncol(val))]),  matrix(0,ncol=1,nrow=nrow(val))), as.matrix(val[,c(ncol(val))]) )
 
 pos<-1
 
@@ -105,10 +126,11 @@ while (pos <= iteration) {
   train<-trainOG[samp,]
   times<-seq(from=min(test$time),
              to=max(test$time),
-             length.out = 100
+             length.out = 200
   )
   times<-times[-c(1,length(times))]
   
+  print('starting cbspline')
   ######################
   ###casebase + splines
   ######################
@@ -125,26 +147,11 @@ while (pos <= iteration) {
   glmProper<- t(glmAbsRisk[-1,-1])
   class(glmProper)<-c("tunnel",class(glmProper))
   
+  
+   print('starting deepsurv')
   ######################
   ###DeepSurv
   ######################
-#   a=get_pycox_activation(
-#   activation = "tanh",
-#   construct = TRUE,
-#   alpha = 1,
-#   dim = NULL,
-#   lambd = 0.5,
-#   min_val = -1,
-#   max_val = 1,
-#   negative_slope = 0.01,
-#   num_parameters = 1L,
-#   init = 0.25,
-#   lower = 1/8,
-#   upper = 1/3,
-#   beta = 1,
-#   threshold = 20,
-#   value = 20
-# )
 #   coxnn<-deepsurv(formula=Surv(time, status) ~ .,data = train, frac = 0.2, activation = 'tanh',
 #                   num_nodes = c(layer1,layer2), dropout = drpt,
 #                   early_stopping = TRUE, epochs = epo,
@@ -157,37 +164,58 @@ while (pos <= iteration) {
 #   colnames(cnnCleaned)<-seq(0,1,length.out = ncol(cnnCleaned))
   
   source_python('src/deepsurver.py')
-  coxnnsurv=fitDeepSurv(train,fullTest,bsize,epochs=epo,patience=patience,min_delta=min_delta,drpt=drpt)
+  #need to break ties
+  tiebreakTrain<-train
+  
+  #while(length(unique(tiebreakTrain$time))/length(tiebreakTrain$time)!=1 ){
+  #tiebreakTrain<-train
+  #tiebreakTrain$time<-tiebreakTrain$time+runif(nrow(tiebreakTrain),0,1/10000000000)
+  #}
+  
+  coxnnsurv=fitDeepSurv(tiebreakTrain,fullTest,bsize,epochs=epo,valida=val,patience=patience,min_delta=min_delta,drpt=drpt)
   coxnnsurv<-t(coxnnsurv)
-  colnames(coxnnsurv)<-seq(0,1,length.out = ncol(coxnnsurv))
+  #colnames(coxnnsurv)<-seq(0,1,length.out = ncol(coxnnsurv))
   cnnCleaned<-pyProcess(coxnnsurv,times=times)
-  colnames(cnnCleaned)<-seq(0,1,length.out = ncol(cnnCleaned))
+  colnames(cnnCleaned)<-times#seq(0,1,length.out = ncol(cnnCleaned))
   py_run_string("del fitDeepSurv")
   rm(fitDeepSurv)
   
+   print('starting deephit')
   ######################
   ###Deephit
   ######################
   source_python('src/oldmortDeephitter.py')
-  hitnnSurv=fitDeephit(train,fullTest,bsize,epo,patience=patience,min_delta=min_delta,drpt=drpt)
+  hitnnSurv=fitDeephit(train,fullTest,bsize,epo,valida=val,patience=patience,min_delta=min_delta,drpt=drpt)
   hitnnSurv<-t(hitnnSurv)
-  colnames(hitnnSurv)<-seq(0,1,length.out = ncol(hitnnSurv))
+  #colnames(hitnnSurv)<-seq(0,1,length.out = ncol(hitnnSurv))
   deephitCleaned<-pyProcess(hitnnSurv,times=times)
-  colnames(deephitCleaned)<-seq(0,1,length.out = ncol(deephitCleaned))
+  colnames(deephitCleaned)<-times#seq(0,1,length.out = ncol(deephitCleaned))
   py_run_string("del fitDeephit")
   rm(fitDeephit)
   
+  
+   print('starting cbnnsplines')
   ######################
   ###PMNN splines
   ######################
+  ###########################################
+###########################################
+  valcbtensor[[1]][[2]]<-rep(mod_cb_glm$offset[1],nrow(valcbtensor[[1]][[1]]))
+###########################################  
+###########################################  
   covars_input<-layer_input(shape=c(length(colnames(mod_cb_glm$data))-2+3),
                             name = 'main_input'
   )
-  covars_output<-covars_input%>%layer_batch_normalization()%>%
+  covars_output<-covars_input%>%
     layer_dense(units=layer1,use_bias = T)%>%
-    activation_tanh()%>%layer_dropout(drpt)%>%
+    layer_batch_normalization()%>%
+    activation_tanh()%>%
+    layer_dropout(drpt)%>%
+    
     layer_dense(units=layer2,use_bias = T)%>%
-    activation_tanh()%>%layer_dropout(drpt)%>%
+    layer_batch_normalization()%>%
+    activation_tanh()%>%
+    layer_dropout(drpt)%>%
     layer_dense(units=1,use_bias = T)#%>%activation_tanh()
 
   pmnn<-pmnnModel(features=colnames(mod_cb_glm$data)[-ncol(mod_cb_glm$data)],
@@ -197,17 +225,17 @@ while (pos <= iteration) {
                   offset=mod_cb_glm$offset,
                   timeVar = "time",
                   eventVar= "status",
-                  optimizer=optimizer_adam(learning_rate = 0.0001,decay=10^-7)
+                  optimizer=optimizer_adam(learning_rate = 0.001)#,decay=10^-7)
   )
 
   fit<-fitSmoothHazSpline(pmnn,
                           epochs=epo,
-                          batch_size=5120,
+                          batch_size=bsize,
                           verbose=0,
                           monitor="val_loss",
-                          val_split=0.2,
+                          #val_split=0.2,
                           min_delta=min_delta,
-                          patience=patience)
+                          patience=patience,val=valcbtensor)
   annPreds<-aarSplines(fit,
                        times=times,
                        x_test=test
@@ -215,28 +243,35 @@ while (pos <= iteration) {
   rownames(annPreds)<-annPreds[,1]
   annProper<- t(annPreds[,-1])
   class(annProper)<-c("tunnel",class(annProper))
-
+  #ggplot(data=brierFinalResults$Brier$score, aes(x=times,y=IPA,col=model))+
+  #geom_line()+coord_cartesian(ylim=c(-0.2,0.5))
   rm(pmnn,covars_output,covars_input,fit)
 
-
+ print('starting cox')
   ######################
   ###coxph
   ######################
   cox<-coxph(Surv(time, status) ~ ., data = train,x=T)
   
-  
+   print('starting cbnn')
   ######################
   ###PMNN
   ######################
   covars_input<-layer_input(shape=c(length(colnames(mod_cb_glm$data))-2),
                             name = 'main_input')
   
-  covars_output<-covars_input%>%layer_batch_normalization()%>%
-    layer_dense(units=layer1,use_bias = T)%>%
-    activation_tanh()%>%layer_dropout(drpt)%>%
-    layer_dense(units=layer2,use_bias = T)%>%
-    activation_tanh()%>%layer_dropout(drpt)%>%
-    layer_dense(units=1,use_bias = T)#%>%activation_tanh()
+  covars_output<-covars_input%>%
+
+    layer_dense(units=20,use_bias = T)%>%
+     layer_batch_normalization()%>%
+    activation_relu()%>%
+    layer_dropout(drpt)%>%
+    
+    layer_dense(units=10,use_bias = T)%>%
+
+    activation_relu()%>%
+    layer_dropout(drpt)%>%
+    layer_dense(units=1,use_bias = T)
   
   pmnn<-pmnnModel(features=colnames(mod_cb_glm$data)[-ncol(mod_cb_glm$data)],
                   feature_input = covars_input,
@@ -245,17 +280,17 @@ while (pos <= iteration) {
                   offset=mod_cb_glm$offset,
                   timeVar = "time",
                   eventVar= "status",
-                  optimizer=optimizer_adam(learning_rate = 0.0001,decay=10^-7)
+                  optimizer=optimizer_adam(learning_rate = 0.0001)#,decay=10^-7)
   )
   
   fit<-fitSmoothHaz(pmnn,
                     epochs=epo,
-                    batch_size=512,
+                    batch_size=bsize,
                     verbose=0,
                     monitor="val_loss",
-                    val_split=0.2,
+                    #val_split=0.3,
                     min_delta=min_delta,
-                    patience=patience)
+                    patience=patience,val=valcbtensor)
   annPreds<-aar(fit,
                 times=times,
                 x_test=test
@@ -265,8 +300,9 @@ while (pos <= iteration) {
   annProperpoly<- t(annPreds[,-1])
   class(annProperpoly)<-c("tunnel",class(annProperpoly)) 
   
-  
-  
+
+  #current best valLoss=0.01048
+   print('starting brier')
   ######################
   ###IPA metric
   ######################
@@ -279,17 +315,20 @@ while (pos <= iteration) {
   BrierIPAList[[pos]]<-brierFinalResults$Brier$score
   
   ggplot(data=brierFinalResults$Brier$score, aes(x=times,y=IPA,col=model))+
-  geom_line()+coord_cartesian(ylim=c(-1,0.7))
+  geom_line()+coord_cartesian(ylim=c(-0.1,0.1))
+  fit$resultOfFit
   rm(pmnn,covars_output,covars_input,fit)
-  #######################
-  ###Cox 
+  
+  
+  ######################
+  ###Cox###           ##
   ######################
   a<-survfit(cox, newdata=fullTest,times=times)
   rownames(a$surv)<-a$time
   coxlinSurv<-pyProcess(t(a$surv),times=times)
-  colnames(coxlinSurv)<-seq(0,1,length.out = ncol(coxlinSurv))
+  colnames(coxlinSurv)<-times#seq(0,1,length.out = ncol(coxlinSurv))
   
-  
+   print('starting cindex')
   ######################
   ###C-Index
   ######################
@@ -307,8 +346,8 @@ while (pos <= iteration) {
   tempTims<-head(tempTims, -1)
   tempTims<-tail(tempTims, -1)
   cScoreTemp<-matrix(NA,nrow=length(tempTims),ncol=length(riskList)+1)
-  et_train<-as.matrix(train)[,c(16,15)]
-  et_test<-as.matrix(fullTest[,c(16,15)])
+  et_train<-as.matrix(train)[,c(15,16)]
+  et_test<-as.matrix(fullTest[,c(15,16)])
   colnames(cScoreTemp)<-c('times', "Cox_Lin",'CB_Logi','DeepSurv','DeepHit',
                           'PMNN_Spline','PMNN_Poly')
   cScoreTemp[,1]<- tempTims
@@ -319,8 +358,9 @@ while (pos <= iteration) {
                                cScore=cScoreTemp
   )
   
-  saveRDS(BrierIPAList,'results/100oldBrier.rds')
+ saveRDS(BrierIPAList,'results/100oldBrier.rds')
   saveRDS(cScore,'results/100oldcidx.rds')
+  print(pos)
   pos<-pos+1
 }
 
@@ -332,7 +372,7 @@ while (pos <= iteration) {
 ggplot(data=brierFinalResults$Brier$score, aes(x=times,y=Brier,col=model))+
   geom_line()
 ggplot(data=brierFinalResults$Brier$score, aes(x=times,y=IPA,col=model))+
-  geom_line()+coord_cartesian(ylim=c(-2,0.7))
+  geom_line()
 
 end_time <- Sys.time()
 
@@ -348,17 +388,17 @@ library(kerastuneR)
   ######################
   ###PMNN
   ######################
-samp<-sample(seq(1,nrow(trainOG),by=1), floor(nrow(trainOG)*.80)) 
-validation<-trainOG[-samp,]
+#samp<-sample(seq(1,nrow(trainOG),by=1), floor(nrow(trainOG)*.80)) 
+#validation<-trainOG[-samp,]
 
-train<-trainOG[samp,]
+#train<-trainOG[samp,]
 
-  mod_cb_glm <- fitSmoothHazard(status~bs(time)+.-time,
-                                data = train,
-                                time = "time",
-                                event="status",
-                                ratio = 100
-  )
+  #mod_cb_glm <- fitSmoothHazard(status~bs(time)+.-time,
+  #                              data = train,
+  #                              time = "time",
+  #                              event="status",
+  #                              ratio = 100
+  #)
 
 
 buildModel<-function(hp){
@@ -366,16 +406,17 @@ buildModel<-function(hp){
                             name = 'main_input')
   
   covars_output<-covars_input%>% layer_batch_normalization()%>%
-    layer_dense(units=hp$Int('units',min_value=5,max_value=25,step=2),
-                use_bias = T,activation = 'linear')%>%
-    layer_dropout(hp$Choice('rate',
+    layer_dense(units=hp$Int('units1',min_value=50,max_value=500,step=25),
+                use_bias = T,activation = 'tanh')%>%
+    layer_dropout(hp$Choice('rate1',
                 values=c(0.4,0.3,0.2,0.1,0.05)))%>%
-    layer_dense(units=hp$Int('units',min_value=5,max_value=25,step=2),
-                use_bias = T,activation = 'linear')%>%
-    layer_dropout(hp$Choice('rate',
+    layer_dense(units=hp$Int('units2',min_value=50,max_value=500,step=25),
+                use_bias = T,activation = 'tanh')%>%
+    layer_dropout(hp$Choice('rate2',
                 values=c(0.4,0.3,0.2,0.1,0.05)))%>%
     layer_dense(units=1,use_bias = T)
-  
+    
+    
   pmnn<-pmnnModel(features=colnames(mod_cb_glm$data)[-ncol(mod_cb_glm$data)],
                   feature_input = covars_input,
                   feature_output = covars_output,
@@ -383,18 +424,18 @@ buildModel<-function(hp){
                   offset=mod_cb_glm$offset,
                   timeVar = "time",
                   eventVar= "status",
-                  optimizer= tf$keras$optimizers$Adam(
-      hp$Choice('learning_rate',
-                values=c(1e-2,5e-3, 1e-3,5e-4, 1e-4)))
+                  optimizer=optimizer_adam(learning_rate = 0.0001)#,decay=10^-7)
   )
   return(pmnn$model)
 }
-  
+
+
+
   tuner = RandomSearch(
     buildModel,
     objective = 'val_loss',
     max_trials = 20,
-    executions_per_trial = 3,
+    executions_per_trial = 5,
     directory = 'tuning',
     project_name = 'oldmort')
   
@@ -402,11 +443,11 @@ buildModel<-function(hp){
   
   xtr<-as.matrix(mod_cb_glm$data[,-c(ncol(mod_cb_glm$data),ncol(mod_cb_glm$data)-1)])
   ytr<-as.matrix(mod_cb_glm$data[,c(ncol(mod_cb_glm$data)-1)])
-  xv<-list(as.matrix(validation[,-c(ncol(validation))]),as.matrix(data.frame(offset=rep(0,nrow(validation)))))
-  yv<-as.matrix(validation[,c(ncol(validation)),drop=F])
+  xv<-valcbtensor[[1]]#list(as.matrix(validation[,-c(ncol(validation))]),as.matrix(data.frame(offset=rep(0,nrow(validation)))))
+  yv<-valcbtensor[[2]]#as.matrix(validation[,c(ncol(validation)),drop=F])
   tuner %>% fit_tuner(x=list(xtr,as.matrix(mod_cb_glm$offset)),y=ytr,
-                    epochs = 50,batch_size=bsize+1000, 
-                    validation_data = list(x=xv,y=yv),verbose=0 )
+                    epochs = 55,batch_size=bsize, 
+                    validation_data = list(xv,yv),verbose=0 )
 result = kerastuneR::plot_tuner(tuner)
 # the list will show the plot and the data.frame of tuning results
 result 

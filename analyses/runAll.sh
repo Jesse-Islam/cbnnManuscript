@@ -20,12 +20,15 @@ metabric='library(rmarkdown); rmarkdown::render("metabricStudy.Rmd",'"params=$pa
 support='library(rmarkdown); rmarkdown::render("supportStudy.Rmd",'"params=$params)"
 simple='library(rmarkdown); rmarkdown::render("simpleSim.Rmd",'"params=$params)"
 complex='library(rmarkdown); rmarkdown::render("complexSim.Rmd",'"params=$params)"
+oldmort='library(rmarkdown); rmarkdown::render("oldmortality.Rmd",'"params=$params)"
 (trap 'kill 0' SIGINT; \
 sleep 1 && eval `echo Rscript -e "'"{$simple}"'"` && bash ~/phoneNotification.sh simpleTest && sleep 9 && eval `echo Rscript -e "'"{$complex}"'"` && bash ~/phoneNotification.sh complexTest \ &
 sleep 6 && eval `echo Rscript -e "'"{$support}"'"` && bash ~/phoneNotification.sh supportTest \ &
-sleep 3 && eval `echo Rscript -e "'"{$metabric}"'"` && bash ~/phoneNotification.sh metabricTest 
+sleep 3 && eval `echo Rscript -e "'"{$metabric}"'"` && bash ~/phoneNotification.sh metabricTest \ &
+sleep 6 && eval `echo Rscript -e "'"{$oldmort}"'"` && bash ~/phoneNotification.sh oldmortTest 
 ) 
 
 
 
 
+Rscript -e '{library(rmarkdown); rmarkdown::render("oldmortality.Rmd",params=list(epo=2000,patience=10,iteration=2,layer1=200,layer2=20,layer3=25,layer4=25,drpt=0.1))}'

@@ -84,9 +84,9 @@ def create_representation(inputdim, layers, activation):
   prevdim = inputdim
 
   for hidden in layers:
-    modules.append(nn.Linear(prevdim, hidden, bias=False))
-    modules.append(nn.ReLU())
-    modules.append(nn.Dropout(0.5))
+    modules.append(nn.Linear(prevdim, hidden, bias=True))
+    modules.append(nn.Tanh())
+    modules.append(nn.Dropout(0.1))
     prevdim = hidden
 
   return nn.Sequential(*modules)
