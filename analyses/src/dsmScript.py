@@ -7,7 +7,7 @@ from dsm import DeepSurvivalMachines
 ##dsm/dsm_torch.py, line 89 dropout(0.5) layer was added
 
 
-def dsmfitter(train,fullTest,bsize,epochs,val,times,tPos=3,ePos=4,lay1=50,lay2=50,lay3=25,lay4=25):
+def dsmfitter(train,fullTest,bsize,epochs,val,times,tPos=3,ePos=4,lay1=50,lay2=50,lay3=25,lay4=25,lr=0.001):
   
   ###############################
   ###Prepare data
@@ -46,8 +46,8 @@ def dsmfitter(train,fullTest,bsize,epochs,val,times,tPos=3,ePos=4,lay1=50,lay2=5
   #I fix the parameter grid
   param_grid = {'k' : [6],
                 'distribution' : ['Weibull'],
-                'learning_rate' : [ 0.0001],
-                'layers' : [ [int(lay1),int(lay2),int(lay3),int(lay4)] ]
+                'learning_rate' : [ lr],
+                'layers' : [ [int(lay1),int(lay2)] ]
                }
   params = ParameterGrid(param_grid)
   

@@ -87,7 +87,7 @@ metricSims<-metricSims[-c(toRemove),]
 plotPerformance<-function(metricSummary,xlab="Follow-up time",method='Metric',iterations='NA'){
   
   allModels<-data.frame(model=c("Null model","Cox_Lin",'CB_Logi','DeepSurv',
-                                'DeepHit','PMNN_Spline','PMNN_Poly','Optimal',
+                                'DeepHit','PMNN_Spline','CBNN_Poly','optimal',
                                 "dsm"),
                         color=qualitative_hcl(9,palette='Dark 3'),
                         trueName=c("KM","Cox",'CBLR','DeepSurv',
@@ -709,7 +709,7 @@ cidxC
 
 
 
-```{r plotoldmort,fig.height=6,fig.width=6}
+```{r plotoldmort,fig.height=6,fig.width=6,eval=F}
 
 
 
@@ -847,7 +847,7 @@ cidxO
 
 
 
-```{r plotgbsg,fig.height=6,fig.width=6}
+```{r plotgbsg,fig.height=6,fig.width=6,eval=F}
 
 
 

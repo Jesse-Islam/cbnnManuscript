@@ -3,13 +3,14 @@ title: "iterSim"
 output: html_document
 params:
   epo: 2000
-  patience: 10
+  patience: 5
   iteration: 1
-  layer1: 50
-  layer2: 50
-  layer3: 25
-  layer4: 25
+  layer1: 12
+  layer2: 12
+  layer3: 100
+  layer4: 100
   drpt: 0.1
+  lr: 0.01
 ---
 
 ```{r}
@@ -40,17 +41,37 @@ source_python('src/deephitter.py')
 ##########################
 ###Shared Hyperparameters
 ##########################
-bsize=512
-min_delta = 0
+#bsize=512
+min_delta = 10^-7
+
 epo=as.numeric(params$epo)
 patience <- as.numeric(params$patience)
 iteration<-as.numeric(params$iteration)
-layer1<-as.numeric(params$layer1)
-layer2<-as.numeric(params$layer2)
-layer3<-as.numeric(params$layer3)
+layer1<-3*7#as.numeric(params$layer1)
+layer2<-3*6#as.numeric(params$layer2)
+layer3<-3*5#as.numeric(params$layer3)
 layer4<-as.numeric(params$layer4)
 drpt<-as.numeric(params$drpt)
+lr=as.numeric(params$lr)
+paramTrials<-readRDS("complexTrials.rds") 
+lr<-paramTrials[which.max(paramTrials$integBrier),]$lr
+layer1<-paramTrials[which.max(paramTrials$integBrier),]$layer1
+layer2<-paramTrials[which.max(paramTrials$integBrier),]$layer2
+layer3<-3*5#as.numeric(params$layer3)
+layer4<-as.numeric(params$layer4)
+drpt<-paramTrials[which.max(paramTrials$integBrier),]$drpt
+bsize=paramTrials[which.max(paramTrials$integBrier),]$bsize
+activ<-paramTrials[which.max(paramTrials$integBrier),]$actv
 
+
+lr<-paramTrials[which.min(paramTrials$valLoss),]$lr
+layer1<-paramTrials[which.min(paramTrials$valLoss),]$layer1
+layer2<-paramTrials[which.min(paramTrials$valLoss),]$layer2
+layer3<-3*5#as.numeric(params$layer3)
+layer4<-as.numeric(params$layer4)
+drpt<-paramTrials[which.min(paramTrials$valLoss),]$drpt
+bsize=paramTrials[which.min(paramTrials$valLoss),]$bsize
+activ<-paramTrials[which.min(paramTrials$valLoss),]$actv
 
 hardsim<-T
 numSamp<-2000
@@ -82,7 +103,7 @@ logcumhaz <- function(t, x, betas, knots) {
     betas[["z1"]] * x[["z1"]]+
     betas[["z2"]] * x[["z2"]]+
     betas[["z3"]] * x[["z3"]]+
-    betas[["term1"]] * x[["z1"]]*x[["z2"]]*t+
+    betas[["term1"]] * x[["z1"]]*t*t+#*x[["z2"]]*
     betas[["term2"]] * x[["z1"]]*x[["z3"]]+
     betas[["term3"]] * x[["z2"]]*(x[["z3"]])
   #
@@ -98,7 +119,7 @@ true_mod <- flexsurv::flexsurvspline(Surv(rectime, censrec) ~ 1, data = brcancer
   
 # Simulate the event times
 coefficients<-true_mod$coefficients
-coefficients<-c(coefficients,z1=1,z2=1,z3=1,term1=10,term2=2,term3=2)
+coefficients<-c(coefficients,z1=0.05,z2=1.05,z3=1.05,term1=1.95,term2=1.05,term3=1.05)
 
 
 ```
@@ -114,27 +135,29 @@ coefficients<-c(coefficients,z1=1,z2=1,z3=1,term1=10,term2=2,term3=2)
   cov<-data.frame(id=1:numSamp,
                   z1=c(rep(1,numSamp/2),rep(0,numSamp/2)),
                   z2=c(rnorm(numSamp/2,10,0.5),rnorm(numSamp/2,0,0.5)),
-                  z3=c(rnorm(numSamp/2,-3,0.5),rnorm(numSamp/2,8,0.5)))
+                  z3=c(rnorm(numSamp/2,0,0.5),rnorm(numSamp/2,10,0.5)))
   true_mod <- flexsurv::flexsurvspline(Surv(rectime, censrec) ~ 1,
                                        data = brcancer, k = 3
   ) #from flexsurv
+  
   dat <- simsurv(betas = coefficients, # "true" parameter values
                  x = cov,                   # covariate data for 200 individuals
                  knots = true_mod$knots,    # knot locations for splines
                  logcumhazard = logcumhaz,  # definition of log cum hazard
-                 maxt = 1,               # no right-censoring
+                 maxt = 10,               # no right-censoring
                  interval = c(0,10000000)) # interval for root finding
   colnames(dat)<-c("id","time","status")
-  samp<-sample(seq(1,nrow(dat),by=1), floor(nrow(dat)*(0.1))) #random censoring
-  dat$status[samp]<-0
+  #samp<-sample(seq(1,nrow(dat),by=1), floor(nrow(dat)*(0.1))) #random censoring
+  #dat$status[samp]<-0
   # Merge the simulated event times onto covariate data frame
   data <- merge(cov, dat)
   covs<-colnames(data)
   data<-data[,-1]
+  
+  toDiv<-max(data$time)
 
-
-
- spec = c(train = .7, test = .1, validate = .2)
+  data$time<-data$time/toDiv
+ spec = c(train = .7, test = .15, validate = .15)
  
  g = sample(cut(
    seq(nrow(data)), 
@@ -153,9 +176,7 @@ fullTest<-res$test
 
 val<-res$validate
 
-valcb<-sampleCaseBase(data = val,time="time",event="status",ratio=100)
-valcb$offset<-0
-valcbtensor<-list(list(as.matrix(valcb[,-c(ncol(valcb)-1,ncol(valcb))]),as.matrix(valcb[,ncol(valcb),drop=F])),as.matrix(valcb[,ncol(valcb)-1,drop=F]))
+
 
 numSamp<-nrow(trainOG)
 
@@ -173,7 +194,7 @@ while (pos <= iteration) {
   cov<-data.frame(id=1:numSamp,
                   z1=c(rep(1,numSamp/2),rep(0,numSamp/2)),
                   z2=c(rnorm(numSamp/2,10,0.5),rnorm(numSamp/2,0,0.5)),
-                  z3=c(rnorm(numSamp/2,-3,0.5),rnorm(numSamp/2,8,0.5)))
+                  z3=c(rnorm(numSamp/2,0,0.5),rnorm(numSamp/2,10,0.5)))
   true_mod <- flexsurv::flexsurvspline(Surv(rectime, censrec) ~ 1,
                                        data = brcancer, k = 3
   ) #from flexsurv
@@ -181,15 +202,16 @@ while (pos <= iteration) {
                  x = cov,                   # covariate data for 200 individuals
                  knots = true_mod$knots,    # knot locations for splines
                  logcumhazard = logcumhaz,  # definition of log cum hazard
-                 maxt = 1,               # no right-censoring
+                 maxt = 10,               # no right-censoring
                  interval = c(0,10000000)) # interval for root finding
   colnames(dat)<-c("id","time","status")
-  samp<-sample(seq(1,nrow(dat),by=1), floor(nrow(dat)*(0.1))) #random censoring
-  dat$status[samp]<-0
+  samp<-sample(seq(1,nrow(dat),by=1), floor(nrow(dat)*(0.05))) #random censoring
+  #dat$status[samp]<-0
   # Merge the simulated event times onto covariate data frame
   data <- merge(cov, dat)
   covs<-colnames(data)
   data<-data[,-1]
+  data$time<-data$time/toDiv
   #########################
   ###Simulate data
   #########################
@@ -197,7 +219,19 @@ while (pos <= iteration) {
   #data<-data[,-1]
   #data[,-c(1,5)]<-as.data.frame(sapply(data[,-c(1,5)], function(x) (x - min(x, na.rm = T)) / (max(x, na.rm = T) - min(x, na.rm=T))))
   train<-data
-  #test<-data[-samp,-c(ncol(data))]
+
+  sds<-sapply(train, function(x) (sd(x)))
+means<-sapply(train, function(x) (mean(x)))
+test<-normalizer(res$test,means,sds)[,-c(ncol(data))]
+fullTest<-normalizer(res$test,means,sds)
+val<-normalizer(res$validate,means,sds)
+
+train<-normalizer(train,means,sds)
+valcb<-sampleCaseBase(data = as.data.frame(val),time="time",event="status",ratio=100)#rbind(train,val)
+valcb$offset<-0
+valcbtensor<-list(list(as.matrix(valcb[,-c(ncol(valcb)-1,ncol(valcb))]),as.matrix(valcb[,ncol(valcb),drop=F])),as.matrix(valcb[,ncol(valcb)-1,drop=F]))
+#val<-rbind(train,val)  
+#test<-data[-samp,-c(ncol(data))]
   #fullTest<-data[-samp,,drop=F]
   times<-seq(from=min(test$time)+0.000001,
              to=max(test$time)-0.000001,
@@ -210,7 +244,7 @@ while (pos <= iteration) {
   ###########################
   ###casebase optimal model
   ###########################
-  final_mod_cb_glm <- fitSmoothHazard(status~bs(time)-time+z1+z2+z3+z1:z2:time+z1:z3+z2:z3,
+  final_mod_cb_glm <- fitSmoothHazard(status~bs(time)-time+z1+z2+z3+z1:time:time+z1:z3+z2:z3,
                                       data = train,
                                       time = "time",
                                       event="status",
@@ -248,18 +282,19 @@ while (pos <= iteration) {
   ######################
   ###PMNN splines
   ######################
+    valcbtensor[[1]][[2]]<-rep(mod_cb_glm$offset[1],nrow(valcbtensor[[1]][[1]]))#
   covars_input<-layer_input(shape=c(length(colnames(mod_cb_glm$data))-2+3),
                             name = 'main_input'
   )
   covars_output<-covars_input%>% #layer_batch_normalization()%>%
-    layer_dense(units=layer1,use_bias = T,activation = 'tanh')%>%
+    layer_dense(units=layer1,use_bias = T,activation = activ)%>%
     layer_dropout(drpt)%>%
-    layer_dense(units=layer2,use_bias = T,activation = 'tanh')%>%
+    layer_dense(units=layer2,use_bias = T,activation = activ)%>%
     layer_dropout(drpt)%>%
-    layer_dense(units=layer3,use_bias = T,activation = 'tanh')%>%
-    layer_dropout(drpt)%>%
-    layer_dense(units=layer4,use_bias = T,activation = 'tanh')%>%
-    layer_dropout(drpt)%>%
+    #layer_dense(units=layer3,use_bias = T,activation = 'relu')%>%
+    #layer_dropout(drpt)%>%
+    #layer_dense(units=layer4,use_bias = T,activation = 'relu')%>%
+    #layer_dropout(drpt)%>%
     layer_dense(units=1,use_bias = T)
   
   pmnn<-pmnnModel(features=colnames(mod_cb_glm$data)[-ncol(mod_cb_glm$data)],
@@ -268,13 +303,13 @@ while (pos <= iteration) {
                   originalData = mod_cb_glm$data,
                   offset=mod_cb_glm$offset,
                   timeVar = "time",
-                  eventVar= "status",optimizer=optimizer_adam(learning_rate = 0.0001)
+                  eventVar= "status",optimizer=optimizer_adam(learning_rate =lr )
   )
 
 
   fit<-fitSmoothHazSpline(pmnn,
                           epochs=epo,
-                          batch_size=bsize,
+                          batch_size=bsize,#floor(nrow(mod_cb_glm$data)/100),
                           verbose=0,
                           monitor="val_loss",
                           #val_split=0.2,
@@ -288,7 +323,7 @@ while (pos <= iteration) {
   rownames(annPreds)<-annPreds[,1]
   annProper<- t(annPreds[,-1])
   class(annProper)<-c("tunnel",class(annProper))
-  
+  rm(pmnn,fit,annPreds,covars_input,covars_output)
   ######################
   ###coxph
   ######################
@@ -305,7 +340,7 @@ while (pos <= iteration) {
   #tiebreakTrain$time<-tiebreakTrain$time+runif(nrow(tiebreakTrain),0,1/10000000000)
   #}
   
-  coxnnsurv=fitDeepSurv(tiebreakTrain,fullTest,bsize,epochs=epo,valida=val,patience=patience,min_delta=min_delta,drpt=drpt,lay1=layer1,lay2=layer2,lay3=layer3,lay4=layer4)
+  coxnnsurv=fitDeepSurv(tiebreakTrain,fullTest,floor(nrow(train)/100),epochs=epo,valida=val,patience=patience,min_delta=min_delta,drpt=drpt,lay1=layer1,lay2=layer2,lay3=layer3,lay4=layer4,lr=lr)
   coxnnsurv<-t(coxnnsurv)
   #colnames(coxnnsurv)<-seq(0,1,length.out = ncol(coxnnsurv))
   cnnCleaned<-pyProcess(coxnnsurv,times=times)
@@ -331,7 +366,7 @@ while (pos <= iteration) {
   ###Deephit
   ######################
   source_python('src/deephitter.py')
-  hitnnSurv=fitDeephit(train,fullTest,bsize,epo,valida=val,patience=patience,min_delta=min_delta,drpt=drpt,lay1=layer1,lay2=layer2,lay3=layer3,lay4=25)
+  hitnnSurv=fitDeephit(train,fullTest,floor(nrow(train)/100),epo,valida=val,patience=patience,min_delta=min_delta,drpt=drpt,lay1=layer1,lay2=layer2,lay3=layer3,lay4=layer4,lr=lr)
   hitnnSurv<-t(hitnnSurv)
   #colnames(hitnnSurv)<-seq(0,1,length.out = ncol(hitnnSurv))
   deephitCleaned<-pyProcess(hitnnSurv,times=times)
@@ -343,18 +378,19 @@ while (pos <= iteration) {
   ######################
   ###PMNN
   ######################
+
   covars_input<-layer_input(shape=c(length(colnames(mod_cb_glm$data))-2),
                             name = 'main_input')
   
   covars_output<-covars_input%>% #layer_batch_normalization()%>%
-    layer_dense(units=layer1,use_bias = T,activation = 'tanh')%>%
+    layer_dense(units=layer1,use_bias = T,activation = activ)%>%
     layer_dropout(drpt)%>%
-    layer_dense(units=layer2,use_bias = T,activation = 'tanh')%>%
+    layer_dense(units=layer2,use_bias = T,activation = activ)%>%
     layer_dropout(drpt)%>%
-    layer_dense(units=layer3,use_bias = T,activation = 'tanh')%>%
-    layer_dropout(drpt)%>%
-    layer_dense(units=layer4,use_bias = T,activation = 'tanh')%>%
-    layer_dropout(drpt)%>%
+    #layer_dense(units=layer3,use_bias = T,activation = 'relu')%>%
+    #layer_dropout(drpt)%>%
+    #layer_dense(units=layer4,use_bias = T,activation = 'relu')%>%
+    #layer_dropout(drpt)%>%
     layer_dense(units=1,use_bias = T)
   
   pmnn<-pmnnModel(features=colnames(mod_cb_glm$data)[-ncol(mod_cb_glm$data)],
@@ -363,15 +399,15 @@ while (pos <= iteration) {
                   originalData = mod_cb_glm$data,
                   offset=mod_cb_glm$offset,
                   timeVar = "time",
-                  eventVar= "status",optimizer=optimizer_adam(learning_rate = 0.0001)
+                  eventVar= "status",optimizer=optimizer_adam(learning_rate = lr)
   )
   
   fit<-fitSmoothHaz(pmnn,
                     epochs=epo,
-                    batch_size=bsize,
+                    batch_size=bsize,#floor(nrow(mod_cb_glm$data)/100),
                     verbose=0,
                     monitor="val_loss",
-                    val_split=0.2,
+                    #val_split=0.2,
                     min_delta=min_delta,
                     patience=patience,val=valcbtensor)
   annPreds<-aar(fit,
@@ -397,7 +433,9 @@ while (pos <= iteration) {
                              formula = Hist(time, status != 0) ~ 1, summary = c("risks","IPA","ibs"), 
                              se.fit = FALSE, metrics = "brier", contrasts = FALSE, times = times)
   BrierIPAList[[pos]]<-brierFinalResults$Brier$score
-  
+    ggplot(data=brierFinalResults$Brier$score, aes(x=times,y=IPA,col=model))+
+  geom_line()+coord_cartesian(ylim=c(-1,1))
+    rm(pmnn,fit,annPreds,covars_input,covars_output)
   #######################
   ###Cox 
   ######################
@@ -439,10 +477,11 @@ while (pos <= iteration) {
                                riskList=riskList,
                                cScore=cScoreTemp
   )
-
+  
   saveRDS(BrierIPAList,'results/100hardBrier.rds')
   saveRDS(cScore,'results/100hardcidx.rds')
   pos<-pos+1
+  gc()
 }
 
 ```
@@ -452,6 +491,112 @@ while (pos <= iteration) {
 
   ggplot(data=brierFinalResults$Brier$score, aes(x=times,y=IPA,col=model))+
   geom_line()+coord_cartesian(ylim=c(-1,1))
+
+
+```
+
+
+```{r, learningTrial,eval=T}
+  times<-seq(from=min(test$time)+0.000001,
+             to=max(test$time)-0.000001,
+             length.out = 25
+  )
+
+
+trials<-1000000
+numTests<-2
+# paramTrials<-data.frame(#lr=runif(trials,0,0.1),
+#                         #drpt=runif(trials,0,0.5),
+#                         lr=sample(c(0.0001,0.001,0.01,0.1),replace=T),
+#                         drpt=sample(c(0.1,0.2,0.3,0.4),replace=T),
+#                         layer1=sample(seq(10,71,20), trials,replace = T),
+#                         layer2=sample(seq(10,71,20), trials,replace = T),
+#                         #layer3=sample(seq(1,100,25), trials,replace = T),
+#                         bsize=sample(c(floor(nrow(mod_cb_glm$data)/100),floor(nrow(mod_cb_glm$data)/100/2)), trials,replace = T),
+#                         actv=sample(c("relu","tanh",'selu'), trials,replace = T),
+#                         integBrier=rep(NA,trials))
+                        
+
+paramTrials<-as.data.frame(tidyr::crossing(lr=c(0.001,0.01,0.1),
+                        drpt=c(0.1,0.2,0.3),
+                        layer1=seq(10,71,25),
+                        layer2=seq(10,71,25),
+                        bsize=c(floor(nrow(mod_cb_glm$data)/100)),
+                        actv=c("relu","tanh"),
+                        integBrier=NA,
+                        valLoss=NA))
+# 
+# paramTrials<-unique.data.frame(paramTrials)
+#paramTrials<-readRDS("complexTrials.rds")
+for(i in 1:nrow(paramTrials)){
+#paramTrials<-readRDS("complexTrials.rds")  
+tempRes<-0
+tempVal<-0
+currentTime<-Sys.time() 
+  for(j in 1:numTests){
+    
+  covars_input<-layer_input(shape=c(length(colnames(mod_cb_glm$data))-2),
+                            name = 'main_input')
+  
+  covars_output<-covars_input%>% #layer_batch_normalization()%>%
+    layer_dense(units=paramTrials$layer1[i],use_bias = T,activation = paramTrials$actv[i])%>%
+    layer_dropout(paramTrials$drpt[i])%>%
+    layer_dense(units=paramTrials$layer2[i],use_bias = T,activation = paramTrials$actv[i])%>%
+    layer_dropout(paramTrials$drpt[i])%>%
+    #layer_dense(units=paramTrials$layer3[i],use_bias = T,activation = paramTrials$actv[i])%>%
+    #layer_dropout(paramTrials$drpt[i])%>%
+    #layer_dense(units=layer4,use_bias = T,activation = 'relu')%>%
+    #layer_dropout(drpt)%>%
+    layer_dense(units=1,use_bias = T)
+  
+  pmnn<-pmnnModel(features=colnames(mod_cb_glm$data)[-ncol(mod_cb_glm$data)],
+                  feature_input = covars_input,
+                  feature_output = covars_output,
+                  originalData = mod_cb_glm$data,
+                  offset=mod_cb_glm$offset,
+                  timeVar = "time",
+                  eventVar= "status",optimizer=optimizer_adam(learning_rate = paramTrials$lr[i])
+  )
+  
+  fit<-fitSmoothHaz(pmnn,
+                    epochs=epo,
+                    batch_size=paramTrials$bsize[i],
+                    verbose=0,
+                    monitor="val_loss",
+                    #val_split=0.2,
+                    min_delta=min_delta,
+                    patience=patience,val=valcbtensor)
+  annPreds<-aar(fit,
+                times=times,
+                x_test=as.data.frame(val[,-c(ncol(data))])#rbind(train,val)
+  )
+  
+  rownames(annPreds)<-annPreds[,1]
+  annProperpoly<- t(annPreds[,-1])
+  class(annProperpoly)<-c("tunnel",class(annProperpoly)) 
+  
+  
+  
+  
+  brierFinalResults <- Score(list('PMNN_Poly'=annProperpoly),
+                             data =as.data.frame(val),#rbind(train,val) 
+                             formula = Hist(time, status != 0) ~ 1, summary = c("risks","IPA","ibs"), 
+                             se.fit = FALSE, metrics = "brier", contrasts = FALSE, times = times)$Brier$score
+  cutted<-brierFinalResults[which(brierFinalResults$model=="PMNN_Poly"),]
+  tempRes<-tempRes+mean(cutted[-c(1,2,24,25)]$IPA)/numTests
+  tempVal<-tempVal+min(fit$resultOfFit$metrics$val_loss)/numTests
+  }
+  paramTrials$integBrier[i]<-tempRes
+  paramTrials$valLoss[i]<-
+  saveRDS(paramTrials,"complexTrials.rds")
+  print(paste("trial",i))
+  print(Sys.time()-currentTime)
+  currentTime<-Sys.time()
+  #print(as.character(paramTrials[i,]))
+    rm(pmnn,fit,annPreds,covars_input,covars_output)
+    
+}
+
 
 
 ```

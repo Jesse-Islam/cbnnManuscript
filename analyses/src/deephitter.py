@@ -13,10 +13,10 @@ from pycox.evaluation import EvalSurv
 
 
 
-
-def fitDeephit(train,fullTest,bsize,epochs,valida,ti='time',ev='status',patience=10,min_delta=10**-7,drpt=0.5,lay1=50,lay2=50,lay3=25,lay4=25):#,epoch,bsize,tPos,ePos):
+def fitDeephit(train,fullTest,bsize,epochs,valida,patience,min_delta,drpt,lay1,lay2,lr,actv,alp):#,epoch,bsize,tPos,ePos):
+  ti='time'
+  ev='status'
   n= np.shape(train)[0]
-  vl_size = int(n*0.20)
   df_val = valida#train.sample(frac=0.2)
   df_train = train#.drop(df_val.index)
   df_test = fullTest
@@ -53,40 +53,38 @@ def fitDeephit(train,fullTest,bsize,epochs,valida,ti='time',ev='status',patience
   batch_norm = False
   dropout = drpt
   
-  #net = tt.practical.MLPVanilla(in_features, num_nodes, out_features, batch_norm, dropout)
- 
-  net = torch.nn.Sequential(
-     #torch.nn.BatchNorm1d(in_features),
-     torch.nn.Linear(in_features,int(lay1)),
-     #torch.nn.ReLU(),
-     torch.nn.Tanh(),
-     torch.nn.Dropout(float(dropout)),
-     
-     torch.nn.Linear(int(lay1), int(lay2)),
-     #torch.nn.ReLU(),
-     torch.nn.Tanh(),
-     torch.nn.Dropout(float(dropout)),
-     
-     torch.nn.Linear(int(lay2), int(lay3)),
-     #torch.nn.ReLU(),
-     torch.nn.Tanh(),
-     torch.nn.Dropout(float(dropout)),     
-
-     torch.nn.Linear(int(lay3), int(lay4)),
-     #torch.nn.ReLU(),
-     torch.nn.Tanh(),
-     torch.nn.Dropout(float(dropout)),
-     torch.nn.Linear(int(lay4), out_features))
-  model = DeepHitSingle(net, tt.optim.Adam, alpha=0.5, sigma=0.1, duration_index=labtrans.cuts)
+  #net = tt.practical.MLPVanilla(in_features, num_nodes, out_features, batch_norm, dropout,activation="selu")
+  if actv=='relu':
+    net = torch.nn.Sequential(
+       torch.nn.Linear(in_features,int(lay1)),
+       torch.nn.ReLU(),
+       torch.nn.Dropout(float(dropout)),
+       
+       torch.nn.Linear(int(lay1), int(lay2)),
+       torch.nn.ReLU(),
+       #torch.nn.Tanh(),
+       torch.nn.Dropout(float(dropout)),
+       torch.nn.Linear(int(lay2), out_features))
+  if actv=='tanh':
+    net = torch.nn.Sequential(
+       torch.nn.Linear(in_features,int(lay1)),
+       torch.nn.Tanh(),
+       torch.nn.Dropout(float(dropout)),
+       
+       torch.nn.Linear(int(lay1), int(lay2)),
+       torch.nn.Tanh(),
+       torch.nn.Dropout(float(dropout)),
+       torch.nn.Linear(int(lay2), out_features))
+  model = DeepHitSingle(net, tt.optim.Adam, alpha=alp, sigma=0.1, duration_index=labtrans.cuts)
   lr_finder = model.lr_finder(x_train, y_train, batch_size=int(bsize), tolerance=2)
   #_ = lr_finder.plot()
   ############
   #fit models
   ###########
-  model.optimizer.set_lr(0.0001)
+  model.optimizer.set_lr(lr)
   callbacks = [tt.callbacks.EarlyStopping(min_delta=min_delta, patience=patience)]
   log = model.fit(x_train, y_train, int(bsize),int(epochs), callbacks, val_data=val,verbose=False )
-  return model.predict_surv_df(x_test)#log#[type(x_train), type(y_train[1])]
+  return model.predict_surv_df(x_test)
   
   
 

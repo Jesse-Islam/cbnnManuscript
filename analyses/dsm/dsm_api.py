@@ -52,15 +52,15 @@ class DSMBase():
   """Base Class for all DSM models"""
 
   def __init__(self, k=3, layers=None, distribution="Weibull",
-               temp=1000., discount=1.0):
+               temp=1000., discount=1.0,activation="relu"):
     self.k = k
     self.layers = layers
     self.dist = distribution
     self.temp = temp
     self.discount = discount
     self.fitted = False
-
-  def _gen_torch_model(self, inputdim, optimizer, risks):
+    
+  def _gen_torch_model(self, inputdim, optimizer, risks,activation):
     """Helper function to return a torch model."""
     return DeepSurvivalMachinesTorch(inputdim,
                                      k=self.k,
@@ -69,7 +69,7 @@ class DSMBase():
                                      temp=self.temp,
                                      discount=self.discount,
                                      optimizer=optimizer,
-                                     risks=risks)
+                                     risks=risks,activation=activation)
 
   def fit(self, x, t, e, vsize=0.15, val_data=None,
           iters=1, learning_rate=1e-3, batch_size=100,
@@ -121,7 +121,7 @@ class DSMBase():
       inputdim = x_train.shape[-1]
 
     maxrisk = int(np.nanmax(e_train.cpu().numpy()))
-    model = self._gen_torch_model(inputdim, optimizer, risks=maxrisk)
+    model = self._gen_torch_model(inputdim, optimizer, risks=maxrisk,activation=activation)
     model, _ = train_dsm(model,
                          x_train, t_train, e_train,
                          x_val, t_val, e_val,

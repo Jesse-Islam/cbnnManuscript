@@ -5,11 +5,12 @@ params:
   epo: 2000
   patience: 10
   iteration: 1
-  layer1: 50
-  layer2: 50
-  layer3: 25
-  layer4: 25
+  layer1: 100
+  layer2: 100
+  layer3: 50
+  layer4: 50
   drpt: 0.1
+  lr: 0.001
 ---
 
 
@@ -30,7 +31,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 
 ```{r setup, include=T}
-set.seed(1)
+set.seed(2)#set seed to 2, because testing set had shortest survival time censored, resulting in an error in the c-index calculation method.
 knitr::opts_chunk$set(echo = TRUE)
 source("src/packages.R")
 source("src/functions.R")
@@ -44,7 +45,7 @@ source_python('src/deephitter.py')
 ###Shared Hyperparameters
 ##########################
 bsize=512
-min_delta = 0
+min_delta = 10^-7
 epo=as.numeric(params$epo)
 patience = as.numeric(params$patience)
 iteration=as.numeric(params$iteration)
@@ -53,6 +54,7 @@ layer2<-as.numeric(params$layer2)
 layer3<-as.numeric(params$layer3)
 layer4<-as.numeric(params$layer4)
 drpt<-as.numeric(params$drpt)
+lr=as.numeric(params$lr)
 
 ```
 
@@ -77,7 +79,7 @@ metabric<-getMetabric()
 colnames(metabric)[ncol(metabric)-1]<-'time'
 colnames(metabric)[ncol(metabric)]<-'status'
 data<-as.data.frame(model.matrix(~.,metabric)[,-1])
-data<-as.data.frame(sapply(data, function(x) (x - min(x, na.rm = T)) / (max(x, na.rm = T) - min(x, na.rm=T))))
+#data<-as.data.frame(sapply(data, function(x) (x - min(x, na.rm = T)) / (max(x, na.rm = T) - min(x, na.rm=T))))
 covs<-colnames(data)
 
 
@@ -104,14 +106,17 @@ valcb<-sampleCaseBase(data = val,time="time",event="status",ratio=100)
 valcb$offset<-0
 valcbtensor<-list(list(as.matrix(valcb[,-c(ncol(valcb)-1,ncol(valcb))]),as.matrix(valcb[,ncol(valcb),drop=F])),as.matrix(valcb[,ncol(valcb)-1,drop=F]))
 
+  # times<-seq(from=min(test$time[fullTest$status==1]),
+  #            to=max(test$time[fullTest$status==1]),
+  #            length.out = 100
+  # )
+
+
+
   times<-seq(from=min(test$time)+0.000001,
              to=max(test$time)-0.000001,
              length.out = 100
   )
-
-
-
-
 
 
 ############################
@@ -141,7 +146,7 @@ train<-normalizer(train,means,sds)
   ###DSM
   ##########################
   source_python('src/dsmScript.py')
-  dsmSurv<-dsmfitter(train=train,fullTest=fullTest,bsize=bsize,epochs=epo,val=val,times=times,tPos=ncol(train)-2,ePos=ncol(train)-1)
+  dsmSurv<-dsmfitter(train=train,fullTest=fullTest,bsize=bsize,epochs=epo,val=val,times=times,tPos=ncol(train)-2,ePos=ncol(train)-1,lay1=layer1,lay2=layer2,lay3=layer3,lay4=layer4,lr=lr)
   if((sum(is.na(dsmSurv))==ncol(dsmSurv)*nrow(dsmSurv))){
     
     dsmSurv<-dsmfitter(train=train,fullTest=fullTest,bsize=bsize,epochs=epo,val=val,times=times)
@@ -190,7 +195,7 @@ train<-normalizer(train,means,sds)
   #tiebreakTrain$time<-tiebreakTrain$time+runif(nrow(tiebreakTrain),0,1/10000000000)
   #}
   
-  coxnnsurv=fitDeepSurv(tiebreakTrain,fullTest,bsize,epochs=epo,valida=val,patience=patience,min_delta=min_delta,drpt=drpt,lay1=layer1,lay2=layer2,lay3=layer3,lay4=layer4)
+  coxnnsurv=fitDeepSurv(tiebreakTrain,fullTest,bsize,epochs=epo,valida=val,patience=patience,min_delta=min_delta,drpt=drpt,lay1=layer1,lay2=layer2,lay3=layer3,lay4=layer4,lr=lr)
   coxnnsurv<-t(coxnnsurv)
   #colnames(coxnnsurv)<-seq(0,1,length.out = ncol(coxnnsurv))
   cnnCleaned<-pyProcess(coxnnsurv,times=times)
@@ -213,7 +218,7 @@ train<-normalizer(train,means,sds)
   ###Deephit
   ############################  
     source_python('src/deephitter.py')
-  hitnnSurv=fitDeephit(train,fullTest,bsize,epo,valida=val,patience=patience,min_delta=min_delta,drpt=drpt,lay1=layer1,lay2=layer2,lay3=layer3,lay4=layer4)
+  hitnnSurv=fitDeephit(train,fullTest,bsize,epo,valida=val,patience=patience,min_delta=min_delta,drpt=drpt,lay1=layer1,lay2=layer2,lay3=layer3,lay4=layer4,lr=lr)
   hitnnSurv<-t(hitnnSurv)
   #colnames(hitnnSurv)<-seq(0,1,length.out = ncol(hitnnSurv))
   deephitCleaned<-pyProcess(hitnnSurv,times=times)
@@ -232,17 +237,18 @@ train<-normalizer(train,means,sds)
   ############################
   ###PMNNsplines
   ############################  
+    valcbtensor[[1]][[2]]<-rep(mod_cb_glm$offset[1],nrow(valcbtensor[[1]][[1]]))
   covars_input<-layer_input(shape=c(length(colnames(mod_cb_glm$data))-2+3),
                             name = 'main_input'
   )
   covars_output<-covars_input%>% #layer_batch_normalization()%>%
-    layer_dense(units=layer1,use_bias = T,activation = 'tanh')%>%
+    layer_dense(units=layer1,use_bias = T,activation = 'relu')%>%
     layer_dropout(drpt)%>%
-    layer_dense(units=layer2,use_bias = T,activation = 'tanh')%>%
+    layer_dense(units=layer2,use_bias = T,activation = 'relu')%>%
     layer_dropout(drpt)%>%
-    layer_dense(units=layer3,use_bias = T,activation = 'tanh')%>%
+    layer_dense(units=layer3,use_bias = T,activation = 'relu')%>%
     layer_dropout(drpt)%>%
-    layer_dense(units=layer4,use_bias = T,activation = 'tanh')%>%
+    layer_dense(units=layer4,use_bias = T,activation = 'relu')%>%
     layer_dropout(drpt)%>%
     layer_dense(units=1,use_bias = T)
   
@@ -252,7 +258,7 @@ train<-normalizer(train,means,sds)
                   originalData = mod_cb_glm$data,
                   offset=mod_cb_glm$offset,
                   timeVar = "time",
-                  eventVar= "status",optimizer=optimizer_adam(learning_rate = 0.0001)
+                  eventVar= "status",optimizer=optimizer_adam(learning_rate = lr)
   )
 
 
@@ -289,13 +295,13 @@ train<-normalizer(train,means,sds)
                             name = 'main_input')
   
   covars_output<-covars_input%>% #layer_batch_normalization()%>%
-    layer_dense(units=layer1,use_bias = T,activation = 'tanh')%>%
+    layer_dense(units=layer1,use_bias = T,activation = 'relu')%>%
     layer_dropout(drpt)%>%
-    layer_dense(units=layer2,use_bias = T,activation = 'tanh')%>%
+    layer_dense(units=layer2,use_bias = T,activation = 'relu')%>%
     layer_dropout(drpt)%>%
-    layer_dense(units=layer3,use_bias = T,activation = 'tanh')%>%
+    layer_dense(units=layer3,use_bias = T,activation = 'relu')%>%
     layer_dropout(drpt)%>%
-    layer_dense(units=layer4,use_bias = T,activation = 'tanh')%>%
+    layer_dense(units=layer4,use_bias = T,activation = 'relu')%>%
     layer_dropout(drpt)%>%
     layer_dense(units=1,use_bias = T)
   
@@ -305,7 +311,7 @@ train<-normalizer(train,means,sds)
                   originalData = mod_cb_glm$data,
                   offset=mod_cb_glm$offset,
                   timeVar = "time",
-                  eventVar= "status",optimizer=optimizer_adam(learning_rate = 0.0001)
+                  eventVar= "status",optimizer=optimizer_adam(learning_rate = lr)
   )
   
   fit<-fitSmoothHaz(pmnn,

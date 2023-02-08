@@ -1,0 +1,139 @@
+---
+title: "fullMetabricanalysis"
+author: "Jesse"
+date: "12/16/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+
+
+```{r loadData}
+library("illuminaHumanv4.db")
+getExpressionDataM <- function(){
+load("metabricData/Complete_METABRIC_Expression_Data.rbin")
+expressionData<-Complete_METABRIC_Expression_Data@assayData$exprs
+
+geneName<-data.frame(Gene=unlist(mget(x = rownames(expressionData),ifnotfound = NA,envir = illuminaHumanv4SYMBOL)))
+
+geneName[which(is.na(geneName$Gene)),1]<-rownames(geneName)[which(is.na(geneName$Gene))]
+
+rownames(expressionData)<-make.unique(geneName$Gene, sep="_")
+
+return(t(expressionData))
+
+}
+
+load("metabricData/Complete_METABRIC_Clinical_Survival_Data_OS.rbin")
+
+```
+
+
+```{r processData}
+
+
+
+library(survival)
+timeEvent<-as.data.frame(Complete_METABRIC_Clinical_Survival_Data_OS)
+
+
+timeEvent<-tidyr::separate(data = timeEvent, col =  "x",into =  c("time", "status"), sep = "\\+", extra = "merge")
+
+timeEvent$status[which(is.na(timeEvent$status))]<-1
+
+timeEvent$status[which(timeEvent$status=="")]<-0
+
+#rm(Complete_METABRIC_Expression_Data)
+rm(Complete_METABRIC_Clinical_Survival_Data_OS)
+#rm(geneName)
+gc()
+
+```
+
+
+```{r splitData}
+set.seed(1)
+data<-getExpressionDataM()
+
+
+
+ spec = c(train = .7, test = .1, validate = .2)
+ 
+ g = sample(cut(
+   seq(nrow(data)), 
+   nrow(data)*cumsum(c(0,spec)),
+   labels = names(spec)
+ ))
+ 
+ res = list()
+res$train<-  data[which(g=="train"),]
+ res$validate<-  data[which(g=="validate"),] 
+ res$test<-  data[which(g=="test"),] 
+ 
+saveRDS(res,"expressionSplit.rds")
+
+```
+
+
+
+```{r featureSelection}
+res<-readRDS("expressionSplit.rds")$train
+spearCor<-cor(res,method = c( "spearman"))
+d <- as.dist(1-spearCor)
+rm(spearCor,res)
+gc()
+hc <- hclust(d, method="complete")
+#get distance
+#get hclust
+rm(d)
+gc()
+
+saveRDS(hc,"hierarchicalClusteringSpearmanDistance.rds")
+```
+
+
+```{r,fig.height=25,fig.width=25}
+
+
+hc<-readRDS("hierarchicalClusteringSpearmanDistance.rds")
+set.seed(1)
+
+plot(hc)
+
+
+clusts <- cutree(hc,k=1000)
+i=1
+chosen=data.frame(reps=rep("representative",1000))
+
+for(i in 1:length(unique(clusts))){
+  
+chosen$reps[i]<-sample(names(which(clusts==i))[!grepl("^ILMN",names(which(clusts==i)))],1)
+
+}
+
+
+
+
+
+```
+
+
+```{r}
+
+expData<-getExpressionDataM()
+
+ 
+importantGenePos<-which(colnames(expData) %in% chosen$reps)
+importantGenes<-expData[,importantGenePos]
+
+toPC<-expData[,-importantGenePos]
+
+pcs <- prcomp(toPC, center = TRUE,scale. = TRUE)
+
+
+```
+

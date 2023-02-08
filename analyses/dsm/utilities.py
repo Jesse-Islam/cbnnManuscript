@@ -187,7 +187,7 @@ def train_dsm(model,
     #
     if oldcost -costs[-1] < 10**-7:
     #if costs[-1] >= oldcost:
-      if patience == 10:
+      if patience == 5:
         minm = np.argmin(costs)
         model.load_state_dict(dics[minm])
 

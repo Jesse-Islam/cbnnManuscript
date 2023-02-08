@@ -75,18 +75,21 @@ def create_representation(inputdim, layers, activation):
 
   if activation == 'ReLU6':
     act = nn.ReLU6()
-  elif activation == 'ReLU':
+  elif activation == 'relu':
     act = nn.ReLU()
   elif activation == 'SeLU':
     act = nn.SELU()
+  elif activation == 'tanh':
+    act = nn.Tanh()
+  
 
   modules = []
   prevdim = inputdim
 
   for hidden in layers:
     modules.append(nn.Linear(prevdim, hidden, bias=True))
-    modules.append(nn.Tanh())
-    modules.append(nn.Dropout(0.1))
+    modules.append(act)
+    modules.append(nn.Dropout(0.25))
     prevdim = hidden
 
   return nn.Sequential(*modules)
@@ -196,7 +199,7 @@ class DeepSurvivalMachinesTorch(nn.Module):
 
     self._init_dsm_layers(lastdim)
 
-    self.embedding = create_representation(inputdim, layers, 'ReLU6')
+    self.embedding = create_representation(inputdim, layers, activation)
 
 
   def forward(self, x, risk='1'):

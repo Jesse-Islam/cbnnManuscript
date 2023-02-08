@@ -12,9 +12,10 @@ from pycox.evaluation import EvalSurv
 
 
 
-def fitDeepSurv(train,fullTest,bsize,epochs,valida,ti='time',ev='status',patience=10,min_delta=10**-7,drpt=0.5,lay1=50,lay2=50,lay3=25,lay4=25):#,epoch,bsize,tPos,ePos):
+def fitDeepSurv(train,fullTest,bsize,epochs,valida,patience,min_delta,drpt,lay1,lay2,lr,actv):#,epoch,bsize,tPos,ePos):
+  ti='time'
+  ev='status'
   n= np.shape(train)[0]
-  vl_size = int(n*0.20)
   df_val = valida#train.sample(frac=0.2)
   df_train = train#.drop(df_val.index)
   df_test = fullTest
@@ -38,46 +39,47 @@ def fitDeepSurv(train,fullTest,bsize,epochs,valida,ti='time',ev='status',patienc
   
   
   in_features = x_train.shape[1]
-  num_nodes = [int(lay1),int(lay2)]
+  #num_nodes = [int(lay1),int(lay2)]
   out_features = 1
-  batch_norm = True
+  #batch_norm = True
   dropout = drpt
   
   #net = tt.practical.MLPVanilla(in_features, num_nodes, out_features, batch_norm, dropout,activation="selu")
-  net = torch.nn.Sequential(
-     #torch.nn.BatchNorm1d(in_features),
-     torch.nn.Linear(in_features,int(lay1)),
-     #torch.nn.ReLU(),
-     torch.nn.Tanh(),
-     torch.nn.Dropout(float(dropout)),
-     
-     torch.nn.Linear(int(lay1), int(lay2)),
-     #torch.nn.ReLU(),
-     torch.nn.Tanh(),
-     torch.nn.Dropout(float(dropout)),
-     
-     torch.nn.Linear(int(lay2), int(lay3)),
-     #torch.nn.ReLU(),
-     torch.nn.Tanh(),
-     torch.nn.Dropout(float(dropout)),     
-
-     torch.nn.Linear(int(lay3), int(lay4)),
-     #torch.nn.ReLU(),
-     torch.nn.Tanh(),
-     torch.nn.Dropout(float(dropout)),
-     torch.nn.Linear(int(lay4), out_features))
-
+  if actv=='relu':
+    net = torch.nn.Sequential(
+       torch.nn.Linear(in_features,int(lay1)),
+       torch.nn.ReLU(),
+       torch.nn.Dropout(float(dropout)),
+       
+       torch.nn.Linear(int(lay1), int(lay2)),
+       torch.nn.ReLU(),
+       #torch.nn.Tanh(),
+       torch.nn.Dropout(float(dropout)),
+       torch.nn.Linear(int(lay2), out_features))
+  if actv=='tanh':
+    net = torch.nn.Sequential(
+       torch.nn.Linear(in_features,int(lay1)),
+       torch.nn.Tanh(),
+       torch.nn.Dropout(float(dropout)),
+       
+       torch.nn.Linear(int(lay1), int(lay2)),
+       #torch.nn.ReLU(),
+       torch.nn.Tanh(),
+       torch.nn.Dropout(float(dropout)),
+       torch.nn.Linear(int(lay2), out_features))
+    
   
   model = CoxPH(net, tt.optim.Adam)
   
-  model.optimizer.set_lr(0.0001)
+  model.optimizer.set_lr(lr)
+  
   callbacks = [tt.callbacks.EarlyStopping(min_delta=min_delta, patience=patience)]
   log = model.fit(x_train, y_train, int(bsize),int(epochs), callbacks, val_data=val,verbose=False )
   #a,b=model.training_data
   #print(b)
+  #print(log)
   _ = model.compute_baseline_hazards()
   return model.predict_surv_df(x_test)
-  
   
   
   

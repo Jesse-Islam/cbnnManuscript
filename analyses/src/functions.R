@@ -45,13 +45,15 @@ pyProcess<-function(predictions,times=times,apr="constant"){
 calcCidx<-function(et_train,et_test,risk,times){
   #et_train <- et_train[order(et_train[,2]),]
   #et_test <- et_test[order(et_test[,2]),]
-  
+  #tims<-times
   tims<-head(times, -1)
   tims<-tail(tims, -1)
   cindexes<-matrix(NA,nrow=length(tims),ncol=2)
   cindexes[,1]<-tims
   
   for( i in 1:(length(tims))){#metabric needs to skip first few
+    
+
     cindexes[i,2]<-cidx(et_train,et_test,risk[,i,drop=F])
   }
   return(cindexes)
@@ -183,11 +185,11 @@ predictRisk.tunnel <- function(object, newdata, times, cause, ...){
 
 
 ##########################################################
-###PMNN
+###CBNN
 #########################################################
 
 
-pmnnModel<-function(features, feature_input, feature_output, originalData=originalData,offset, timeVar,eventVar, ratio=100, compRisk=FALSE,censored.indicator=0,optimizer=optimizer_adam(learning_rate = 0.001,decay=10^-7)){
+cbnnModel<-function(features, feature_input, feature_output, originalData=originalData,offset, timeVar,eventVar, ratio=100, compRisk=FALSE,censored.indicator=0,optimizer=optimizer_adam(learning_rate = 0.001,decay=10^-7)){
   if(class(originalData)[1]=="cbData"){
     data<-originalData
   }else{
@@ -226,17 +228,17 @@ pmnnModel<-function(features, feature_input, feature_output, originalData=origin
 
 
 
-fitSmoothHaz<-function(pmnn,epochs=20000,batch_size=500,verbose=0,monitor="val_loss",val_split=0.2,min_delta=10^-7,patience=10,val){
-  #pmnn$casebaseData
+fitSmoothHaz<-function(cbnn,epochs=2000,batch_size=500,verbose=0,monitor="val_loss",val_split=0.2,min_delta=10^-7,patience=10,val){
+  #cbnn$casebaseData
   
-  offset<-as.matrix(pmnn$offset)
-  #pmnn$casebaseData<-as.matrix(pmnn$casebaseData[,pmnn$features])
-  #x_train<-as.matrix(pmnn$casebaseData)
-  x_train<-as.matrix(pmnn$casebaseData[,pmnn$features])
+  offset<-as.matrix(cbnn$offset)
+  #cbnn$casebaseData<-as.matrix(cbnn$casebaseData[,cbnn$features])
+  #x_train<-as.matrix(cbnn$casebaseData)
+  x_train<-as.matrix(cbnn$casebaseData[,cbnn$features])
   
-  y_train<-as.matrix(pmnn$casebaseData[,c(pmnn$eventVar)])
+  y_train<-as.matrix(cbnn$casebaseData[,c(cbnn$eventVar)])
   xTensor<-list(x_train, offset)
-  resultOfFit<-pmnn$model %>% fit(
+  resultOfFit<-cbnn$model %>% fit(
     x = xTensor,
     y = y_train,
     epochs = epochs,#30000,
@@ -244,7 +246,9 @@ fitSmoothHaz<-function(pmnn,epochs=20000,batch_size=500,verbose=0,monitor="val_l
     #validation_split = val_split,
     validation_data=val,
     shuffle=T,
-    verbose=verbose,callbacks=list(callback_early_stopping(
+    verbose=verbose,
+    #class_weight=list("0"=1,"1"=1),
+    callbacks=list(callback_early_stopping(
       monitor = monitor,
       min_delta = min_delta,
       patience = patience,
@@ -255,35 +259,35 @@ fitSmoothHaz<-function(pmnn,epochs=20000,batch_size=500,verbose=0,monitor="val_l
       # validation_split = 0.2
     )))
   
-  pmnn[[length(pmnn)+1]]<-resultOfFit
-  names(pmnn)[length(pmnn)]<-"resultOfFit"
-  pmnn[[length(pmnn)+1]]<-x_train
-  names(pmnn)[length(pmnn)]<-"x_train"
-  pmnn[[length(pmnn)+1]]<-y_train
-  names(pmnn)[length(pmnn)]<-"y_train"
+  cbnn[[length(cbnn)+1]]<-resultOfFit
+  names(cbnn)[length(cbnn)]<-"resultOfFit"
+  cbnn[[length(cbnn)+1]]<-x_train
+  names(cbnn)[length(cbnn)]<-"x_train"
+  cbnn[[length(cbnn)+1]]<-y_train
+  names(cbnn)[length(cbnn)]<-"y_train"
   
-  return(pmnn)
+  return(cbnn)
   
 }
 
 
 
-fitSmoothHazSpline<-function(pmnn,epochs=20000,batch_size=500,verbose=0,monitor="val_loss",val_split=0.2,min_delta=10^-7,patience=10,val){
-  #pmnn$casebaseData
+fitSmoothHazSpline<-function(cbnn,epochs=2000,batch_size=500,verbose=0,monitor="val_loss",val_split=0.2,min_delta=10^-7,patience=10,val){
+  #cbnn$casebaseData
   
-  offset<-as.matrix(pmnn$offset)
-  #pmnn$casebaseData<-as.matrix(pmnn$casebaseData[,pmnn$features])
-  #x_train<-as.matrix(pmnn$casebaseData)
-  #x_train<-pmnn$casebaseData[,-c(which(pmnn$features %in% pmnn$eventVar))]
+  offset<-as.matrix(cbnn$offset)
+  #cbnn$casebaseData<-as.matrix(cbnn$casebaseData[,cbnn$features])
+  #x_train<-as.matrix(cbnn$casebaseData)
+  #x_train<-cbnn$casebaseData[,-c(which(cbnn$features %in% cbnn$eventVar))]
   
-  x_train<-pmnn$casebaseData[,c(pmnn$features)]
+  x_train<-cbnn$casebaseData[,c(cbnn$features)]
   x_train<-as.matrix(cbind(x_train,bs(x_train$time)))
-  y_train<-as.matrix(pmnn$casebaseData[,pmnn$eventVar])
+  y_train<-as.matrix(cbnn$casebaseData[,cbnn$eventVar])
   xTensor<-list(x_train, offset)
 
-  val[[1]][[1]]<-as.matrix(cbind(val[[1]][[1]][,c(pmnn$features)],bs(val[[1]][[1]][,ncol(val[[1]][[1]])])))
+  val[[1]][[1]]<-as.matrix(cbind(val[[1]][[1]][,c(cbnn$features)],bs(val[[1]][[1]][,ncol(val[[1]][[1]])])))
   
-  resultOfFit<-pmnn$model %>% fit(
+  resultOfFit<-cbnn$model %>% fit(
     x = xTensor,
     y = y_train,
     epochs = epochs,#30000,
@@ -302,14 +306,14 @@ fitSmoothHazSpline<-function(pmnn,epochs=20000,batch_size=500,verbose=0,monitor=
       # validation_split = 0.2
     )))
   
-  pmnn[[length(pmnn)+1]]<-resultOfFit
-  names(pmnn)[length(pmnn)]<-"resultOfFit"
-  pmnn[[length(pmnn)+1]]<-x_train
-  names(pmnn)[length(pmnn)]<-"x_train"
-  pmnn[[length(pmnn)+1]]<-y_train
-  names(pmnn)[length(pmnn)]<-"y_train"
+  cbnn[[length(cbnn)+1]]<-resultOfFit
+  names(cbnn)[length(cbnn)]<-"resultOfFit"
+  cbnn[[length(cbnn)+1]]<-x_train
+  names(cbnn)[length(cbnn)]<-"x_train"
+  cbnn[[length(cbnn)+1]]<-y_train
+  names(cbnn)[length(cbnn)]<-"y_train"
   
-  return(pmnn)
+  return(cbnn)
   
 }
 
@@ -318,11 +322,11 @@ fitSmoothHazSpline<-function(pmnn,epochs=20000,batch_size=500,verbose=0,monitor=
 
 
 
-aarSplines<-function(pmnn, times=times,x_test=x_test){
+aarSplines<-function(cbnn, times=times,x_test=x_test){
   #offset<-exp(offset)
   # browser()
-  # which(colnames(pmnn$casebaseData) %in% pmnn$timeVar))
-  x_test<-x_test[,c(pmnn$features),drop=F]
+  # which(colnames(cbnn$casebaseData) %in% cbnn$timeVar))
+  x_test<-x_test[,c(cbnn$features),drop=F]
   
   results<- matrix(data=NA,nrow=length(times),ncol= nrow(x_test)+1)
   results[,1]<-times
@@ -332,19 +336,19 @@ aarSplines<-function(pmnn, times=times,x_test=x_test){
     # this is a waste of time make this funciton more efficent
     #    tempX<-as.matrix(data.frame( do.call("rbind",
     #                                        replicate(length(times),
-    #                                                 x_test[j,-c(which(colnames(x_test) %in% pmnn$timeVar))],
+    #                                                 x_test[j,-c(which(colnames(x_test) %in% cbnn$timeVar))],
     #                                                simplify = FALSE)),ftime=times))
     tempX<-as.matrix(data.frame( do.call("rbind",
                                          replicate(length(times),
                                                    x_test[j,],
                                                    simplify = FALSE))))
-    tempX[,c(which(colnames(x_test) == pmnn$timeVar))]<-times
+    tempX[,c(which(colnames(x_test) == cbnn$timeVar))]<-times
     tempX<-cbind(tempX,bs(times))
     #tempa<-cbind(tempX[,1:3],tempX[,ncol(tempX)], tempX[,4:(ncol(tempX)-1)])
     #tempX<-tempa
     tempOffset<-as.matrix(data.frame(offset=rep(0,length(times))))
     #score = model %>% evaluate(tempX,tempY , batch_size=128)
-    aTemp=pmnn$model%>% predict(list(tempX,tempOffset))
+    aTemp=cbnn$model%>% predict(list(tempX,tempOffset))
     #results[,i]<-(aTemp/(1-aTemp))*(1/offset)
     #results[,i]<-exp(log(aTemp/(1-aTemp))+offset) #hazard?
     #results[,i]<-1-exp(-cumsum(exp(log(aTemp/(1-aTemp))+offset))) #external offset
@@ -374,11 +378,11 @@ aarSplines<-function(pmnn, times=times,x_test=x_test){
 
 
 
-hazardpmnn<-function(pmnn, times=times,x_test=x_test){
+hazardcbnn<-function(cbnn, times=times,x_test=x_test){
   #offset<-exp(offset)
-  # which(colnames(pmnn$casebaseData) %in% pmnn$timeVar))
+  # which(colnames(cbnn$casebaseData) %in% cbnn$timeVar))
   
-  x_test<-x_test[,c(pmnn$features),drop=F]
+  x_test<-x_test[,c(cbnn$features),drop=F]
   
   results<- matrix(data=NA,nrow=length(times),ncol= nrow(x_test)+1)
   results[,1]<-times
@@ -390,14 +394,14 @@ hazardpmnn<-function(pmnn, times=times,x_test=x_test){
                                          replicate(length(times),
                                                    x_test[j,],
                                                    simplify = FALSE))))
-    tempX[,c(which(colnames(x_test) == pmnn$timeVar))]<-times
+    tempX[,c(which(colnames(x_test) == cbnn$timeVar))]<-times
     
     tempOffset<-as.matrix(data.frame(offset=rep(0,length(times))))
     #score = model %>% evaluate(tempX,tempY , batch_size=128)
     #results[,i]<-(aTemp/(1-aTemp))*(1/offset)
     #results[,i]<-exp(log(aTemp/(1-aTemp))+offset) #hazard?
     #results[,i]<-1-exp(-cumsum(exp(log(aTemp/(1-aTemp))+offset))) #external offset
-    results[,i]<-pmnn$model%>% predict(list(tempX,tempOffset))
+    results[,i]<-cbnn$model%>% predict(list(tempX,tempOffset))
     #results[,i]<-1-exp(-cumsum(exp(aTemp)*(1/length(times))))
     #odds<-((aTemp)*(1/length(times)))
     #results[,i]<-(aTemp/(1-aTemp))
@@ -436,9 +440,9 @@ aar<-function(fit, times=times,x_test=x_test){
 #Depreciated
 ##################
 
-aarOld<-function(pmnn, times=times,x_test=x_test){
+aarOld<-function(cbnn, times=times,x_test=x_test){
 
-  x_test<-x_test[,c(pmnn$features),drop=F]
+  x_test<-x_test[,c(cbnn$features),drop=F]
   
   results<- matrix(data=NA,nrow=length(times),ncol= nrow(x_test)+1)
   results[,1]<-times
@@ -449,11 +453,11 @@ aarOld<-function(pmnn, times=times,x_test=x_test){
                                          replicate(length(times),
                                                    x_test[j,],
                                                    simplify = FALSE))))
-    tempX[,c(which(colnames(x_test) == pmnn$timeVar))]<-times
+    tempX[,c(which(colnames(x_test) == cbnn$timeVar))]<-times
     
     tempOffset<-as.matrix(data.frame(offset=rep(0,length(times))))
     
-    aTemp=pmnn$model%>% predict(list(tempX,tempOffset))
+    aTemp=cbnn$model%>% predict(list(tempX,tempOffset))
     rm(tempX)
     
     results[,i]<-1-exp(-cumsum((aTemp/(1-aTemp))*(diff(times)[1]))) 
