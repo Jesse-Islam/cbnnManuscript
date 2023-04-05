@@ -30,35 +30,6 @@ Allaire, J.%
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
-Allaire%
-\ \BBA {} Tang%
-}{%
-Allaire%
-\ \BBA {} Tang%
-}{%
-{\protect \APACyear {2021}}%
-}]{%
-tf}
-\APACinsertmetastar {%
-tf}%
-\begin{APACrefauthors}%
-Allaire, J.%
-\BCBT {}\ \BBA {} Tang, Y.%
-\end{APACrefauthors}%
-\unskip\
-\newblock
-\APACrefYearMonthDay{2021}{}{}.
-\newblock
-{\BBOQ}\APACrefatitle {tensorflow: R Interface to 'TensorFlow'} {tensorflow: R
-  interface to 'tensorflow'}{\BBCQ}\ [\bibcomputersoftwaremanual].
-\newblock
-\begin{APACrefURL} \url{https://CRAN.R-project.org/package=tensorflow}
-  \end{APACrefURL}
-\newblock
-\APACrefnote{R package version 2.7.0}
-\PrintBackRefs{\CurrentBib}
-
-\bibitem [\protect \citeauthoryear {%
 Bhatnagar%
 , Turgeon%
 , Islam%
@@ -116,30 +87,6 @@ Blanche, P.%
   predicted risks}.{\BBCQ}
 \newblock
 \APACjournalVolNumPages{Biostatistics}{20}{2}{347--357}.
-\PrintBackRefs{\CurrentBib}
-
-\bibitem [\protect \citeauthoryear {%
-Bozinovski%
-}{%
-Bozinovski%
-}{%
-{\protect \APACyear {2020}}%
-}]{%
-bozinovski2020reminder}
-\APACinsertmetastar {%
-bozinovski2020reminder}%
-\begin{APACrefauthors}%
-Bozinovski, S.%
-\end{APACrefauthors}%
-\unskip\
-\newblock
-\APACrefYearMonthDay{2020}{}{}.
-\newblock
-{\BBOQ}\APACrefatitle {Reminder of the first paper on transfer learning in
-  neural networks, 1976} {Reminder of the first paper on transfer learning in
-  neural networks, 1976}.{\BBCQ}
-\newblock
-\APACjournalVolNumPages{Informatica}{44}{3}{}.
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
@@ -231,6 +178,38 @@ Curtis, C.%
   architecture of 2,000 breast tumours reveals novel subgroups}.{\BBCQ}
 \newblock
 \APACjournalVolNumPages{Nature}{486}{7403}{346--352}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Dispenzieri%
+\ \protect \BOthers {.}}{%
+Dispenzieri%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2012}}%
+}]{%
+flc}
+\APACinsertmetastar {%
+flc}%
+\begin{APACrefauthors}%
+Dispenzieri, A.%
+, Katzmann, J\BPBI A.%
+, Kyle, R\BPBI A.%
+, Larson, D\BPBI R.%
+, Therneau, T\BPBI M.%
+, Colby, C\BPBI L.%
+\BDBL {}others%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2012}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Use of nonclonal serum immunoglobulin free light chains
+  to predict overall survival in the general population} {Use of nonclonal
+  serum immunoglobulin free light chains to predict overall survival in the
+  general population}.{\BBCQ}
+\newblock
+\BIn{} \APACrefbtitle {Mayo Clinic Proceedings} {Mayo clinic proceedings}\
+  (\BVOL~87, \BPGS\ 517--523).
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
@@ -370,35 +349,6 @@ Hanley, J\BPBI A.%
   logistic regression}.{\BBCQ}
 \newblock
 \APACjournalVolNumPages{The International Journal of Biostatistics}{5}{1}{}.
-\PrintBackRefs{\CurrentBib}
-
-\bibitem [\protect \citeauthoryear {%
-Hilsenbeck%
-\ \protect \BOthers {.}}{%
-Hilsenbeck%
-\ \protect \BOthers {.}}{%
-{\protect \APACyear {1998}}%
-}]{%
-hilsenbeck1998time}
-\APACinsertmetastar {%
-hilsenbeck1998time}%
-\begin{APACrefauthors}%
-Hilsenbeck, S\BPBI G.%
-, Ravdin, P\BPBI M.%
-, Moor, C\BPBI A\BPBI d.%
-, Chamness, G\BPBI C.%
-, Osborne, C\BPBI K.%
-\BCBL {}\ \BBA {} Clark, G\BPBI M.%
-\end{APACrefauthors}%
-\unskip\
-\newblock
-\APACrefYearMonthDay{1998}{}{}.
-\newblock
-{\BBOQ}\APACrefatitle {Time-dependence of hazard ratios for prognostic factors
-  in primary breast cancer} {Time-dependence of hazard ratios for prognostic
-  factors in primary breast cancer}.{\BBCQ}
-\newblock
-\APACjournalVolNumPages{Breast cancer research and treatment}{52}{1}{227--237}.
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
@@ -572,6 +522,29 @@ Knaus, W\BPBI A.%
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
+Kyle%
+}{%
+Kyle%
+}{%
+{\protect \APACyear {1997}}%
+}]{%
+myeloma}
+\APACinsertmetastar {%
+myeloma}%
+\begin{APACrefauthors}%
+Kyle, R.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{1997}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Long term survival in multiple myeloma} {Long term
+  survival in multiple myeloma}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{New Eng J Medicine}{}{}{}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
 Lee%
 , Zame%
 , Yoon%
@@ -602,6 +575,36 @@ Lee, C.%
   Intelligence}{}{}{2314--2321}.
 \newblock
 \APACrefnote{Software from pycox version 0.2.2}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Lu-Yao%
+\ \protect \BOthers {.}}{%
+Lu-Yao%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2009}}%
+}]{%
+prostate}
+\APACinsertmetastar {%
+prostate}%
+\begin{APACrefauthors}%
+Lu-Yao, G\BPBI L.%
+, Albertsen, P\BPBI C.%
+, Moore, D\BPBI F.%
+, Shih, W.%
+, Lin, Y.%
+, DiPaola, R\BPBI S.%
+\BDBL {}others%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2009}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Outcomes of localized prostate cancer following
+  conservative management} {Outcomes of localized prostate cancer following
+  conservative management}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Jama}{302}{11}{1202--1209}.
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
@@ -692,60 +695,6 @@ Rsoft}%
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
-Ribeiro%
-, Singh%
-\BCBL {}\ \BBA {} Guestrin%
-}{%
-Ribeiro%
-\ \protect \BOthers {.}}{%
-{\protect \APACyear {2016}}%
-}]{%
-ribeiro2016model}
-\APACinsertmetastar {%
-ribeiro2016model}%
-\begin{APACrefauthors}%
-Ribeiro, M\BPBI T.%
-, Singh, S.%
-\BCBL {}\ \BBA {} Guestrin, C.%
-\end{APACrefauthors}%
-\unskip\
-\newblock
-\APACrefYearMonthDay{2016}{}{}.
-\newblock
-{\BBOQ}\APACrefatitle {Model-agnostic interpretability of machine learning}
-  {Model-agnostic interpretability of machine learning}.{\BBCQ}
-\newblock
-\APACjournalVolNumPages{arXiv preprint arXiv:1606.05386}{}{}{}.
-\PrintBackRefs{\CurrentBib}
-
-\bibitem [\protect \citeauthoryear {%
-Ripley%
-, Harris%
-\BCBL {}\ \BBA {} Tarassenko%
-}{%
-Ripley%
-\ \protect \BOthers {.}}{%
-{\protect \APACyear {2004}}%
-}]{%
-ripley2004non}
-\APACinsertmetastar {%
-ripley2004non}%
-\begin{APACrefauthors}%
-Ripley, R\BPBI M.%
-, Harris, A\BPBI L.%
-\BCBL {}\ \BBA {} Tarassenko, L.%
-\end{APACrefauthors}%
-\unskip\
-\newblock
-\APACrefYearMonthDay{2004}{}{}.
-\newblock
-{\BBOQ}\APACrefatitle {Non-linear survival analysis using neural networks}
-  {Non-linear survival analysis using neural networks}.{\BBCQ}
-\newblock
-\APACjournalVolNumPages{Statistics in medicine}{23}{5}{825--842}.
-\PrintBackRefs{\CurrentBib}
-
-\bibitem [\protect \citeauthoryear {%
 Royston%
 \ \BBA {} Parmar%
 }{%
@@ -826,69 +775,6 @@ Sonabend, R.%
   \end{APACrefURL}
 \newblock
 \APACrefnote{R package version 0.1.9}
-\PrintBackRefs{\CurrentBib}
-
-\bibitem [\protect \citeauthoryear {%
-Srivastava%
-, Hinton%
-, Krizhevsky%
-, Sutskever%
-\BCBL {}\ \BBA {} Salakhutdinov%
-}{%
-Srivastava%
-\ \protect \BOthers {.}}{%
-{\protect \APACyear {2014}}%
-}]{%
-srivastava2014dropout}
-\APACinsertmetastar {%
-srivastava2014dropout}%
-\begin{APACrefauthors}%
-Srivastava, N.%
-, Hinton, G.%
-, Krizhevsky, A.%
-, Sutskever, I.%
-\BCBL {}\ \BBA {} Salakhutdinov, R.%
-\end{APACrefauthors}%
-\unskip\
-\newblock
-\APACrefYearMonthDay{2014}{}{}.
-\newblock
-{\BBOQ}\APACrefatitle {Dropout: A simple way to prevent neural networks from
-  overfitting} {Dropout: A simple way to prevent neural networks from
-  overfitting}.{\BBCQ}
-\newblock
-\APACjournalVolNumPages{The Journal of Machine Learning
-  Research}{15}{1}{1929--1958}.
-\PrintBackRefs{\CurrentBib}
-
-\bibitem [\protect \citeauthoryear {%
-Sun%
-, Wei%
-, Chen%
-\BCBL {}\ \BBA {} Ding%
-}{%
-Sun%
-\ \protect \BOthers {.}}{%
-{\protect \APACyear {2020}}%
-}]{%
-sun2020genome}
-\APACinsertmetastar {%
-sun2020genome}%
-\begin{APACrefauthors}%
-Sun, T.%
-, Wei, Y.%
-, Chen, W.%
-\BCBL {}\ \BBA {} Ding, Y.%
-\end{APACrefauthors}%
-\unskip\
-\newblock
-\APACrefYearMonthDay{2020}{}{}.
-\newblock
-{\BBOQ}\APACrefatitle {Genome-wide association study-based deep learning for
-  survival prediction} {Genome-wide association study-based deep learning for
-  survival prediction}.{\BBCQ}
-\newblock
-\APACjournalVolNumPages{Statistics in medicine}{39}{30}{4605--4620}.
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%

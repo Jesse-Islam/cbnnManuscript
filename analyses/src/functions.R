@@ -14,11 +14,11 @@ statCalcSim<-function(metricSims){
 }
 
 plotPerformance<-function(metricSummary,xlab="Follow-up-time",method='Metric',iterations='NA'){
-  mainTitle<-paste(method,' : 95% P.I. over ', iterations, ' iterations',sep='')
+  mainTitle<-paste(method,' : 95% C.I. over ', iterations, ' iterations',sep='')
   
   a<-ggplot(data=metricSummary, aes(x=times,y=means,col=model))+
     geom_line() +
-    geom_ribbon(aes(ymin=pilower95,ymax=piupper95,fill=model),linetype=0,alpha=0.3) +
+    geom_ribbon(aes(ymin=cilower95,ymax=ciupper95,fill=model),linetype=0,alpha=0.3) +
     ggtitle(mainTitle) + 
     xlab(xlab) +
     ylab(method)
@@ -65,7 +65,7 @@ cIndexSummary<-function(et_train, et_test,riskList,cScore){
   for (i in 1:length(riskList)){
     #print(i)
     cScore[,i+1]<-calcCidx(et_train=et_train,et_test=et_test,risk=riskList[[i]],
-                           times = as.numeric(colnames(riskList[[i]])))[,2]
+                           times = as.numeric(colnames(riskList[[1]])))[,2]
   }
   cScore<-cScore
   return(na.omit(cScore))
@@ -253,9 +253,9 @@ fitSmoothHaz<-function(cbnn,epochs=2000,batch_size=500,verbose=0,monitor="val_lo
       min_delta = min_delta,
       patience = patience,
       verbose = verbose,
-      mode = c("auto"),
+      mode = c("min"),
       baseline =NULL,#lossCutOff,
-      restore_best_weights = T#,
+      restore_best_weights = F#,
       # validation_split = 0.2
     )))
   
@@ -302,7 +302,7 @@ fitSmoothHazSpline<-function(cbnn,epochs=2000,batch_size=500,verbose=0,monitor="
       verbose = verbose,
       mode = c("auto"),
       baseline =NULL,#lossCutOff,
-      restore_best_weights = T#,
+      restore_best_weights = F#,
       # validation_split = 0.2
     )))
   
@@ -469,14 +469,15 @@ aarOld<-function(cbnn, times=times,x_test=x_test){
 
 
 
-normalizer<-function(data,means,sds){
-  normalized<-data
+normalizer<-function(data,means,sds,maxTime){
+  normalized<-as.data.frame(data)
   for (i in 1:ncol(data)){
-    if(length(unique(data[,i]))>2){
+    if(length(unique(data[,i]))>1){
     normalized[,i]<-(data[,i]-means[i])/sds[i]
     }
   }
   normalized$status<-data$status
-  normalized$time<-data$time
+
+  normalized$time<-data$time/maxTime
   return(normalized)
 }

@@ -1,0 +1,671 @@
+---
+title: "plottingScript"
+output: html_document
+---
+
+
+```{r setup, include=T}
+knitr::opts_chunk$set(echo = TRUE)
+library(casebase) #core
+library(keras) #core
+source("src/functions.R") #core
+library(data.table)#corecr
+library(mltools)#corecr
+
+library(survival)#compare
+library(survminer)#compare
+library(ggplot2)#compare
+library(colorspace)#compare
+library(DT)
+library(splines)
+library(reticulate)
+
+library(simsurv)
+library(flexsurv)
+library(survivalmodels)
+library(visreg)
+
+#library(tidyverse)
+library(riskRegression)
+library(pseudo)
+
+library(tensorflow)
+library(ggrepel)
+
+library(dplyr)
+library(flextable)
+
+library(cowplot)
+library(matrixStats)
+library(tableone)
+library(gridExtra)
+library(grid)
+library(gtable)
+#tf$config$threading$set_intra_op_parallelism_threads(1)
+#tf$config$threading$set_inter_op_parallelism_threads(1)
+
+
+
+#set.seed(2)
+set.seed(1)
+epo=2000
+bsize=512
+min_delta = 10^-7
+patience = 10
+iteration=100
+e_sup=F
+eval_firstSim<-F
+numSamp<-2000
+
+
+
+pal <- function(col, border = "light gray", ...)  {
+  n <- length(col)
+  plot(0, 0, type="n", xlim = c(0, 1), xlim=c(0.05,0.95),ylim = c(0, 1),
+       axes = FALSE, xlab = "", ylab = "", ...)
+  rect(0:(n-1)/n, 0, 1:n/n, 1, col = col, border = border)
+}
+statCalcSim<-function(metricSims){
+  
+  toRemove <- which(apply(metricSims, 1, function(x){any(is.na(x))})==T)
+  if(length(toRemove)>0){
+    metricSims<-metricSims[-c(toRemove),]
+  }
+  metricSummary<-data.frame(model=metricSims$model,times=metricSims$times)
+  metricSummary<-cbind(metricSummary,sds=rowSds(as.matrix(metricSims[,-c(1,2)])),means=rowMeans(as.matrix(metricSims[,-c(1,2)])))
+  
+  ci<-apply(as.matrix(metricSims[,-c(1,2)]), 1, function(x){mean(x)+c(-1.96,1.96)*sd(x)/sqrt(length(x))})
+  rownames(ci)<-c('cilower95','ciupper95')
+  pi<-apply(as.matrix(metricSims[,-c(1,2)]), 1, function(x){quantile(x,c(.025, .975))})
+  rownames(pi)<-c('pilower95','piupper95')
+  
+  metricSummary<-cbind(metricSummary,t(ci),t(pi))
+  
+  return(metricSummary)
+}
+
+plotPerformance<-function(metricSummary,xlab="Follow-up time",method='Metric',iterations='NA',ticks=5){
+  
+  allModels<-data.frame(model=c("Null model","Cox_Lin",'CB_Logi','DeepSurv',
+                                'DeepHit','cbnn','CBNN_Poly','optimal',
+                                "Optimal"),
+                        color=qualitative_hcl(9,palette='Dark 3'),
+                        trueName=c("KM","Cox",'CBLR','DeepSurv',
+                                   'DeepHit','CBNN','CBNN','Optimal',
+                                   "Optimal"))
+  allModels$color[1]="#000000"
+  allModels$color[2]="#3cff4b"#"#7C4C74" #deephit
+  allModels$color[3]="#1e90ff"#"#4363ff" #"#F9A602"#CBLR
+  allModels$color[4]="#C0C000"#"#f032e6"#"#ff194B"
+  allModels$color[5]="#ff8231" #deepsurv
+  allModels$color[6]="#911eff"#"#911eff"
+  allModels$color[7]="#911eff"#"#42d4f4"
+  allModels$color[8]="#f00000"#"#ff32e6"
+  allModels$color[9]="#f00000"
+  allModels<- allModels[order(allModels$trueName),]
+  i <- sapply(metricSummary, is.factor)
+  metricSummary[i] <- lapply(metricSummary[i], as.character)
+  metricSummary<-metricSummary[complete.cases(metricSummary), ]
+  mainTitle<-""
+  metricSummary$color<-NA
+  for(i in 1:nrow(metricSummary)){
+    modelPos<-which(metricSummary$model[i] ==allModels$model)
+    metricSummary$model[i]<-allModels$trueName[modelPos]
+    metricSummary$color[i]<-allModels$color[modelPos]
+  }
+  
+  
+  
+  metricSummary<-metricSummary[order(metricSummary$model),]
+  
+  #colorsToUse<- which(allModels$trueName %in% metricSummary$model)
+  
+  if(method=="C-Index"){
+    method=expression("C"["IPCW"])
+  }   
+  metricSummary#<- metricSummary[-which(metricSummary$model=="CBNN_Spline"),]
+  #mainTitle<-paste(method,' : 95% P.I. over ', iterations, ' iterations',sep='')
+  colnames(metricSummary)[1]<-"Models"
+  a<-ggplot(data=metricSummary, aes(x=times,y=means,col=Models))+
+    geom_line() +
+    geom_ribbon(aes(ymin=cilower95,ymax=ciupper95,fill=Models),linetype=0,alpha=0.3) +
+    ggtitle(mainTitle) + 
+    xlab(xlab) +
+    ylab(method)+
+    theme_minimal()+
+    scale_color_manual(values=unique(metricSummary$color))+
+    scale_fill_manual(values=unique(metricSummary$color))+
+    scale_x_continuous(n.breaks=6)
+  # scale_color_manual(labels = metricSummary$model, values = metricSummary$color)
+  
+  
+  return(a)
+}
+
+
+```
+
+
+
+
+
+```{r getAll,eval=T}
+
+#age, sex, race, number of comorbidities, presence of diabetes, presence of dementia, presence of cancer, mean arterial blood pressure, heart rate, respiration rate, temperature, white blood cell count, serum’s sodium, and serum’s creatinine
+
+
+
+
+
+getPlots<-function(briers,cidxs,auc,dMax){
+  
+  BrierIPAList<-readRDS(briers)
+  
+  cidxList<-readRDS(cidxs)
+  AUClist<-readRDS(auc)
+  
+  ipaSims=data.frame(model=BrierIPAList[[1]]$model,times=BrierIPAList[[1]]$times*dMax)
+  brierSims=data.frame(model=BrierIPAList[[1]]$model,times=BrierIPAList[[1]]$times*dMax)
+  ibsSims=data.frame(model=BrierIPAList[[1]]$model,times=BrierIPAList[[1]]$times*dMax)
+  ibsTable<-as.data.frame(matrix(data=NA,nrow=100,ncol=length(unique(BrierIPAList[[1]]$model))))
+  colnames(ibsTable)<-unique(BrierIPAList[[1]]$model)
+  count=1
+  for(sim in BrierIPAList){
+    ipaSims<-cbind(ipaSims, sim$IPA)
+    brierSims<-cbind(brierSims,sim$Brier)
+    ibsSims<-cbind(ibsSims,sim$IBS)
+    for(mod in colnames(ibsTable)){
+      
+      ibsTable[count,which(mod ==colnames(ibsTable))]<-sim$IBS[sim$model==mod & sim$time==max(sim$time)]
+      
+    }
+    count<-count+1
+  }
+  ibsTable<-na.omit(ibsTable)
+  
+  
+  aucSims=data.frame(model=AUClist[[1]]$model,times=AUClist[[1]]$times*dMax)
+  for(sim in AUClist){
+    aucSims<-cbind(aucSims,sim$AUC)
+    
+  }
+  
+  
+  
+  
+  ipaSummary<-statCalcSim(ipaSims)
+  brierSummary<-statCalcSim(brierSims)
+  ibsSummary<-statCalcSim(ibsSims)
+  aucSummary<-statCalcSim(aucSims)
+  ipa<-plotPerformance(ipaSummary,method="IPA",iterations=iteration  )
+  brier<-plotPerformance(brierSummary,method="BS",iterations=iteration )
+  ibs<-plotPerformance(ibsSummary,method="IBS",iterations=iteration )
+  auc<-plotPerformance(aucSummary,method="AUC",iterations=iteration )
+  
+  
+  
+  temp<-melt(setDT(as.data.frame(cidxList[[1]])), id.vars = c("times"), variable.name = "model")
+  cidxSims=data.frame(model=temp$model,times=temp$times*dMax)
+  
+  
+  count=1
+  for(sim in cidxList){
+    cidxSims<-cbind(cidxSims, melt(setDT(as.data.frame(sim)), id.vars = c("times"), variable.name = "model")$value)
+    
+    count<-count+1
+  }
+  
+  cidxSummary<-statCalcSim(cidxSims)
+  cidxC<-plotPerformance(cidxSummary,method="C-Index",iterations=iteration  )
+  return(list(ipa=ipa,
+              brier=brier,
+              ibs=ibs,
+              cidx=cidxC,
+              auc=auc))
+}
+
+
+
+cMax<-max(readRDS("ComplexSimTest.rds")$time)/365
+mMax<-max(readRDS("myelomaTest.rds")$time)/365
+fMax<-max(readRDS("flchainTest.rds")$time)/365
+pMax<-max(readRDS("prostateTest.rds")$time)/12
+
+
+
+
+
+complex<-getPlots('results/100complexBrier.rds','results/100complexcidx.rds','results/100complexAuc.rds',cMax)
+
+myeloma<-getPlots('results/100myelomaBrier.rds','results/100myelomacidx.rds','results/100myelomaAuc.rds',mMax)
+
+flchain<-getPlots('results/100flchainBrier.rds','results/100flchaincidx.rds','results/100flchainAuc.rds',fMax)
+
+prostate<-getPlots('results/100prostateBrier.rds','results/100prostatecidx.rds','results/100prostateAuc.rds',pMax)
+#sup<-getPlots('results/100supportBrier.rds','results/100supportcidx.rds')
+
+
+
+```
+
+
+```{r megaplot,fig.height=12,fig.width=12}
+#complex[[4]]$layers[[2]]<-NULL
+pt <- plot_grid(
+  complex[[1]]+ theme(legend.position="none")+ ggtitle("Complex simulation")+ labs(x = "")+coord_cartesian(ylim=c(-0.3,0.7)),
+  myeloma[[1]]+ theme(legend.position="none")+ ggtitle("MM")+ labs(x = "",y="")+coord_cartesian(ylim=c(-1,.1)),
+  flchain[[1]]+ theme(legend.position="none")+ ggtitle("FLC")+ labs(x = "",y="")+coord_cartesian(ylim=c(-0.025,.45)),
+  prostate[[1]]+ theme(legend.position="none")+ ggtitle("Prostate")+ labs(x = "",y="")+coord_cartesian(ylim=c(-0.02,0.205)),
+  complex[[5]]+ theme(legend.position="none")+ labs(x = "Follow-up time (years)")+coord_cartesian(ylim=c(0.68,1)),
+  myeloma[[5]]+ theme(legend.position="none")+ labs(x = "Follow-up time (years)",y="")+coord_cartesian(ylim=c(0.00,0.75)),
+  flchain[[5]]+ theme(legend.position="none")+ labs(x = "Follow-up time (years)",y="")+coord_cartesian(ylim=c(0.8,0.875)),
+  prostate[[5]]+ theme(legend.position="none")+ labs(x = "Follow-up time (years)",y="")+coord_cartesian(ylim=c(0.65,0.82)),
+  # complex[[4]]+ theme(legend.position="none")+ labs(x = "Follow-up time (years)")+coord_cartesian(ylim=c(0.5,0.8)),
+  # myeloma[[4]]+ theme(legend.position="none")+ labs(x = "Follow-up time (years)",y="")+coord_cartesian(ylim=c(0.4,0.65)),
+  # flchain[[4]]+ theme(legend.position="none")+ labs(x = "Follow-up time (years)",y="")+coord_cartesian(ylim=c(0.65,0.9)),
+  # prostate[[4]]+ theme(legend.position="none")+ labs(x = "Follow-up time (years)",y="")+coord_cartesian(ylim=c(0.5,0.73)),
+  labels = c('A',"B","C","D",'E','F','G',"H"),#,"I","J","K","L"),
+  ncol=4)
+legend <- get_legend(
+  # create some space to the left of the legend
+  complex$ipa  +
+    guides(color = guide_legend(nrow = 2)) +
+    theme(legend.position = "bottom")+
+    theme(legend.text=element_text(size=8))
+)
+
+g<-plot_grid(pt, legend,ncol = 1, rel_heights = c(1, .1), rel_widths = c(3, .4))
+pdf(file="figures/megaPlot.pdf",width=16,height=9)
+g
+dev.off()
+```
+
+
+```{r flextableTablePrep,fig.height=46,fig.width=26}
+
+edit_cell <- function(table, row, col, name="core-fg", ...){
+  l <- table$layout
+  ids <- which(l$t %in% row & l$l %in% col & l$name==name)
+  for (id in ids){
+    newgrob <- editGrob(table$grobs[id][[1]], ...)
+    table$grobs[id][[1]] <- newgrob
+  }
+  table
+}
+
+
+#SUMMARY DATA ORDER, IPA BS IBS CIDX
+makeTable<-function(summaryData,study="study"){
+  allModels<-data.frame(model=c("Null model","Cox_Lin",'CB_Logi','DeepSurv',
+                                'DeepHit','CBNN_Poly','Optimal'),
+                        color=rainbow_hcl(7, start = 30, end = 300),
+                        trueName=c("KM","Cox",'CBLR','DeepSurv',
+                                   'DeepHit','CBNN','Optimal'))
+  
+  wantedScores<-c(0.25,0.5,0.75,1)
+  
+  tableResults<-as.data.frame(matrix(NA,nrow=nrow(allModels)+2,ncol=20))
+  tableResults[1,]<-c("IPA","IPA","IPA","IPA",
+                      "BS","BS","BS","BS",
+                      "IBS","IBS","IBS","IBS",
+                      "C-Index","C-Index","C-Index","C-Index",
+                      "AUC","AUC","AUC","AUC"
+  )
+  tableResults[2,]<-c(0.25,0.5,0.75,1,0.25,0.5,0.75,1,0.25,0.5,0.75,1,0.25,0.5,0.75,1,0.25,0.5,0.75,1)*100
+  indexer<-1
+  rownames(tableResults)<-c(study,"% of time",allModels$trueName)
+  meanOnly<-tableResults
+  for (i in 1:length(summaryData)){ #IPA BRIER IBS CIDX is indexed by i
+    
+    tempPos<-which(rownames(tableResults) %in% unique(summaryData[[i]]$Models)  )
+    tempModels<-rownames(tableResults)[ tempPos]
+    for(j in 1:length(tempModels)){ #indexes model
+      offset<-(i-1)*4
+      indexer=1+offset
+      for(k in 1:length(wantedScores)){ #indexes .25 .5 .75 1.0
+        tempTime<-unique(summaryData[[i]]$times)[(floor(length(unique(summaryData[[i]]$times))*wantedScores[k]))]
+        tempResRow<-which(summaryData[[i]]$Models==rownames(tableResults)[ tempPos[j]] & summaryData[[i]]$times==tempTime)
+        if(length(tempResRow)==0){
+          tempTime<-max(summaryData[[i]]$times[which(summaryData[[i]]$Models==rownames(tableResults)[ tempPos[j]])])
+          tempResRow<-which(summaryData[[i]]$Models==rownames(tableResults)[ tempPos[j]] & summaryData[[i]]$times==tempTime)
+        }
+        # if(length(round(summaryData[[i]]$means[tempResRow],2))<1){
+        #   tableResults[tempPos[j],indexer]<-"-0.23 (-0.25,-0.23)" #note that this is grabbed directly from the last estimate of Cox, as its the only time we don't get a value. So we extrapolate from the last available survival time.
+        # }else{
+        tableResults[tempPos[j],indexer]<-paste(round(summaryData[[i]]$means[tempResRow],2),
+                                                " (",round(summaryData[[i]]$cilower95[tempResRow],2),
+                                                ",",round(summaryData[[i]]$ciupper95[tempResRow],2),")",sep="")
+        meanOnly[tempPos[j],indexer]<-round(summaryData[[i]]$means[tempResRow],2)
+        #}
+        indexer<-indexer+1
+        
+      }
+    }
+    
+    
+  }
+  
+  
+  
+  return(list(tab=tableResults[-3,-c(5:16)],means=meanOnly[-3,-c(5:16)]))#
+}
+
+
+
+
+cleantables<-function(tab){
+  toRemove<-which(rowSums(is.na(tab))==ncol(tab))
+  tab[is.na(tab)]<-"-"
+  if(length(toRemove)>0){
+    
+    return(tab[-toRemove,])
+  }
+  return(tab)
+}
+
+
+
+
+quickEdit<-function(grob,rows,columns){
+  return(edit_cell(grob, rows, columns, "core-fg", 
+                   gp=gpar(fontsize=12, fontface="bold")))
+}
+
+addBorders<-function(grob){
+  grob$layout[1:2 , c("l", "r")] <- list(c(5, 9),c(2,6))
+  grob<- gtable_add_grob(grob,
+                         grobs = rectGrob(gp = gpar(fill = NA, lwd = 2)),
+                         t = 2, b = nrow(grob), l = 1, r = ncol(grob))
+  grob <- gtable_add_grob(grob,
+                          grobs = rectGrob(gp = gpar(fill = NA, lwd = 2)),
+                          t = 1, l = 1, r = ncol(grob))
+  grob <- gtable_add_grob(grob,
+                          grobs = rectGrob(gp = gpar(fill = NA, lwd = 2)),
+                          t = 1, l = 2,r=5,b= nrow(grob))
+  return(grob)
+}
+
+getMaxes<-function(Tab){
+  
+  tab<-Tab$tab
+  
+  sumer<-Tab$means[-c(1,2),]
+  sumer<-as.data.frame(apply(na.omit(sumer),2,as.numeric))
+  rowPick<-c()
+  colPick<-c()
+  
+  rows<-apply(sumer,2,function(x){which(x==max(x))})
+  cols<-c()
+  for(i in 1:length(rows)){
+    cols<-append(cols,rep(i,length(rows[[i]])))
+  }
+  rows<-c(5,as.vector(unlist(rows)))
+  picks<-data.frame(row=rows,
+                    col=c(0,cols))
+  return(picks)
+}
+
+convert0<-function(tab){
+  tempNames<-rownames(tab)
+  tab<-as.data.frame(lapply(tab, function(x){gsub("0 ","0.00 ", x,fixed=T)}))
+  tab<-as.data.frame(lapply(tab, function(x){gsub('(0,',"(0.00,", x,fixed=T)}))
+  tab<-as.data.frame(lapply(tab, function(x) gsub(",0)",",0.00)", x,fixed=T)))
+  rownames(tab)<-tempNames
+  return(tab)
+}
+
+flexMaker<-function(tab,boldPicks=NA,title){
+  boldPicks$col=boldPicks$col+1 #makes finding the correct ones easier.
+  bord<-fp_border_default(color="black",style="solid")
+  bord2<-fp_border_default(color="black",style="solid",width = 2)
+  tab<-cbind(rownames(tab),tab)
+  ft<-delete_part(flextable(tab[-c(1,2),],cwidth=5,cheight=1), part = "header")
+  
+  ft <- add_header_row(x = ft, values = c(title,"IPA","AUC"),
+                       colwidths = c(1,4,4))
+  # ft <- compose(ft, part = "header", i = 1, j = 6,
+  #               value = as_paragraph("C",
+  #                                    as_sub("IPCW")))
+  #ft<-bold(ft, bold = TRUE, part = "header")
+  
+  #ft$header$styles$text$bold$data
+  ft <- add_header_row(x = ft,top=F, values = c("Method", 25,50,75,100,25,50,75,100),
+                       colwidths = c(1,1,1,1,1,1,1,1,1))
+  ft$header$styles$text$bold$data[1,1]<-T
+  #ft <- add_header_row(
+  #  x = ft, values = c(title),
+  #  colwidths = c(9))
+  ft <- align(ft, i = c(1,2), part = "header", align = "center")
+  ft<-vline(ft, j = c(1,5), border = bord2, part = "body")
+  ft<-hline(ft,i=c(1,2),border=bord2,part="header")
+  #ft<-hline(ft,i=c(1),border=bord,part="body")
+  ft<-fontsize(ft, i = NULL, j = NULL, size =7, part = "all")
+  ft<-fontsize(ft, i = NULL, j = NULL, size =10, part = "header")
+  ft <- align(ft, i = NULL, part = "body", align = "center")
+  ft$body$styles$text$font.size$data[,1]<-10
+  
+  if(is.data.frame(boldPicks)){
+    for(i in 1:nrow(boldPicks)){
+      ft$body$styles$text$bold$data[boldPicks$row[i],boldPicks$col[i]]<-T
+    }
+  }
+  return(rasterGrob(as_raster(autofit(ft))))
+}
+
+```
+
+
+
+```{r flexTableMain,fig.height=46,fig.width=26}
+
+getFlex<-function(result,titler="X: study"){
+  Tab<-makeTable(list(result$ipa$data,result$brier$data,result$ibs$data,result$cidx$data,result$auc$data),study="Complex")
+  Picks<-getMaxes(Tab)
+  Tab<-cleantables(Tab$tab)
+  Tab<-convert0(Tab)
+  Flex<-flexMaker(tab=Tab,boldPicks = Picks,title=titler)
+  
+}
+
+cFlex<-getFlex(complex,"A: Complex")
+mFlex<-getFlex(myeloma,"B: MM")
+fFlex<-getFlex(flchain,"C: FLC")
+pFlex<-getFlex(prostate,"D: Prostate")
+
+
+
+pdf(file="figures/megaTable.pdf",width=14,height=13)
+cowplot::plot_grid(cFlex,mFlex,fFlex,pFlex,ncol=1)
+dev.off()
+
+
+```
+
+
+```{r hyperparams}
+
+getWinsTable<-function(win,main){
+  winners<-readRDS(win)
+  
+  
+  winners$cbnn$alp="-"
+  winners$ds$alp="-"
+  winners$ds<-winners$ds[,c(1,2,3,4,5,6,9,7,8)]
+  
+  winners$cbnn<-winners$cbnn[,c(1,2,3,4,5,6,9,7,8)]
+  tabWin<-data.frame(CBNN=t(winners$cbnn),
+                     DeepSurv=t(winners$ds),
+                     DeepHit=t(winners$dh))
+  
+  colnames(tabWin)<-c("CBNN","DeepSurv","DeepHit")
+  rownames(tabWin)<-c("Learning rate","Dropout","First layer nodes","Second layer nodes","Number of batches","Activation function","\U03B1","IBS","runtime")
+  tabWin$`Hyper parameter`<-rownames(tabWin)
+  tabWin<-tabWin[,c(4,1,2,3)]
+  tabWin<-tabWin[-nrow(tabWin),]
+  
+  ft<-flextable(tabWin,cwidth=1.35,cheight=0.1)%>%flextable::hline(i = 7, part = 'body')
+  ft <- add_header_row(x = ft, values = c(main),
+                       colwidths = c(4))
+  ft$header$styles$text$bold$data[1,1]<-T
+  ft<-ft%>%hline_top(border = fp_border_default(width = 0), 
+                     part = "header")
+  
+  return(rasterGrob(as_raster(autofit(ft))))
+}
+
+
+
+cwtab<-getWinsTable("complexOptimWins.rds","A: Complex")
+mwtab<-getWinsTable("myelomaWins.rds","B: MM")
+fwtab<-getWinsTable("flchainWins.rds","C: FLC")
+pwtab<-getWinsTable("prostateWins.rds","D: Prostate")
+
+
+pdf(file="figures/winTable.pdf",width=12,height=6)
+cowplot::plot_grid(cwtab,mwtab,fwtab,pwtab,ncol=2)
+dev.off()
+
+```
+
+
+
+```{r complexHazard}
+
+library(casebase)
+
+
+
+klist<-readRDS("ComplexSimCV.rds")
+data<-rbind(klist[[1]]$train,klist[[1]]$val)
+
+
+
+
+
+start_time <- Sys.time()
+BrierIPAList<-list()
+cScore<-list()
+pos<-1
+
+
+spec = c(train = .85, validate = .15)
+
+g = sample(cut(
+  seq(nrow(data)), 
+  nrow(data)*cumsum(c(0,spec)),
+  labels = names(spec)
+))
+
+res = split(data, g)
+
+
+
+
+trainOG<-res$train
+
+numSamp<-nrow(trainOG)
+samp<-sample(seq(1,nrow(trainOG),by=1) , nrow(trainOG),replace = T) 
+train<-trainOG[samp,]
+
+
+#train<-res$train
+val<-res$validate
+
+sds<-sapply(train, function(x) (sd(x)))
+means<-sapply(train, function(x) (mean(x)))
+maxTime<-max(train$time)
+
+fullTest<-readRDS("ComplexSimTest.rds")
+test<-fullTest[,-c(ncol(data))]
+test<-normalizer(fullTest,means,sds,maxTime)[,-c(ncol(data))]
+fullTest<-normalizer(fullTest,means,sds,maxTime)
+
+val<-normalizer(res$validate,means,sds,maxTime)
+
+train<-normalizer(train,means,sds,maxTime)
+linModelTrain<-as.data.frame(rbind(train,val))
+
+fakeTrain<-train
+fakeTrain$status[which((fakeTrain$status==1) & (fakeTrain$z1==max(fakeTrain$z1)))]<-2
+
+dat<-popTime(fakeTrain,time="time",event="status")
+a<-plot(dat, add.competing.event = T) +scale_color_manual(labels = c("Time-constant", "Time-varying"),values=c("red","blue"))+scale_fill_manual(labels = c("Time-constant", "Time-varying"),values=c("red","blue"))+
+  guides(color = "none")+labs(fill="Case-series events")
+
+
+pdf(file="figures/ComplexPopTime.pdf",width=8,height=6)
+a
+dev.off()
+
+#https://onlinelibrary.wiley.com/doi/10.1111/biom.12232
+
+```
+
+
+
+```{r codeDump,eval=F,include=F}
+
+
+times<-seq(from=min(test$time),
+           to=max(test$time),
+           length.out = 27
+)
+
+times<-head(times, -1)
+times<-tail(times, -1)
+
+
+
+haz_inter <- fitSmoothHazard(status~bs(time)+ z1+z2+z3+z1:time+z2:z3-time,
+                             data = linModelTrain,
+                             time = "time")
+
+
+nonPH<-casebase::hazardPlot(haz_inter,newdata = data.frame(z1=max(train$z1),z2=1,z3=1))
+nonPH$`Time Varying`<-TRUE
+PH<- casebase::hazardPlot(haz_inter,newdata = data.frame(z1=min(train$z1),z2=0,z3=1))
+PH$`Time Varying`<-FALSE
+
+
+H<-as.data.frame(rbind(nonPH,PH))
+
+
+ggplot(H,aes(x=time,y=predictedhazard,col=`Time Varying`))+geom_line()
+fill_cols <- c("z1=0" = "Red", "z1=1" = "#009E73",
+               "Base series" = "#0072B2")
+g<-plot(popTime(train,time="time",event="status",),  add.competing.event=T,fill.params = list(
+  name = element_blank(),
+  breaks = c("Case series", "Competing event", "Base series")
+))
+
+g
+
+
+a<-popTime(train,time="time",event="status",   
+           
+)
+
+
+plot(mod_cb_tvc,
+     hazard.params = list(xvar = "time",
+                          by = "z1",
+                          alpha = 1,
+                          ylab = "Hazard")) 
+
+
+
+
+
+mod_cb_tvc <- fitSmoothHazard(censrec ~ hormon * ns(log(rectime), df = 3),
+                              data = brcancer,
+                              time = "rectime")
+plot(mod_cb_tvc,
+     hazard.params = list(xvar = "rectime",
+                          by = "hormon",
+                          alpha = 0.05,
+                          ylab = "Hazard")) 
+
+
+
+
+```

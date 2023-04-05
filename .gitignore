@@ -43,3 +43,4 @@ analyses/DeepSurv
 analyses/DeepSurvivalMachines
 
 analyses/metabricData
+analysis/*.rds

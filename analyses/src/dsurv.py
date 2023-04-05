@@ -68,7 +68,14 @@ def fitDeepSurv(train,fullTest,bsize,epochs,valida,patience,min_delta,drpt,lay1,
        torch.nn.Dropout(float(dropout)),
        torch.nn.Linear(int(lay2), out_features))
     
-  
+  if actv=='linear':
+    net = torch.nn.Sequential(
+       torch.nn.Linear(in_features,int(lay1)),
+       torch.nn.Dropout(float(dropout)),
+       torch.nn.Linear(int(lay1), int(lay2)),
+       torch.nn.Dropout(float(dropout)),
+       torch.nn.Linear(int(lay2), out_features))
+       
   model = CoxPH(net, tt.optim.Adam)
   
   model.optimizer.set_lr(lr)

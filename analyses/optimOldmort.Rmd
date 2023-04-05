@@ -1,0 +1,937 @@
+---
+title: "oldmort"
+output: html_document
+params:
+  epo: 2000
+  patience: 10
+  iteration: 100
+  layer1: 12
+  layer2: 12
+  layer3: 100
+  layer4: 100
+  drpt: 0.1
+  lr: 0.01
+---
+
+```{r}
+library(reticulate)
+
+```
+
+```{python}
+
+import os
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID" 
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+
+```
+
+
+```{r setup, include=T}
+set.seed(1)
+knitr::opts_chunk$set(echo = TRUE)
+source("src/packages.R")
+source("src/functions.R")
+library(reticulate)
+eval_oldmort<-T
+#source_python('src/getSUP.py')
+source_python("src/cIndex.py")
+#source_python("src/dsmScript.py")
+#source_python('src/deephitter.py')
+##########################
+###Shared Hyperparameters
+##########################
+#bsize=512
+min_delta = 0 #10^-7
+
+epo=as.numeric(params$epo)
+patience <- as.numeric(params$patience)
+iteration<-as.numeric(params$iteration)
+
+
+
+#baselineTrials<-2
+
+reoptimize=T
+
+finalFit=T
+```
+
+
+#5 fold cross validation to select best hyperparameters, average performance on a test set.
+
+```{r oldmortPrep,eval=FALSE,hide=FALSE}
+
+
+library(eha)
+
+data("oldmort")
+
+
+oldmort<-oldmort
+
+omor=as.data.frame(matrix(NA,nrow=length(unique(oldmort$id)),ncol=ncol(oldmort)))
+colnames(omor)<-colnames(oldmort)
+unique(oldmort$id)[1]
+j<-1
+for(i in 1:length(unique(oldmort$id))){
+  temp<-which(oldmort$id %in% unique(oldmort$id)[i])
+  if(length(temp)==1){
+    omor[j,]<-oldmort[temp,]
+    j<-j+1
+  }else if(length(temp)>1){
+    tempData<-oldmort[which(oldmort$id %in% unique(oldmort$id)[i]),]
+    omor[j,]<-tempData[which.min(tempData$enter),]
+    omor[j,]$exit<-max(tempData$exit)
+    omor[j,]$event<-sum(tempData$event)>0
+    j<-j+1
+  }
+  
+}
+
+
+
+oldmort<-omor
+preData<-data.frame(sex=as.factor(oldmort$sex),
+                    civ=as.factor(oldmort$civ),
+                    ses=as.factor(oldmort$ses.50),
+                    birthplace=as.factor(oldmort$birthplace),
+                    ageAtEntry=oldmort$enter,
+                    imrAtBirth=oldmort$imr.birth,
+                    region=as.factor(oldmort$region),
+                    birthdate=oldmort$birthdate,
+                    time=oldmort$exit-oldmort$enter,
+                    status=as.numeric(oldmort$event))
+
+modData<-as.data.frame(model.matrix(~.,preData)[,-1])
+
+
+data<-as.data.frame(apply(modData,2,as.numeric))
+
+spec = c(train = .85, test = .15)
+
+g = sample(cut(
+  seq(nrow(data)), 
+  nrow(data)*cumsum(c(0,spec)),
+  labels = names(spec)
+))
+
+res = split(data, g)
+
+
+
+
+
+
+saveRDS(res$test,"oldmortTest.rds")
+
+
+k=3
+klist<-list()
+data<-res$train
+for(i in 1:k){
+  
+  
+  
+  spec = c(train = .85, val = .15)
+  
+  g = sample(cut(
+    seq(nrow(data)), 
+    nrow(data)*cumsum(c(0,spec)),
+    labels = names(spec)
+  ))
+  klist[[i]]= split(data, g)
+}
+saveRDS(klist,"oldmortCV.rds")
+
+
+
+
+```
+
+
+
+```{r setFixedHyperparameters,eval=FALSE,hide=FALSE}
+
+
+klist<-readRDS("oldmortCV.rds")
+
+
+# lr=c(0.001)
+# drpt=c(0.25,0.5)
+# layer1=c(10,20,30)
+# layer2=c(10,20,30)
+# bsize=c(floor(nrow(klist[[1]]$train)/100))
+# actv=c("relu","linear")#,"tanh"
+# alp=c(0)
+
+lr=c(0.001,0.01)
+drpt=c(0.01,0.05,0.1)
+layer1=c(50,75,100)
+layer2=c(10,25,50)
+nBatch=c(100,500)
+actv=c("relu","linear")#
+alp=c(0,0.5,1)
+
+# 
+# lr=c(0.001)
+# drpt=c(0.25)
+# layer1=c(20)
+# layer2=c(10)
+# nBatch=c(1000,100)
+# actv=c("relu")#
+# alp=c(0)
+
+```
+
+```{r hyperOpDsurv,eval=FALSE,hide=FALSE}
+
+
+optimDeepSurv<-function(klist,test,baselineTrials,lr,drpt,layer1,layer2,nBatch,actv){
+  
+  paramTrials<-as.data.frame(tidyr::crossing(lr=lr,
+                                             drpt=drpt,
+                                             layer1=layer1,
+                                             layer2=layer2,
+                                             nBatch=nBatch,
+                                             actv=actv,
+                                             #IPA=NA,
+                                             #IPAse=NA,
+                                             valLoss=NA,
+                                             runtime=NA))
+  
+  #paramTrials<-paramTrials[sample(nrow(paramTrials), baselineTrials), ]
+  
+  
+  
+  
+  
+  
+  # paramTrials<-unique.data.frame(paramTrials)
+  #paramTrials<-readRDS("complexTrials.rds")
+  for(i in 1:nrow(paramTrials)){
+    #paramTrials<-readRDS("complexTrials.rds")  
+    tempRes<-c()
+    tempVal<-c()
+    runTime<-c()
+    
+    for(data in klist){
+      currentTime<-Sys.time() 
+      train<-data$train
+      val<-data$val
+      maxTime<-max(train$time)
+      sds<-sapply(train, function(x) (sd(x)))
+      means<-sapply(train, function(x) (mean(x)))
+      val<-normalizer(val,means,sds,maxTime)
+      train<-normalizer(train,means,sds,maxTime)
+      times<-seq(from=min(val$time),
+                 to=max(val$time),
+                 length.out = 22
+      )
+      
+      
+      times<-head(times, -1)
+      times<-tail(times, -1)
+      
+      lr=paramTrials[i,]$lr
+      drpt=paramTrials[i,]$drpt
+      layer1=paramTrials[i,]$layer1
+      layer2=paramTrials[i,]$layer2
+      bsize=ceiling(nrow(train)/paramTrials[i,]$nBatch)
+      actv=paramTrials[i,]$actv
+      #=paramTrials[i,]$IPA
+      #=paramTrials[i,]$valLoss
+      source_python('src/dsurv.py')
+      
+      ctrain<-train
+     ctrain$time<- train$time + runif(nrow(train),-0.000001,0.000001)
+
+
+      coxnnsurv=fitDeepSurv(ctrain,val,bsize,epochs=epo,valida=val,patience=patience,min_delta=min_delta,drpt=drpt,lay1=layer1,lay2=layer2,lr=lr,actv=actv)
+      
+      
+      
+      coxnnsurv<-t(coxnnsurv)
+      cnnCleaned<-pyProcess(coxnnsurv,times=times)
+      colnames(cnnCleaned)<-times
+      py_run_string("del fitDeepSurv")
+      rm(fitDeepSurv)
+      
+      miniee <- Score(list('mod'=cnnCleaned),
+                      data =val, 
+                      formula = Hist(time, status != 0) ~ 1, summary = c("risks","IPA","ibs"), 
+                      se.fit = FALSE, metrics = "brier", contrasts = FALSE, times = times)$Brier$score
+      
+      
+      tempVal<-append(tempVal,miniee$IBS[which(miniee$model=="mod" & miniee$times==max(miniee$times))])
+      runTime<-append(runTime, Sys.time()-currentTime)
+      currentTime<-Sys.time() 
+      
+      # coxnnsurv<-coxnnsurv[[1]]
+      # coxnnsurv<-t(coxnnsurv)
+      # #colnames(coxnnsurv)<-seq(0,1,length.out = ncol(coxnnsurv))
+      # cnnCleaned<-pyProcess(coxnnsurv,times=times)
+      # colnames(cnnCleaned)<-times#seq(0,1,length.out = ncol(cnnCleaned))
+      # py_run_string("del fitDeepSurv")
+      # rm(fitDeepSurv)
+      # brierFinalResults <- Score(list('ds'=cnnCleaned),
+      #                            data =as.data.frame(val),#rbind(train,val) 
+      #                            formula = Hist(time, status != 0) ~ 1, summary = c("risks","IPA","ibs"), 
+      #                            se.fit = FALSE, metrics = "brier", contrasts = FALSE, times = times)$Brier$score
+      # cutted<-brierFinalResults[which(brierFinalResults$model=="ds"),]
+      #tempRes<-append(tempRes,mean(cutted[-c(1,2,24,25)]$IPA))
+    }
+    
+    #paramTrials$IPA[i]<-mean(tempRes)
+    #paramTrials$IPAse[i]<-sd(tempRes)
+    paramTrials$valLoss[i]<-mean(tempVal)
+    paramTrials$runtime[i]<-mean(runTime)
+    saveRDS(paramTrials,"complexds.rds")
+    print(paste("trial",i))
+    print(sum(runTime))
+    #print(as.character(paramTrials[i,]))
+    #rm(cbnn,fit,annPreds,covars_input,covars_output)
+    gc()
+  }
+  bestPerformance<-paramTrials[which.min(paramTrials$valLoss),]
+  return(bestPerformance)
+}
+
+
+klist<-readRDS("oldmortCV.rds")
+test<-readRDS("oldmortTest.rds")
+source_python('src/dsurv.py')
+bestDS<-optimDeepSurv(klist,test,baselineTrials=baselineTrials,lr,drpt,layer1,layer2,nBatch,actv)
+
+```
+
+```{r optimDeepHit,eval=FALSE,hide=FALSE}
+
+
+
+
+optimDeepHit<-function(klist,test,times,baselineTrials,lr,drpt,layer1,layer2,nBatch,actv,alp){
+  
+  paramTrials<-as.data.frame(tidyr::crossing(lr=lr,
+                                             drpt=drpt,
+                                             layer1=layer1,
+                                             layer2=layer2,
+                                             nBatch=nBatch,
+                                             actv=actv,
+                                             alp=alp,
+                                             #IPA=NA,
+                                             #IPAse=NA,
+                                             valLoss=NA,
+                                             runtime=NA))
+  
+  
+  #paramTrials<-paramTrials[sample(nrow(paramTrials), baselineTrials), ]
+  
+  
+  
+  
+  
+  
+  # paramTrials<-unique.data.frame(paramTrials)
+  #paramTrials<-readRDS("complexTrials.rds")
+  for(i in 1:nrow(paramTrials)){
+    #paramTrials<-readRDS("complexTrials.rds")  
+    tempRes<-c()
+    tempVal<-c()
+    runTime<-c()
+    
+    for(data in klist){
+      currentTime<-Sys.time() 
+      train<-data$train
+      val<-data$val
+      maxTime<-max(train$time)
+      sds<-sapply(train, function(x) (sd(x)))
+      means<-sapply(train, function(x) (mean(x)))
+      val<-normalizer(val,means,sds,maxTime)
+      train<-normalizer(train,means,sds,maxTime)
+      times<-seq(from=min(val$time),
+                 to=max(val$time),
+                 length.out = 22
+      )
+      
+      times<-head(times, -1)
+      times<-tail(times, -1)
+      
+      lr=paramTrials[i,]$lr
+      drpt=paramTrials[i,]$drpt
+      layer1=paramTrials[i,]$layer1
+      layer2=paramTrials[i,]$layer2
+      bsize=ceiling(nrow(train)/paramTrials[i,]$nBatch)
+      actv=paramTrials[i,]$actv
+      alp=paramTrials[i,]$alp
+      #=paramTrials[i,]$IPA
+      #=paramTrials[i,]$valLoss
+      source_python('src/deephitter.py')
+      hitnnSurv=fitDeephit(train,val,bsize,epochs=epo,valida=val,patience=patience,min_delta=min_delta,drpt=drpt,lay1=layer1,lay2=layer2,lr=lr,actv=actv,alp=alp)
+      hitnnSurv<-t(hitnnSurv)
+      deephitCleaned<-pyProcess(hitnnSurv,times=times)
+      colnames(deephitCleaned)<-times
+      py_run_string("del fitDeephit")
+      rm(fitDeephit)
+      
+      
+      miniee <- Score(list('mod'=deephitCleaned),
+                      data =val, 
+                      formula = Hist(time, status != 0) ~ 1, summary = c("risks","IPA","ibs"), 
+                      se.fit = FALSE, metrics = "brier", contrasts = FALSE, times = times)$Brier$score
+      
+      
+      tempVal<-append(tempVal,miniee$IBS[which(miniee$model=="mod" & miniee$times==max(miniee$times))])
+      runTime<-append(runTime, Sys.time()-currentTime)
+      currentTime<-Sys.time() 
+    }
+    
+    
+    #paramTrials$IPA[i]<-mean(tempRes)
+    #paramTrials$IPAse[i]<-sd(tempRes)
+    paramTrials$valLoss[i]<-mean(tempVal)
+    paramTrials$runtime[i]<-mean(runTime)
+    saveRDS(paramTrials,"complexds.rds")
+    print(paste("trial",i))
+    print(sum(runTime))
+    #print(as.character(paramTrials[i,]))
+    #rm(cbnn,fit,annPreds,covars_input,covars_output)
+    gc()
+  }
+  bestPerformance<-paramTrials[which.min(paramTrials$valLoss),]
+  return(bestPerformance)
+}
+
+
+
+klist<-readRDS("oldmortCV.rds")
+test<-readRDS("oldmortTest.rds")
+times<-seq(from=min(test$time)+0.000001,
+           to=max(test$time)-0.000001,
+           length.out = 25
+)
+
+bestDH<-optimDeepHit(klist,test,times,baselineTrials=baselineTrials,lr,drpt,layer1,layer2,nBatch,actv,alp)
+
+
+
+
+```
+
+
+```{r hyperopcbnn,eval=FALSE,hide=FALSE}
+
+
+
+
+optimCBNN<-function(klist,test,times,lr,drpt,layer1,layer2,nBatch,actv){
+  
+  # 
+  # for (i in 1:length(klist)){
+  #   #train<-sampleCaseBase(data = as.data.frame(klist[[i]]$train),time="time",event="status",ratio=100)
+  #   valcb<-sampleCaseBase(data = as.data.frame(klist[[i]]$val),time="time",event="status",ratio=100)
+  #   valcbtensor<-list(list(as.matrix(valcb[,-c(ncol(valcb)-1,ncol(valcb))]),
+  #                          as.matrix(valcb[,ncol(valcb),drop=F])),
+  #                     as.matrix(valcb[,ncol(valcb)-1,drop=F]))
+  #   #valcbtensor[[1]][[2]]<-rep(train$offset[1],nrow(valcbtensor[[1]][[1]]))      
+  #   #klist[[i]]$train<-train
+  #   klist[[i]]$val<-valcbtensor
+  # }
+  
+  
+  
+  
+  
+  
+  paramTrials<-as.data.frame(tidyr::crossing(lr=lr,
+                                             drpt=drpt,
+                                             layer1=layer1,
+                                             layer2=layer2,
+                                             nBatch=nBatch,
+                                             actv=actv,
+                                             #IPA=NA,
+                                             #IPAse=NA,
+                                             valLoss=NA,
+                                             runtime=NA))
+  
+  #paramTrials<-paramTrials[sample(nrow(paramTrials), 2), ]
+  
+  
+  # paramTrials<-unique.data.frame(paramTrials)
+  #paramTrials<-readRDS("complexTrials.rds")
+  for(i in 1:nrow(paramTrials)){
+    #paramTrials<-readRDS("complexTrials.rds")  
+    tempRes<-c()
+    tempVal<-c()
+    runTime<-c()
+    
+    for(data in klist){
+      
+      
+      
+      train<-data$train
+      val<-data$val
+      maxTime<-max(train$time)
+      sds<-sapply(train, function(x) (sd(x)))
+      means<-sapply(train, function(x) (mean(x)))
+      #val[[1]][[1]]<-as.matrix(normalizer(as.data.frame(val[[1]][[1]]),means,sds))
+      train<-normalizer(train,means,sds,maxTime)
+      
+      #train[,ncol(train)]<-data$train[,ncol(train)]
+      val<-normalizer(val,means,sds,maxTime)
+      valTest<-val
+      times<-seq(from=min(val$time),
+                 to=max(val$time),
+                 length.out = 22
+      )
+      
+      times<-head(times, -1)
+      times<-tail(times, -1)
+      
+      train<-sampleCaseBase(data = as.data.frame(train),time="time",event="status",ratio=100)
+      valcb<-sampleCaseBase(data = as.data.frame(val),time="time",event="status",ratio=100)
+      val<-list(list(as.matrix(valcb[,-c(ncol(valcb)-1,ncol(valcb))]),
+                     as.matrix(valcb[,ncol(valcb),drop=F])
+      ),
+      as.matrix(valcb[,ncol(valcb)-1,drop=F])
+      )
+      val[[1]][[2]]<-rep(train$offset[1],nrow(val[[1]][[1]]))
+      #val[[1]][[2]]<-rep(0,nrow(val[[1]][[1]]))
+      
+      
+      
+      
+      lr=paramTrials[i,]$lr
+      drpt=paramTrials[i,]$drpt
+      layer1=paramTrials[i,]$layer1
+      layer2=paramTrials[i,]$layer2
+      bsize=c(floor(nrow(train)/paramTrials[i,]$nBatch))
+      actv=paramTrials[i,]$actv
+      
+      
+      
+      currentTime<-Sys.time() 
+      
+      covars_input<-layer_input(shape=c(length(colnames(train))-2),
+                                name = 'main_input')
+      
+      covars_output<-covars_input%>% 
+        layer_dense(units=layer1,use_bias = T,activation = actv)%>%
+        layer_dropout(drpt)%>%
+        layer_dense(units=layer2,use_bias = T,activation = actv)%>%
+        layer_dropout(drpt)%>%
+        layer_dense(units=1,use_bias = T)
+      
+      cbnn<-cbnnModel(features=colnames(train)[-ncol(train)],
+                      feature_input = covars_input,
+                      feature_output = covars_output,
+                      originalData = train,
+                      offset=train$offset,
+                      timeVar = "time",
+                      eventVar= "status",optimizer=optimizer_adam(learning_rate = lr)
+      )
+      
+      fit<-fitSmoothHaz(cbnn,
+                        epochs=epo,
+                        batch_size=bsize,
+                        verbose=0,
+                        monitor="val_loss",
+                        #val_split=0.2,
+                        min_delta=min_delta,
+                        patience=patience,val=val)
+      #tempVal<-append(tempVal,min(fit$resultOfFit$metrics$val_loss))
+      annPreds<-aar(fit,
+                    times=times,
+                    x_test=valTest[,-c(ncol(valTest))]
+      )
+      
+      rownames(annPreds)<-annPreds[,1]
+      annProperpoly<- t(annPreds[,-1])
+      class(annProperpoly)<-c("tunnel",class(annProperpoly)) 
+      
+      
+      miniee <- Score(list('mod'=annProperpoly),
+                      data =valTest, 
+                      formula = Hist(time, status != 0) ~ 1, summary = c("risks","IPA","ibs"), 
+                      se.fit = FALSE, metrics = "brier", contrasts = FALSE, times = times)$Brier$score
+      
+      
+      tempVal<-append(tempVal,miniee$IBS[which(miniee$model=="mod" & miniee$times==max(miniee$times))])
+      
+      runTime<-append(runTime, Sys.time()-currentTime)
+      currentTime<-Sys.time() 
+      
+      rm(cbnn,fit,covars_input,covars_output)
+    }
+    
+    
+    
+    
+    paramTrials$valLoss[i]<-mean(tempVal)
+    paramTrials$runtime[i]<-mean(runTime)
+    saveRDS(paramTrials,"complexds.rds")
+    print(paste("trial",i,"out of ",nrow(paramTrials)))
+    print(sum(runTime))
+    #print(as.character(paramTrials[i,]))
+    #rm(cbnn,fit,annPreds,covars_input,covars_output)
+    gc()
+  }
+  bestPerformance<-paramTrials[which.min(paramTrials$valLoss),]
+  return(bestPerformance)
+}
+
+
+klist<-readRDS("oldmortCV.rds")
+test<-readRDS("oldmortTest.rds")
+
+cbnnPerformance<-optimCBNN(klist,test,times,lr,drpt,layer1,layer2,nBatch,actv)
+#cbnnPerformance<-cbnnPerformance[which.min(cbnnPerformance$valLoss),]
+```
+
+
+```{r winners,eval=FALSE,hide=FALSE}
+winners<-list(cbnn=cbnnPerformance,
+              ds=bestDS,
+              dh=bestDH)
+
+saveRDS(winners,"oldmortWins.rds")
+
+```
+
+```{r bestFits,finalFit}
+
+winners<-readRDS("oldmortWins.rds")
+
+
+klist<-readRDS("oldmortCV.rds")
+data<-rbind(klist[[1]]$train,klist[[1]]$val)
+#data$time<-data$time/max(data$time)
+
+
+
+
+start_time <- Sys.time()
+BrierIPAList<-list()
+cScore<-list()
+pos<-1
+
+
+spec = c(train = .85, validate = .15)
+
+g = sample(cut(
+  seq(nrow(data)), 
+  nrow(data)*cumsum(c(0,spec)),
+  labels = names(spec)
+))
+
+res = split(data, g)
+
+
+while (pos <= iteration) {
+  
+  
+  
+  
+  
+  
+  trainOG<-res$train
+  
+  numSamp<-nrow(trainOG)
+  samp<-sample(seq(1,nrow(trainOG),by=1) , nrow(trainOG),replace = T) 
+  train<-trainOG[samp,]
+  
+  
+  #train<-res$train
+  val<-res$validate
+  
+  sds<-sapply(train, function(x) (sd(x)))
+  means<-sapply(train, function(x) (mean(x)))
+  maxTime<-max(train$time)
+  
+  fullTest<-readRDS("oldmortTest.rds")
+  test<-fullTest[,-c(ncol(data))]
+  test<-normalizer(fullTest,means,sds,maxTime)[,-c(ncol(data))]
+  fullTest<-normalizer(fullTest,means,sds,maxTime)
+  
+  val<-normalizer(res$validate,means,sds,maxTime)
+  
+  train<-normalizer(train,means,sds,maxTime)
+  
+  
+  linModelTrain<-as.data.frame(rbind(train,val))
+  #valcb<-sampleCaseBase(data = as.data.frame(val),time="time",event="status",ratio=100)#rbind(train,val)
+  #valcb$offset<-0
+  #valcbtensor<-list(list(as.matrix(valcb[,-c(ncol(valcb)-1,ncol(valcb))]),as.matrix(valcb[,ncol(valcb),drop=F])),as.matrix(valcb[,ncol(valcb)-1,drop=F]))
+  times<-seq(from=min(test$time),
+             to=max(test$time),
+             length.out = 20
+  )
+  
+  times<-head(times, -1)
+  times<-tail(times, -1)
+  
+  
+  
+  #########################
+  ###casebase+splines
+  ##########################
+  mod_cb_glm <- casebase::fitSmoothHazard(status~bs(time)+.-time,
+                                          data = linModelTrain,
+                                          time = "time",
+                                          event= "status",
+                                          ratio = 100
+  )
+  
+  glmAbsRisk<-as.data.frame(absoluteRisk(mod_cb_glm,time=times,newdata=test,type="CI"))
+  rownames(glmAbsRisk)<-glmAbsRisk$time
+  glmProper<- t(glmAbsRisk[-1,-1])
+  class(glmProper)<-c("tunnel",class(glmProper))
+  
+  
+  
+  #############################
+  ###DEEPSURV
+  #############################
+  
+  lr=winners$ds$lr
+  drpt=winners$ds$drpt
+  layer1=winners$ds$layer1
+  layer2=winners$ds$layer2
+  bsize=ceiling(nrow(train)/winners$ds$nBatch)
+  actv=winners$ds$actv
+  
+  
+  source_python('src/dsurv.py')
+      ctrain<-train
+      ctrain$time<- train$time + runif(nrow(train),-0.000001,0.000001)
+
+  
+  coxnnsurv=fitDeepSurv(ctrain,fullTest,bsize,epochs=epo,valida=val,patience=patience,min_delta=min_delta,drpt=drpt,lay1=layer1,lay2=layer2,lr=lr,actv=actv)
+  coxnnsurv<-t(coxnnsurv)
+  
+  cnnCleaned<-pyProcess(coxnnsurv,times=times)
+  colnames(cnnCleaned)<-times
+  py_run_string("del fitDeepSurv")
+  rm(fitDeepSurv)
+  
+  
+  #############################
+  ###DEEPHIT
+  #############################
+  lr=winners$dh$lr
+  drpt=winners$dh$drpt
+  layer1=winners$dh$layer1
+  layer2=winners$dh$layer2
+  bsize=ceiling(nrow(train)/winners$dh$nBatch)
+  actv=winners$dh$actv
+  alp=winners$dh$alp
+  source_python('src/deephitter.py')
+  hitnnSurv=fitDeephit(train,fullTest,bsize,epochs=epo,valida=val,patience=patience,min_delta=min_delta,drpt=drpt,lay1=layer1,lay2=layer2,lr=lr,actv=actv,alp=alp)
+  hitnnSurv<-t(hitnnSurv)
+  deephitCleaned<-pyProcess(hitnnSurv,times=times)
+  colnames(deephitCleaned)<-times
+  py_run_string("del fitDeephit")
+  rm(fitDeephit)
+  
+  
+  
+  ############################
+  ###coxph
+  ############################  
+  cox<-coxph(Surv(time, status) ~ ., data = linModelTrain,x=T)
+  
+  
+  #############################
+  ###CBNN
+  #############################
+  tempTrain<-train
+  train<-sampleCaseBase(data = as.data.frame(train),time="time",event="status",ratio=100)
+  valcb<-sampleCaseBase(data = as.data.frame(val),time="time",event="status",ratio=100)
+  val<-list(list(as.matrix(valcb[,-c(ncol(valcb)-1,ncol(valcb))]),
+                 as.matrix(valcb[,ncol(valcb),drop=F])),
+            as.matrix(valcb[,ncol(valcb)-1,drop=F]))
+  
+  val[[1]][[2]]<-rep(train$offset[1],nrow(val[[1]][[1]]))   
+  lr=winners$cbnn$lr
+  drpt=winners$cbnn$drpt
+  layer1=winners$cbnn$layer1
+  layer2=winners$cbnn$layer2
+  bsize=c(floor(nrow(train)/winners$cbnn$nBatch))
+  actv=winners$cbnn$actv
+  # 
+  # 
+  #  lr=0.001
+  #  drpt=0.5
+  #  layer1=10
+  #  layer2=10
+  #  patience=10
+  #actv='linear'
+  
+  currentTime<-Sys.time() 
+  covars_input<-layer_input(shape=c(length(colnames(mod_cb_glm$data))-2),
+                            name = 'main_input')
+  
+  covars_output<-covars_input%>%
+    layer_dense(units=layer1,use_bias = T)%>%
+    layer_activation(activation = actv)%>%
+    layer_dropout(drpt)%>%
+    layer_dense(units=layer2,use_bias = T)%>%
+    layer_activation(activation = actv)%>%
+    layer_dropout(drpt)%>%
+    layer_dense(units=1,use_bias = T)
+  
+  cbnn<-cbnnModel(features=colnames(train)[-ncol(train)],
+                  feature_input = covars_input,
+                  feature_output = covars_output,
+                  originalData = train,
+                  offset=train$offset,
+                  timeVar = "time",
+                  eventVar= "status",optimizer=optimizer_adam(learning_rate = lr)
+  )
+  
+  fit<-fitSmoothHaz(cbnn,
+                    epochs=epo,
+                    batch_size=bsize,
+                    verbose=0,
+                    monitor="val_loss",
+                    #val_split=0.2,
+                    min_delta=min_delta,
+                    patience=patience,val=val)
+  annPreds<-aar(fit,
+                times=times,
+                x_test=test
+  )
+  
+  rownames(annPreds)<-annPreds[,1]
+  annProperpoly<- t(annPreds[,-1])
+  class(annProperpoly)<-c("tunnel",class(annProperpoly)) 
+  
+  
+  
+  ############################
+  ###Brier Score
+  ############################  
+  brierFinalResults <- Score(list("Cox_Lin" = cox,'CB_Logi'=glmProper,
+                                  'DeepSurv'=cnnCleaned,'DeepHit'=deephitCleaned,
+                                  'CBNN_Poly'=annProperpoly),
+                             data =fullTest, 
+                             formula = Hist(time, status != 0) ~ 1, summary = c("risks","IPA","ibs"), 
+                             se.fit = FALSE, metrics = "brier", contrasts = FALSE, times = times)
+  BrierIPAList[[pos]]<-brierFinalResults$Brier$score
+  
+  ggplot(data=brierFinalResults$Brier$score, aes(x=times,y=IPA,col=model))+
+    geom_line()#+coord_cartesian(ylim=c(-0.1,0.2))
+  rm(fit,cbnn,covars_input,covars_output)
+  #######################
+  ###Cox 
+  ######################
+  a<-survfit(cox, newdata=fullTest,times=times)
+  rownames(a$surv)<-a$time
+  coxlinSurv<-pyProcess(t(a$surv),times=times)
+  colnames(coxlinSurv)<-seq(0,1,length.out = ncol(coxlinSurv))
+  
+  
+  ######################
+  ###C-Index
+  ######################
+  
+  riskList<-list(coxlinSurv,
+                 glmProper,
+                 cnnCleaned,
+                 deephitCleaned,
+                 annProperpoly
+  )
+  
+  
+  tempTims<-   as.numeric(colnames(annProperpoly))
+  tempTims<-head(tempTims, -1)
+  tempTims<-tail(tempTims, -1)
+  cScoreTemp<-matrix(NA,nrow=length(tempTims),ncol=length(riskList)+1)
+  et_train<-as.matrix(tempTrain)[,c(ncol(tempTrain),ncol(tempTrain)-1)]
+  et_test<-as.matrix(fullTest[,c(ncol(fullTest),ncol(fullTest)-1)])
+  colnames(cScoreTemp)<-c('times', "Cox_Lin",'CB_Logi','DeepSurv','DeepHit',
+                          'cbnn')
+  cScoreTemp[,1]<- tempTims
+  
+  cScore[[pos]]<-cIndexSummary(et_train=et_train,
+                               et_test=et_test,
+                               riskList=riskList,
+                               cScore=cScoreTemp
+  )
+  print(paste("current iter:",pos))
+  saveRDS(BrierIPAList,'results/100oldmortBrier.rds')
+  saveRDS(cScore,'results/100oldmortcidx.rds')
+  pos=pos+1
+  
+}
+
+
+```
+
+
+
+
+```{r plotoldmort}
+
+
+
+BrierIPAList<-readRDS('results/100oldmortBrier.rds')
+
+ipaSims=data.frame(model=BrierIPAList[[1]]$model,times=BrierIPAList[[1]]$times)
+brierSims=data.frame(model=BrierIPAList[[1]]$model,times=BrierIPAList[[1]]$times)
+ibsSims=data.frame(model=BrierIPAList[[1]]$model,times=BrierIPAList[[1]]$times)
+ibsTable<-as.data.frame(matrix(data=NA,nrow=100,ncol=length(unique(BrierIPAList[[1]]$model))))
+colnames(ibsTable)<-unique(BrierIPAList[[1]]$model)
+count=1
+for(sim in BrierIPAList){
+  ipaSims<-cbind(ipaSims, sim$IPA)
+  brierSims<-cbind(brierSims,sim$Brier)
+  ibsSims<-cbind(ibsSims,sim$IBS)
+  for(mod in colnames(ibsTable)){
+    
+    ibsTable[count,which(mod ==colnames(ibsTable))]<-sim$IBS[sim$model==mod & sim$time==max(sim$time)]
+    
+  }
+  count<-count+1
+}
+ibsTable<-na.omit(ibsTable)
+ibsOverall<-data.frame(mean=apply(ibsTable,2,mean),sd = apply(ibsTable,2,sd))
+ibsOverall
+ipaSummary<-statCalcSim(ipaSims)
+brierSummary<-statCalcSim(brierSims)
+ibsSummary<-statCalcSim(ibsSims)
+ipa<-plotPerformance(ipaSummary,method="IPA",iterations=iteration  )
+brier<-plotPerformance(brierSummary,method="BS",iterations=iteration )
+ibs<-plotPerformance(ibsSummary,method="IBS",iterations=iteration )
+
+ipa+coord_cartesian(ylim=c(-0.1,0.2))
+#end_time-start_time
+
+
+
+```
+
+
+```{r}
+
+
+cidxList<-readRDS('results/100oldmortcidx.rds')
+
+
+temp<-melt(setDT(as.data.frame(cidxList[[1]])), id.vars = c("times"), variable.name = "model")
+cidxSims=data.frame(model=temp$model,times=temp$times)
+
+
+count=1
+for(sim in cidxList){
+  cidxSims<-cbind(cidxSims, melt(setDT(as.data.frame(sim)), id.vars = c("times"), variable.name = "model")$value)
+
+  count<-count+1
+}
+
+cidxSummary<-statCalcSim(cidxSims)
+cidxC<-plotPerformance(cidxSummary,method="C-Index",iterations=iteration  )
+cidxC
+
+
+```

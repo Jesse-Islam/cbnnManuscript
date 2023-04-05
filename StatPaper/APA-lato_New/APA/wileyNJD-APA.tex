@@ -49,19 +49,18 @@ and data augmentation, we incorporate time directly into a feed-forward
 neural network. CBNN predicts the probability of an event occurring at a
 given moment and estimates the hazard function. We compare the
 performance of CBNN to survival methods based on regression and neural
-networks in two simulations and two real data applications. We report
+networks in a simulation and three real data applications. We report
 two time-dependent metrics for each model. In the simulations and real
 data applications, CBNN provides a more consistent predictive
 performance across time and outperforms the competing neural network
-approaches. For a simple simulation with an exponential hazard model,
-CBNN outperforms the other neural network methods. For a complex
-simulation, which highlights the ability of CBNN to model both a complex
-baseline hazard and time-varying interactions, CBNN outperforms all
-competitors. The first real data application shows CBNN outperforming
-all neural network competitors, while a second real data application
-shows competitive performance. We highlight the benefit of combining
-case-base sampling with deep learning to provide a simple and flexible
-modeling framework for data-driven, time-varying interaction modeling of
+approaches. For a complex simulation, which highlights the ability of
+CBNN to model both a complex baseline hazard and time-varying
+interactions, CBNN outperforms all competitors. The first two real data
+application shows CBNN outperforming all neural network competitors,
+while a second real data application shows competitive performance.
+We highlight the benefit of combining case-base sampling with deep
+learning to provide a simple and flexible modeling framework for
+data-driven, time-varying interaction modeling of
 survival outcomes. An R package is available at
 \url{https://github.com/Jesse-Islam/cbnn}.}
 
@@ -103,25 +102,19 @@ proportional hazards model that implements the Cox partial
 log-likelihood as a custom loss function \citep{katzman2018DeepSurv},
 resulting in a stepwise absolute risk curve that cannot accommodate
 time-varying interactions. Compared to Cox regression, DeepSurv shows
-better performance on the Study to Understand Prognoses Preferences and
-Risk Treatments (SUPPORT) dataset \citep{knaus1995SUPPORT}. To handle
+better performance on a real dataset \citep{katzman2018DeepSurv}. To handle
 non-proportional hazards, a modification to the loss function was
-proposed \citep{faraggi1995neural}. To remove the need for tuning the
-number of layers and nodes, the concept of extreme learning machines has
-been applied to a Cox neural network model \citep{wang2019extreme}.
+proposed \citep{faraggi1995neural}. 
 
 As an alternative method that assumes a baseline hazard distribution,
 DeepHit specifies each survival time of interest in the model and
 directly estimates survival curves, rather than deriving a hazard
-function \citep{lee2018DeepHit}. It assumes an inverse Gaussian
-distribution as the baseline hazard and it outperforms DeepSurv on the
-Molecular Taxonomy of Breast Cancer International Consortium (METABRIC)
-dataset \citep{curtis2012genomic}.
+function . It assumes an inverse Gaussian
+distribution as the baseline hazard and it outperformed DeepSurv \citep{lee2018DeepHit}.
 
 Providing further flexibility, Deep Survival Machines (DSM) is a
 parametric survival model using neural networks with a mixture of
-distributions as the baseline hazard \citep{dsmPaper}. On both the
-SUPPORT and METABRIC datasets, DSM outperforms DeepSurv and DeepHit
+distributions as the baseline hazard \citep{dsmPaper}. DSM outperformed DeepSurv and DeepHit
 \citep{dsmPaper}. However, like DeepHit and DeepSurv, DSM cannot model
 time-varying interactions.
 
@@ -298,21 +291,13 @@ approximate the integral in \eqref{eqn:ci2}.
 \subsection{Hyperparameter selection}\label{hyperparameter-selection}}
 
 Neural networks are flexible when defining the architecture and
-optimization parameters. These hyperparameter decisions can affect the
-estimated parameters and were chosen during a set of initial simulations
-to determine if CBNN can learn complex interactions in practice. We set
-a max number of epochs to be \(2000\), batch size as \(512\), learning
-rate as \(10^{-3}\), decay as \(10^{-7}\), patience as \(10\) epochs,
-\(\{50,50,25,25\}\) nodes in each hidden layer with \(50\%\) dropout at
-each layer, a minimum delta loss on the validation set of \(10^{-7}\)
-over 10 epochs and Adam \citep{gulli2017} as our optimizer. These
-choices may permit the model to approximate higher-order interactions
-while preventing over-fitting \citep{srivastava2014dropout}. We fix a
-train-validation-test split that allows us to update the weights with a
-subset of the data (training), assess performance at each epoch
-(validation) and gauge performance of the final model (test) for each
-method. We select the best weights after training based on validation
-loss \citep{gulli2017}.
+optimization parameters. These hyperparameter choices can affect the
+estimated parameters and are not necessarily the same for each model.
+First we fix a test set with 15\% of the data, then we use three-fold cross-validation on the remaining 
+data (85\%:15\% training:validation) for a range of hyperparameters (TABLE REF). We track integrated brier 
+score on the validation set for each hyperparameter combination, choosing 
+the combination with the lowest score for each method. The chosen 
+hyperparameters are in (TABLE REF).
 
 \hypertarget{software-implementation}{%
 \subsection{Software implementation}\label{software-implementation}}
@@ -341,8 +326,6 @@ our simulations and bootstrap, we use the \textbf{reticulate} package
 
 
 
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%section3
@@ -350,65 +333,25 @@ our simulations and bootstrap, we use the \textbf{reticulate} package
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\hypertarget{sims}{%
-\section{Simulation studies}\label{sims}}
-
-In this section, we use simulated data to evaluate the performance of
-CBNN and compare our approach with existing regression-based (Cox, CBLR)
-and neural network-based (DeepHit, DeepSurv, DSM) methods. We specify a
-linear combination of each covariate as the linear predictor in
-regression-based approaches (Cox, CBLR), which contrasts with neural
-network approaches that allow for non-linear interactions. We simulate
-data under a simple exponential model and a complex baseline hazard with
-time-varying interactions, each with 10\% random censoring. For both
-settings, we simulate three covariates:
-
-\[
-z_{1} \sim \textrm{Bernoulli}(0.5) \qquad \qquad
-z_{2} \sim \begin{cases}
- N(0,0.5) & \textrm{if } z_{1}=0\\ 
- N(10,0.5) & \textrm{if } z_{1}=1
-\end{cases} \qquad \qquad
-z_{3} \sim \begin{cases}
- N(8,0.5) & \textrm{if } z_{1}=0\\ 
- N(-3,0.5) & \textrm{if } z_{1}=1.
-\end{cases}
-\]
-
-The DeepHit-specific hyperparameter alpha is set to \(0.5\) (equal
-weight between its negative log-likelihood and ranking losses
-\citep{lee2018DeepHit}). We modify the \textbf{DeepSurvivalMachines}
-\citep{dsmPaper} package to include dropout and a minimum delta loss
-during the fitting process. For DSM, we define a mixture model of six
-Weibull distributions for the baseline hazard. All other hyperparameters
-are held constant across all neural network methods in both the
-simulation studies and real data applications.
-
-Besides the methods mentioned above, we include the Optimal model in our
-comparisons using CBLR. That is, we include the exact functional form of
-the covariates in a CBLR model (referred to as Optimal for simplicity).
-We calculate \(t\)-based 95\% confidence intervals using 100
-replications of the simulated data. For all analyses, we use 80\% for
-training and 20\% for the test set. 20\% of the training set is kept for
-validation at each epoch. We predict risk functions \(F\) using
-\eqref{eqn:ci2} for individuals in the test set, which are used to
-calculate our \(C_{IPCW}\) and IPA scores.
-
 
 
 \hypertarget{performance-metrics}{%
-\subsection{Performance metrics}\label{performance-metrics}}
+\section{Performance metrics}\label{performance-metrics}}
 
-We use two metrics to assess the performance of the different methods of
-interest: 1) (IPA) \citep{kattan2018index} and 2) inverse probability
+To choose our method-specific hyperparameters, we use the Integrated 
+Brier Score (IBS) \citep{graf1999}. We use two metrics to assess the 
+performance of the different methods of interest on testing data: 1) (IPA) 
+\citep{kattan2018index} and 2) inverse probability
 censoring weights-adjusted concordance index (\(C_{IPCW}\))
-\citep{uno2011}, which we define below. Both these time-dependent
-metrics provide transparency as to when in follow-up time each model may
+\citep{uno2011}, which we define below. IBS provides a summarized assessment
+of performance for each model. (\(C_{IPCW}\)) provides information
+about performance up to the survival time of interest. while IPA provide transparency
+as to when in follow-up time each model may
 perform better than the others.
 
+
 \hypertarget{index-of-prediction-accuracy-ipa}{%
-\subsubsection{Index of prediction accuracy
-(IPA)}\label{index-of-prediction-accuracy-ipa}}
+\subsubsection{Index of prediction accuracy (IPA)}\label{index-of-prediction-accuracy-ipa}}
 
 The IPA is a function of the Brier score (\(BS(t)\)) \citep{graf1999},
 which is defined as \begin{align}
@@ -446,6 +389,15 @@ the Brier score is potentially small at the start and at the end of
 their respective curves, The IPA score may be unstable at the same
 locations.
 
+\hypertarget{integrated-brier-score-ibs}{%
+\subsubsection{Integrated Brier Score (IBS)}\label{integrated-brier-score-ibs}}
+
+The IBS is a function of the Brier score (\(BS(t)\)) \citep{graf1999}. as well,
+which is defined as \begin{align}
+IBS=\int_{t}^{t_{max}}BS(t)dw(t)
+\end{align} where $w(t)=\frac{t}{t_{max}}$. As this is a score for a range of follow-up-time,
+it is a useful metric to track during cross-validation. The performance at a specific time
+is hidden, and is why we opt for the IPA in assessing the final models on a test set.
 
 \hypertarget{inverse-probability-censoring-weights-adjusted-concordance-index}{%
 \subsubsection{Inverse probability censoring weights-adjusted
@@ -477,54 +429,57 @@ population concordance measure because of the IPCW adjustment
 \caption{Summarizes the simple simulation (A, B), complex simulation (C, D), SUPPORT case study (E, F) and METABRIC case study (G, H) results. The first row shows the IPA score for each model in each study over follow-up time. Negative values mean our model performs worse than the null model and positive values mean the model performs better. The second row demonstrates the $C_{IPCW}$ score for each model in each study over follow-up time. A score of 1 is the maximum performance for either metric. Each model-specific metric in each study shows a 95-percent confidence interval over 100 iterations. The models of interest are case-base with logistic regression (CBLR), Case-Base Neural Networks (CBNN), Cox, DeepHit, DeepSurv, Deep Survival Machines (DSM), Optimal (a CBLR model with the exact interaction terms and baseline hazard specified) and Kaplan-Meier (to serve as a baseline, predicting the average for all individuals).}\label{fig:megaPlot}
 \end{figure}
 
+\hypertarget{sims}{%
+\section{Simulation study}\label{sims}}
 
-\hypertarget{simple-simulation-constant-baseline-hazard}{%
-\subsection{Simple simulation: constant baseline
-hazard}\label{simple-simulation-constant-baseline-hazard}}
+In this section, we simulate data to evaluate the performance of
+CBNN and compare our approach with existing regression-based (Cox, CBLR)
+and neural network-based (DeepHit, DeepSurv) methods. We specify a
+linear combination of each covariate as the linear predictor in
+regression-based approaches (Cox, CBLR), which contrasts with neural
+network approaches that allow for non-linear interactions. We simulate
+data under a complex baseline hazard with
+time-varying interactions, each with 10\% random censoring. For both
+settings, we simulate three covariates:
 
-We simulate data from a simple model that primarily depends on a
-constant baseline hazard:
-\[\log h(t \mid X_i) = \beta_{{1}}z_{1}+\beta_{{2}}z_{2}+\beta_{{3}}z_{3},\]
-The covariate effects are given by
-\(\beta_{{1}}=0.1, \beta_{{2}}=0.1, \beta_{{3}}=0.1\). Once we simulate
-survival times, we introduce 10\% random censoring.
-
-\hypertarget{performance-comparison-in-simple-simulation}{%
-\subsubsection{Performance comparison in simple
-simulation}\label{performance-comparison-in-simple-simulation}}
-
-Figure \ref{fig:megaPlot} A, B and Table \ref{tab:megaTable} A show the
-results for the simple simulation. The regression-based methods (CBLR,
-Cox, Optimal) outperform the neural network ones in the simple
-simulation setting. Among the neural network approaches, CBNN
-outperforms all other methods in terms of both IPA and \(C_{IPCW}\)
-(Figure \ref{fig:megaPlot} A, B). Specifically, we see CBNN is
-consistent across time with smaller confidence intervals compared to
-DeepHit, DeepSurv and DSM.
-
-In this simple setting, the regression models are much closer to the
-Optimal model, while the neural network models perform worse than the KM
-null model. The wide confidence bands in \(C_{IPCW}\) suggest the neural
-network models may be over-parameterized.
+\[
+z_{1} \sim \textrm{Bernoulli}(0.5) \qquad \qquad %technically a control and treatement group
+z_{2} \sim \begin{cases}
+ N(0,0.5) & \textrm{if } z_{1}=0\\ 
+ N(1,0.5) & \textrm{if } z_{1}=1
+\end{cases} \qquad \qquad
+z_{3} \sim N(1,0.5)
+\]
+Besides the methods mentioned above, we include the Optimal model in our
+comparisons using CBLR. That is, we include the exact functional form of
+the covariates in a CBLR model (referred to as Optimal for simplicity).
+We calculate \(t\)-based 95\% confidence intervals using 100
+replications of the simulated data. For all analyses, 15\% of the data is 
+kept for testing, while 15\% of the remaining data is kept for validation. 
+The remaining data is kept for training. We predict risk functions \(F\) using
+\eqref{eqn:ci2} for individuals in the test set, which are used to
+calculate our \(C_{IPCW}\) and IPA scores. We conduct 100 bootstrap
+re-samples on the training data to obtain confidence intervals.
 
 \hypertarget{complex-simulation-flexible-baseline-hazard-time-varying-interactions}{%
 \subsection{Complex simulation: flexible baseline hazard, time-varying
 interactions}\label{complex-simulation-flexible-baseline-hazard-time-varying-interactions}}
 
 This simulation demonstrates performance with the presence of a complex
-baseline hazard and a time-varying interaction. Originally used to show
-the spline-based hazard model proposed by Royston and Parmar
+baseline hazard and a time-varying interaction. Inspired by a cancer treatment 
+that initially reduces risk of death, but slowly returns as time progresses. 
+Originally used to show the spline-based hazard model proposed by Royston and Parmar
 \citep{royston2002flexible}, the breast cancer dataset provides a
 complex hazard from which we simulate, available in the
 \textbf{flexsurv} R package \citep{flexsurv}. To increase the complexity
 of our data-generating mechanism for this simulation, we design the
 model as follows: \begin{align}
-\log h(t \mid X_i) =\sum_{i=1}^{5} (\gamma_{i} \cdot \psi_{i}) + \beta_{{1}} (z_{1}) + \beta_{{2}} (z_{2})+ \beta_{{3}} (z_{3})+ \tau_{1} ( z_{1} \cdot z_{2} \cdot t)+ \tau_{2} ( z_{1} \cdot z_{3})+ \tau_{3} (z_{2} \cdot z_{3}), \nonumber
+\log h(t \mid X_i) =\sum_{i=1}^{5} (\gamma_{i} \cdot \psi_{i}) + \beta_{{1}} (z_{1}) + \beta_{{2}} (z_{2})+ \beta_{{3}} (z_{3})+ \tau_{1} ( z_{1} \cdot t)+ \tau_{2} (z_{2} \cdot z_{3}), \nonumber
 \end{align}
 
 
 \begin{table}
-\caption{Four tables representing performance at certain follow-up times for the simple simulation, complex simulation, SUPPORT and METABRIC. Each table shows performance for each method in each study at $25\%$, $50\%$. $75\%$ and $100\%$ of follow-up time. The bold elements show the best model for each study, at each follow-up time of interest. These tables are included to provide exact measures at certain intervals. The models of interest are: Cox, case-base with logistic regression (CBLR), DeepSurv, DeepHit, Case-Base Neural Network (CBNN), Optimal and Deep Survival Machines (DSM).}
+\caption{Four tables representing performance at certain follow-up times for the simple simulation, complex simulation, SUPPORT and METABRIC. Each table shows performance for each method in each study at $25\%$, $50\%$. $75\%$ and $100\%$ of follow-up time. The bold elements show the best model for each study, at each follow-up time of interest. These tables are included to provide exact measures at certain intervals. The models of interest are: Cox, case-base with logistic regression (CBLR), DeepSurv, DeepHit, Case-Base Neural Network (CBNN) and Optimal}
 \label{tab:megaTable}
 
 \begin{center}\includegraphics[width=1\linewidth]{../../../analyses/figures/megaTable} \end{center}
@@ -533,7 +488,7 @@ model as follows: \begin{align}
 
 
 where
-\(\gamma_{1}=3.9, \gamma_{2}=3, \gamma_{3}=-0.43, \gamma_{4}=1.33,\gamma_{5}=-0.86, \beta_{{1}}=1, \beta_{{2}}=1, \beta_{{3}}=1, \tau_{1}=10, \tau_{2}=2, \tau_{3}=2\)
+\(\gamma_{1}=3.9, \gamma_{2}=3, \gamma_{3}=-0.43, \gamma_{4}=1.33,\gamma_{5}=-0.86, \beta_{{1}}=-5, \beta_{{2}}=-1, \beta_{{3}}=1, \tau_{1}=0.001, \tau_{2}=-1\)
 and \(\psi\) are basis splines. The \(gamma\) coefficients are obtained
 from an intercept-only cubic splines model with three knots using the
 \emph{flexsurvspline} function from the \textbf{flexsurv} package
@@ -542,21 +497,30 @@ from an intercept-only cubic splines model with three knots using the
 \({\tau_3}\) represent interactions and \(\tau_{1}\) is a time-varying
 interaction.
 
+We use a population time plot to visualize incidence density across $z1$ (FIGURE REF).
+z1 acts to mimic a treatment and control group. The control group $(z1=0)$ is not impacted
+by the time-varying interaction. The treatment group $(z1=1)$ initially acts to protect the group,
+while the risk slowly builds with time at the rate of the interaction term $(\tau_{1})$. This creates
+a separation between the median time of death between these two groups due to the time-varying
+interaction. We expect all competing models (aside from the Optimal model and CBNN) to drop in
+performance for the second half of follow-up time.
+
 \hypertarget{performance-comparison-in-complex-simulation}{%
 \subsubsection{Performance comparison in complex
 simulation}\label{performance-comparison-in-complex-simulation}}
 
-Figure \ref{fig:megaPlot} C, D and Table \ref{tab:megaTable} B show the
-performance over time on a test set in the complex simulation. Apart
-from the Optimal regression model, CBNN outperforms the competing models
-when examining IPA and up to the 75-percentile of follow-up time for
-\(C_{IPCW}\). We expected the Optimal model to perform best in both
+
+Figure \ref{fig:megaPlot} A, E and Table \ref{tab:megaTable} A
+demonstrates the performance over time on a test set. While examining the IPA score, the optimal
+regression model and CBNN perform near identically, leading in performance followed by 
+DeepHit, the linear regression models and DeepSurv. We expected the Optimal model to perform best in both
 metrics. However, this was not the case for \(C_{IPCW}\) and may be due
 to an artifact of concordance-based metrics, where a misspecified model
 may perform better than a correctly specified one
 \citep{cindexfails2019}. We attribute the performance of CBNN to its
 flexibility in modeling time-varying interactions and baseline hazard,
-flexibility the other neural network models do not have.
+flexibility the other neural network models do not have. We keep this misspecification issue
+in mind while interpreting the \(C_{IPCW}\) results in the case studies.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -566,82 +530,63 @@ flexibility the other neural network models do not have.
 
 
 \hypertarget{casestudies}{%
-\section{Application to SUPPORT and METABRIC data}\label{casestudies}}
+\section{Casestudies}\label{casestudies}}
 
 Our complex simulation demonstrates the superior performance of CBNN in
 ideal conditions with clean data. To obtain a more realistic performance
-assessment, we compared models using two real datasets with a
-time-to-event outcome. The first case study examines the SUPPORT dataset
-\citep{knaus1995SUPPORT}. The second case study examines the METABRIC
-dataset \citep{curtis2012genomic}. We use the same hyperparameters as in
-the simulation studies. As we do not know the true model for the real
-data, we exclude the Optimal model. We split the datasets keeping 20\%
-of the observations as a test set. 20\% of the training set is kept
-aside for validation at each epoch. We predict risk functions for
-everyone in the test set, which is used to calculate our metrics. We
-conduct 100 bootstrap re-samples for the real data applications to
+assessment, we compared models using three real datasets with a
+time-to-event outcome. The first case study examines multiple myeloma (MM) \citep{myeloma}.
+The second examines the relationship between serum free light chain (FLC) and mortality \citep{flc}.
+The third examines prostate cancer survival on a publicly available simulation of the Surveillance,
+Epidemiology, and End Results (SEER)-medicare prostate cancer data\citep{prostate}.
+As we do not know the true model for the real
+data, we exclude the Optimal model. After grid search is performed with the same hyperparameter
+options, We split the data the same way we did for the simulation (15\% of the data is 
+kept for testing, while 15\% of the remaining data is kept for validation and the rest for testing).
+We predict risk functions for everyone in the test set, which is used to calculate our metrics. We
+conduct 100-fold bootstrap re-samples on the training data to
 obtain confidence intervals.
 
-\hypertarget{performance-evaluation-using-the-support-dataset}{%
-\subsection{Performance evaluation using the SUPPORT
-dataset}\label{performance-evaluation-using-the-support-dataset}}
+\hypertarget{pe-multiplemyeloma}{%
+\subsection{Performance evaluation on multiple myeloma dataset}\label{pe-multiplemyeloma}}
+The (MM) dataset tracks 3882 patients seen at the Mayo Clinic from 1947-1996 until death \citep{myeloma}.
+We use 2 covariates, year of entry into the study and the time of MM diagnosis\citep{myeloma}. We see 71\% incidence over 23 years\citep{myeloma}.
 
-The SUPPORT dataset tracks the time until death for seriously ill
-patients at five American hospitals \citep{knaus1995SUPPORT}. We use a
-pre-processed version of the dataset made available in the DeepSurv
-package \citep{katzman2018DeepSurv}. This dataset contains 9104 samples
-and 14 covariates (age, sex, race, number of comorbidities, presence of
-diabetes, presence of dementia, presence of cancer, mean arterial blood
-pressure, heart rate, respiration rate, temperature, white blood cell
-count, serum's sodium and serum's creatinine)
-\citep{katzman2018DeepSurv}. Patients with missing features were
-excluded and 68.10\% of the patients died during the 5.56-year study
-period \citep{katzman2018DeepSurv}.
+Figure \ref{fig:megaPlot} B, F and Table \ref{tab:megaTable} B
+demonstrates the performance over time on a test set. With the IPA score, CBNN outperforms
+The competing models, followed by the linear models, DeepSurv and DeepHit. We note that after
+50\% of survival time, all models aside from CBNN perform substantially worse than a null model.
+We note with \(C_{IPCW}\), the linear models and DeepSurv perform equivalently, followed by CBNN and
+DeepHit.
+%paragraph about performance
 
-Figure \ref{fig:megaPlot} E, F and Table \ref{tab:megaTable} C
-demonstrates the performance over time on a test set. The regression
-models (CBLR, Cox) perform best considering IPA, followed by CBNN from
-the \(25^{th}\) to \(100^{th}\) percentile of follow-up time. We note a
-drop in performance for CBNN before the \(25^{th}\) percentile of
-follow-up. For \(C_{IPCW}\), CBNN outperforms the competing models
-consistently over follow-up time. Note that performance is similar for
-all models, aside from DeepSurv whose \(C_{IPCW}\) is lower than the
-rest (Figure \ref{fig:megaPlot} E, F and Table \ref{tab:megaTable} C).
+\hypertarget{pe-flc}{%
+\subsection{Performance evaluation on free light chain dataset}\label{pe-flc}}
+The FLC dataset is a random sample of half the individuals in $\frac{2}{3}$ of the
+residents of Olmsted County over the age of 50\citep{flc}. We have access to 7874 subjects
+tracked until death\citep{flc}. We use 5 covariates, total serum FLC (kappa+lambda), age, sex,
+serum creatine and monoclonal gammapothy state\citep{flc}. we see 27\% incidence over 14 years\citep{flc}.
 
-\hypertarget{performance-evaluation-using-the-metabric-dataset}{%
-\subsection{Performance evaluation using the METABRIC
-dataset}\label{performance-evaluation-using-the-metabric-dataset}}
+Figure \ref{fig:megaPlot} C, G and Table \ref{tab:megaTable} C
+demonstrates the performance over time on a test set. With the IPA score, CBNN outperforms
+The competing models, followed by the linear models and lastly DeepSurv and DeepHit for the first 60\% of follow-up time. 
+After 60\% of follow-up time, DeepHit has similar performance to CBNN. For the \(C_{IPCW}\) score, CBNN outperforms all models,
+followed by the linear models and finally DeepSurv. Note that for earlier ranges of survival time, DeepHit is the worst performing model. 
+After 25\% of follow-up time, DeepHit is in second place. In the FLC dataset, CBNN has a consistent top ranking for both IPA and  \(C_{IPCW}\).
 
-METABRIC is a 30-yearlong study aiming to discover the molecular drivers
-of breast tumors, following 2000 individuals with breast cancer until
-death \citep{curtis2012genomic}. They described these growths as primary
-invasive breast carcinomas, with the goal of discovering both genetic
-and clinical risk factors for breast cancer survival
-\citep{curtis2012genomic}. We used the processed dataset made available
-through DeepSurv \citep{katzman2018DeepSurv}, which includes 1980
-patients of which 57.72\% die due to breast cancer within a median 10
-years of follow-up \citep{katzman2018DeepSurv}. There are 10 covariates
-in total: time, 4 RNA-Seq gene expressions (MKI67, EGFR, PGR and ERBB2)
-and 5 clinical features (hormone treatment indicator, radiotherapy
-indicator, chemotherapy indicator, ER-positive indicator and age at
-diagnosis) \citep{katzman2018DeepSurv}.
+\hypertarget{pe-prostate}{%
+\subsection{Performance evaluation on prostate cancer dataset}\label{pe-prostate}}
+The prostate cancer dataset has a record of competing risks\citep{prostate}. As we are only interested in the
+single event scenario, we only keep individuals with prostate cancer death or censoring\citep{prostate}.
+This subset tracks 11054 individuals with three covariates, differentiation grade, age group and cancer state\citep{prostate}.
+There is a 7\% incidence over 10 years.
 
-Figure \ref{fig:megaPlot} G, H and Table \ref{tab:megaTable} D shows the
-performance on a test set over time. The IPA scores suggest that
-regression models outperform competing models on this dataset, as all
-the neural network models are equal to or perform worse than KM over
-follow-up time. Our CBNN model is comparable to KM until around the
-50-percentile of follow-up time, after which CBNN, DeepSurv and DSM drop
-in performance. The \(C_{IPCW}\) produces a different ranking. Our CBNN
-model outperforms the other models up to the \(25^{th}\) percentile of
-follow-up time, whereas DeepHit performs best from the \(50^{th}\) to
-\(75^{th}\) percentile of follow-up. With this metric, CBNN and DeepHit
-outperform the regression models. This disagreement between IPA and
-\(C_{IPCW}\) may be due to the misspecification issue of
-concordance-based metrics \citep{cindexfails2019}. The neural network
-models may be over-parameterized, as shown by the wide confidence bands
-in \(C_{IPCW}\).
-
+Figure \ref{fig:megaPlot} C, G and Table \ref{tab:megaTable} C shows the
+performance over time on a test set. With the IPA score, the linear models
+outperform the neural network ones, followed by CBNN and DeepHit, and
+finally DeepSurv. For the \(C_{IPCW}\) score, the linear models, CBNN, DeepHit
+perform near identically, side from DeepHit with an initial drop in performance.
+DeepSurv performed substantially worse than the other models.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -656,22 +601,19 @@ in \(C_{IPCW}\).
 CBNN models survival outcomes by using neural networks on case-base
 sampled data. We incorporate follow-up time as a feature, providing a
 data-driven estimate of a flexible baseline hazard and time-varying
-interactions in our hazard function. The three competing neural network
+interactions in our hazard function. The two competing neural network
 models we evaluated cannot model time-varying interactions by design
-\citep{dsmPaper} \citep{katzman2018DeepSurv} \citep{lee2018DeepHit}. DSM
-requires a mixture component distributions for a flexible baseline
-hazard to be fit \citep{dsmPaper}. As our goal is to fix the design and
-compare performance, we did not change any shared hyperparameters. With
-our choice of shared hyperparameters and model design, DSM did not
-converge in the complex simulation and SUPPORT case study. Despite this
-limitation, we include this method when it did function as it can fit
-flexible baseline hazards. Compared to CBNN, the remaining two models
-also have limitations. DeepSurv is a proportional hazards model and does
+ \citep{katzman2018DeepSurv} \citep{lee2018DeepHit}
+With our hyperparameters options and model design, DSM did not
+converge in the complex simulation. Due to this issue limitation,
+we did not include this method. Compared to CBNN, all three neural network
+models also have limitations. DeepSurv is a proportional hazards model and does
 not estimate the baseline hazard \citep{katzman2018DeepSurv}. DeepHit
 requires an alpha hyperparameter, is restricted to a single distribution
 for the baseline hazard and models the survival function directly
-\citep{lee2018DeepHit}. The alternative neural network methods match on
-time, while CBNN models time directly.
+\citep{lee2018DeepHit}. Though not included, DSM can model a flexible
+baseline hazard, however is not meant for time-varying interactions\citep{dsmPaper}.
+The alternative neural network methods match on time, while CBNN models time directly.
 
 To assess performance among these models, we use both IPA and
 \(C_{IPCW}\) metrics. Concordance-based measures are commonly used in
@@ -680,83 +622,54 @@ analyses. However, \(C_{IPCW}\) is a non-proper metric and may cause
 misspecified models to appear better than they should
 \citep{cindexfails2019}. Therefore, we contextualize our \(C_{IPCW}\)
 results in relation to IPA, a proper scoring rule. The model rankings
-between \(C_{IPCW}\) and IPA differed for both the complex simulation
-and METABRIC application. Wider \(C_{IPCW}\) confidence intervals for
-DeepHit and DeepSurv show potential misspecification of the models
-(Figure \ref{fig:megaPlot} D, H).
+between \(C_{IPCW}\) and IPA differed for all but FLC. If we consider
+Figure \ref{fig:megaPlot} A, E and Table \ref{tab:megaTable} A in conjuction
+with FIGURE REF POPTIME, We note a universal drop in \(C_{IPCW}\) performance
+for all models. We hide the confidence intervals in Figure \ref{fig:megaPlot} E due to visibility but list them in Table \ref{tab:megaTable} A .
+aside from CBNN, all models have a wide confidence band at 75\% of follow-up time.
+We expect the optimal model to perform best, but that's not the case looking at  \(C_{IPCW}\).
+As such, we 
 
-With this interpretation of \(C_{IPCW}\) in mind, we assess two
-simulations with minimal noise and two case studies in real scenarios.
-The simple simulation demonstrates potential pitfalls associated with
-neural network models, particularly overparameterization. All neural
-network-based approaches performed worse than null KM model (IPA score),
-while the regression-based performed better. We attribute this to
-potential overparameterization in the neural network models, as the wide
-confidence intervals suggest over-fitting, even with dropout. Both
-DeepSurv and DSM are affected, while DeepHit and CBNN are less so. This
-is a limitation to our strategy for evaluating the methods, which uses a
-fixed study design across all assessments.
+With this interpretation of \(C_{IPCW}\) in mind, we assess a
+simulations with minimal noise and three case studies.
 
-From this baseline benchmark, we move on to a complex simulation that
-requires a method that can learn both time-varying interactions and have
-a flexible baseline hazard. Here, CBNN demonstrates a distinct advantage
-over all other methods. The regression models show improved performance
-over the null KM model, while the competing neural network models
-performed worse. Based on our complex simulation results (Figure
+The complex simulation requires method that can learn both time-varying
+interactions and have a flexible baseline hazard. Here, CBNN demonstrates
+a distinct advantage over all other methods. Based on our complex simulation results (Figure
 \ref{fig:megaPlot} C, D and Table \ref{tab:megaTable} B), CBNN
 outperforms the competitors when time-varying interactions and a complex
-baseline hazard are present. This simulation shows how CBNN can perform
-under ideal conditions, while the following two analyses on real data
+baseline hazard are present (after 50\% of survival time, Figure REF POPTIME).
+This simulation shows how CBNN can perform
+under ideal conditions, while the three case studies
 serve to assess its performance in realistic conditions.
 
-In the SUPPORT and METABRIC case studies, flexibility in both
-interaction modeling and baseline hazard did not improve CBNNs relative
-performance, suggesting that this flexibility does not aid prediction in
-either case study. From a biological perspective, the 30-year follow-up
-time in the METABRIC study may contain competing causes of death. The
-causes at the start of the study may not match the causes towards the
-end, potentially explaining the drop in performance as we reach later
-survival times with fewer individuals. The baseline hazard is unlikely
-to cause this drop as DSM is the most flexible competing model in our
-comparison. Over-fitting is also unlikely given the tight confidence
-intervals. Further research is required to determine the cause of the
-drop in performance seen in the METABRIC case study. In both case
-studies, CBNN outperforms the competing neural network methods.
+In the MM and FLC case studies, flexibility in both
+interaction modeling and baseline hazard improved CBNN's performance over
+the other models, suggesting that this flexibility aids prediction in
+both case studies. In the Prostate case study, the linear models outperform
+the neural network ones. CBNN and DeepHit alternate their positions depending
+on the survival time and DeepSurv maintains last place.
+We attribute this to potential overparameterization in the neural network models
+as we did not test for a small number of nodes in each hidden layer, even with dropout.
+Though the ranking places the linear models above the neural network ones, the overall
+performance is comparable aside from DeepSurv, falling within a small range of IPA scores. 
 
-Taken together, CBNN outperforms all competitors in the complex
-simulation, demonstrating its value in survival settings that may
+\section{Conclusions}\label{sec5}
+
+CBNN outperforms all competitors in the complex
+simulation and two case studies, while maintaining competitive performance in a final case study,
+demonstrating its value in survival settings that may
 involve time-varying interactions and a complex baseline hazard. Once we
 perform case-base sampling and adjust for the sampling bias, we can use
 a sigmoid activation function to predict our hazard function. Our
-approach simplifies the incorporation of censored individuals, allowing
-survival outcomes to be treated as binary ones. Forgoing the requirement
+approach provides an alternative to the incorporation of censored individuals, treating
+survival outcomes as binary ones. Forgoing the requirement
 of custom loss functions, CBNN only requires the use of standard
 components in machine learning libraries (specifically, the add layer to
 adjust for sampling bias and the sigmoid activation function). Due to
 the simplicity in its implementation and by extension user experience,
 CBNN is both a user-friendly approach to data-driven survival analysis
 and is easily extendable to any feed-forward neural network framework.
-
-
-
-
-
-\section{Conclusions}\label{sec5}
-
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Ut purus elit, vestibulum ut, placerat ac, adipiscing vitae,
-felis. Curabitur dictum gravida mauris. Nam arcu libero, nonummy eget, consectetuer id, vulputate a, magna. Donec
-vehicula augue eu neque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
-Mauris ut leo. Cras viverra metus rhoncus sem. Nulla et lectus vestibulum urna fringilla ultrices. Phasellus eu tellus
-sit amet tortor gravida placerat. Integer sapien est, iaculis in, pretium quis, viverra ac, nunc. Praesent eget sem vel
-leo ultrices bibendum. Aenean faucibus. Morbi dolor nulla, malesuada eu, pulvinar at, mollis ac, nulla. Curabitur
-auctor semper nulla. Donec varius orci eget risus. Duis nibh mi, congue eu, accumsan eleifend, sagittis quis, diam.
-Duis eget orci sit amet orci dignissim rutrum.
-
-Nam dui ligula, fringilla a, euismod sodales, sollicitudin vel, wisi. Morbi auctor lorem non justo. Nam lacus libero,
-pretium at, lobortis vitae, ultricies et, tellus. Donec aliquet, tortor sed accumsan bibendum, erat ligula aliquet magna,
-vitae ornare odio metus a mi. Morbi ac orci et nisl hendrerit mollis. Suspendisse ut massa. Cras nec ante. Pellentesque
-a nulla. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam tincidunt
-urna. Nulla ullamcorper vestibulum turpis. Pellentesque cursus luctus mauris.
 
 %\backmatter
 
@@ -788,7 +701,7 @@ the case-base methodology.
 
 \subsection*{Author contributions}
 
-This is an author contribution text. This is an author contribution text. This is an author contribution text. This is an author contribution text. This is an author contribution text.
+J.I. conceived the proof of concept, developed the theoretical formalism, developed the neural network code base, wrote the majority of the manuscript and performed the simulations and analyses. M.T. and S.B. provided key insights into the core sampling technique (casebase). All authors discussed the results and contributed to the final manuscript. M.T. contributed heavily to the casebase sampling section \ref{case-base-sampling}.
 
 \subsection*{Financial disclosure}
 
@@ -807,7 +720,7 @@ The authors declare no potential conflict of interests.
 
 \section*{Author Biography}
 
-\begin{biography}{\includegraphics[width=60pt,height=70pt,draft]{empty}}{\textbf{Author Name.} This is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text.}
+\begin{biography}{\includegraphics[width=60pt,height=70pt,draft]{empty}}{\textbf{Jesse Islam} A PhD Candidate in Quantitative life sciences, studying complex relationships in data in a survival context.}
 \end{biography}
 
 \end{document}

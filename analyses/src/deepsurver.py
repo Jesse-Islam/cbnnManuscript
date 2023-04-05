@@ -12,7 +12,7 @@ from pycox.evaluation import EvalSurv
 
 
 
-def fitDeepSurv(train,fullTest,bsize,epochs,valida,ti='time',ev='status',patience=10,min_delta=10**-7,drpt=0.5,lay1=200,lay2=20):#,epoch,bsize,tPos,ePos):
+def fitDeepSurv(train,fullTest,bsize,epochs,valida,ti='time',ev='status',patience=10,min_delta=10**-7,drpt,lay1,lay2):#,epoch,bsize,tPos,ePos):
   n= np.shape(train)[0]
   vl_size = int(n*0.20)
   df_val = valida#train.sample(frac=0.2)

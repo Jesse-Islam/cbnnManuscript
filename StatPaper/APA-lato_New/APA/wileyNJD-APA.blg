@@ -1,4 +1,4 @@
-This is BibTeX, Version 0.99d (TeX Live 2022)
+This is BibTeX, Version 0.99d (TeX Live 2023)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: wileyNJD-APA.aux
 The style file: WileyNJD-APA.bst
@@ -13,44 +13,44 @@ Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: wileyNJD-APA.bib
 apacite.bst [2013/07/21 v6.03 APA bibliography style]
-You've used 36 entries,
+You've used 32 entries,
             6949 wiz_defined-function locations,
-            1491 strings with 17569 characters,
-and the built_in function-call counts, 72810 in all, are:
-= -- 8843
-> -- 655
-< -- 3582
-+ -- 3804
-- -- 82
-* -- 4776
-:= -- 13392
-add.period$ -- 142
-call.type$ -- 36
-change.case$ -- 612
+            1473 strings with 17161 characters,
+and the built_in function-call counts, 65968 in all, are:
+= -- 8026
+> -- 587
+< -- 3247
++ -- 3482
+- -- 78
+* -- 4313
+:= -- 12155
+add.period$ -- 126
+call.type$ -- 32
+change.case$ -- 545
 chr.to.int$ -- 0
-cite$ -- 72
-duplicate$ -- 2118
-empty$ -- 2820
-format.name$ -- 1170
-if$ -- 13653
+cite$ -- 64
+duplicate$ -- 1927
+empty$ -- 2531
+format.name$ -- 1053
+if$ -- 12331
 int.to.chr$ -- 0
-int.to.str$ -- 108
+int.to.str$ -- 96
 missing$ -- 0
-newline$ -- 966
-num.names$ -- 288
-pop$ -- 1402
+newline$ -- 858
+num.names$ -- 256
+pop$ -- 1282
 preamble$ -- 1
-purify$ -- 144
+purify$ -- 128
 quote$ -- 0
-skip$ -- 4246
+skip$ -- 3839
 stack$ -- 0
-substring$ -- 4116
-swap$ -- 1198
-text.length$ -- 79
+substring$ -- 3786
+swap$ -- 1078
+text.length$ -- 82
 text.prefix$ -- 0
 top$ -- 1
-type$ -- 2880
+type$ -- 2624
 warning$ -- 0
-while$ -- 384
+while$ -- 346
 width$ -- 0
-write$ -- 1240
+write$ -- 1094
