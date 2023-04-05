@@ -275,7 +275,7 @@ legend <- get_legend(
 )
 
 g<-plot_grid(pt, legend,ncol = 1, rel_heights = c(1, .1), rel_widths = c(3, .4))
-pdf(file="figures/megaPlot.pdf",width=16,height=9)
+pdf(file="../StatPaper/figures/megaPlot.pdf",width=16,height=9)
 g
 dev.off()
 ```
@@ -474,7 +474,7 @@ pFlex<-getFlex(prostate,"D: Prostate")
 
 
 
-pdf(file="figures/megaTable.pdf",width=14,height=13)
+pdf(file="../StatPaper/figures/megaTable.pdf",width=14,height=13)
 cowplot::plot_grid(cFlex,mFlex,fFlex,pFlex,ncol=1)
 dev.off()
 
@@ -521,7 +521,7 @@ fwtab<-getWinsTable("cvData/flchainWins.rds","C: FLC")
 pwtab<-getWinsTable("cvData/prostateWins.rds","D: Prostate")
 
 
-pdf(file="figures/winTable.pdf",width=12,height=6)
+pdf(file="../StatPaper/figures/winTable.pdf",width=12,height=6)
 cowplot::plot_grid(cwtab,mwtab,fwtab,pwtab,ncol=2)
 dev.off()
 
@@ -529,7 +529,7 @@ dev.off()
 
 
 
-```{r complexHazard}
+```{r complexHazard,eval=FALSE}
 
 library(casebase)
 
@@ -593,7 +593,7 @@ a<-plot(dat, add.competing.event = T) +scale_color_manual(labels = c("Time-const
   guides(color = "none")+labs(fill="Case-series events")
 
 
-pdf(file="figures/ComplexPopTime.pdf",width=8,height=6)
+pdf(file="../StatPaper/figures/ComplexPopTime.pdf",width=8,height=6)
 a
 dev.off()
 
