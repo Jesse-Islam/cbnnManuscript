@@ -96,7 +96,7 @@ res = split(data, g)
 
 
 
-#saveRDS(res$test,"cvData/prostateTest.rds")
+saveRDS(res$test,"cvData/prostateTest.rds")
 
 
 k=3
@@ -115,7 +115,7 @@ for(i in 1:k){
   ))
   klist[[i]]= split(data, g)
 }
-#saveRDS(klist,"cvData/prostateCV.rds")
+saveRDS(klist,"cvData/prostateCV.rds")
 
 
 
@@ -127,11 +127,6 @@ for(i in 1:k){
 ```{r setFixedHyperparameters,eval=TRUE,hide=FALSE}
 
 
-klist<-readRDS("cvData/prostateCV.rds")
-
-
-
-
 lr=c(0.001,0.01)
 drpt=c(0.01,0.05,0.1)
 layer1=c(50,75,100)
@@ -140,13 +135,6 @@ nBatch=c(100,500)
 actv=c("relu","linear")#
 alp=c(0,0.5,1)
 
-lr=c(0.01)
-drpt=c(0.01)
-layer1=c(50)
-layer2=c(10)
-nBatch=c(100)
-actv=c("relu","linear")#
-alp=c(0)
 
 ```
 
@@ -181,7 +169,7 @@ winners<-list(cbnn=cbnnPerformance,
               ds=bestDS,
               dh=bestDH)
 
-#saveRDS(winners,"cvData/prostateWins.rds")
+saveRDS(winners,"cvData/prostateWins.rds")
 
 ```
 
@@ -225,7 +213,6 @@ while (pos <= iteration) {
   train<-trainOG[samp,]
   
   
-  #train<-res$train
   val<-res$validate
   
   sds<-sapply(train, function(x) (sd(x)))
@@ -243,9 +230,7 @@ while (pos <= iteration) {
   
   
   linModelTrain<-as.data.frame(rbind(train,val))
-  #valcb<-sampleCaseBase(data = as.data.frame(val),time="time",event="status",ratio=100)#rbind(train,val)
-  #valcb$offset<-0
-  #valcbtensor<-list(list(as.matrix(valcb[,-c(ncol(valcb)-1,ncol(valcb))]),as.matrix(valcb[,ncol(valcb),drop=F])),as.matrix(valcb[,ncol(valcb)-1,drop=F]))
+
   times<-seq(from=min(test$time),
              to=max(test$time),
              length.out = 82
@@ -342,14 +327,7 @@ while (pos <= iteration) {
   layer2=winners$cbnn$layer2
   bsize=c(floor(nrow(train)/winners$cbnn$nBatch))
   actv=winners$cbnn$actv
-  # 
-  # 
-  #  lr=0.001
-  #  drpt=0.5
-  #  layer1=10
-  #  layer2=10
-  #  patience=10
-  #actv='linear'
+  
   
   currentTime<-Sys.time() 
   covars_input<-layer_input(shape=c(length(colnames(mod_cb_glm$data))-2),
@@ -378,7 +356,6 @@ while (pos <= iteration) {
                     batch_size=bsize,
                     verbose=0,
                     monitor="val_loss",
-                    #val_split=0.2,
                     min_delta=min_delta,
                     patience=patience,val=val)
   annPreds<-aar(fit,
@@ -444,9 +421,9 @@ while (pos <= iteration) {
                                cScore=cScoreTemp
   )
   print(paste("current iter:",pos))
-  #saveRDS(BrierIPAList,'results/100prostateBrier.rds')
-  #saveRDS(cScore,'results/100prostatecidx.rds')
-  #saveRDS(AUClist,'results/100prostateAuc.rds')
+  saveRDS(BrierIPAList,'results/100prostateBrier.rds')
+  saveRDS(cScore,'results/100prostatecidx.rds')
+  saveRDS(AUClist,'results/100prostateAuc.rds')
   pos=pos+1
   
 }

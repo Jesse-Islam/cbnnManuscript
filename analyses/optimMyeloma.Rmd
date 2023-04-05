@@ -91,7 +91,7 @@ res = split(data, g)
 
 
 
-#saveRDS(res$test,"cvData/myelomaTest.rds")
+saveRDS(res$test,"cvData/myelomaTest.rds")
 
 
 k=3
@@ -110,7 +110,7 @@ for(i in 1:k){
   ))
   klist[[i]]= split(data, g)
 }
-#saveRDS(klist,"cvData/myelomaCV.rds")
+saveRDS(klist,"cvData/myelomaCV.rds")
 
 
 
@@ -131,13 +131,6 @@ nBatch=c(100,500)
 actv=c("relu","linear")#
 alp=c(0,0.5,1)
 
-lr=c(0.01)
-drpt=c(0.01)
-layer1=c(50)
-layer2=c(10)
-nBatch=c(100)
-actv=c("relu","linear")#
-alp=c(0)
 
 ```
 
@@ -166,7 +159,7 @@ cbnnPerformance<-optimCBNN(klist,lr,drpt,layer1,layer2,nBatch,actv)
 winners<-list(cbnn=cbnnPerformance,
               ds=bestDS,
               dh=bestDH)
-#saveRDS(winners,"cvData/myelomaWins.rds")
+saveRDS(winners,"cvData/myelomaWins.rds")
 
 ```
 
@@ -426,9 +419,9 @@ while (pos <= iteration) {
   )
   
   print(paste("current iter:",pos))
-  #saveRDS(BrierIPAList,'results/100myelomaBrier.rds')
-  #saveRDS(cScore,'results/100myelomacidx.rds')
-  #saveRDS(AUClist,'results/100myelomaAuc.rds')
+  saveRDS(BrierIPAList,'results/100myelomaBrier.rds')
+  saveRDS(cScore,'results/100myelomacidx.rds')
+  saveRDS(AUClist,'results/100myelomaAuc.rds')
   pos=pos+1
   
 }

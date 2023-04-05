@@ -135,7 +135,7 @@ g = sample(cut(
 ))
 
 res = split(data, g)
-#saveRDS(res$test,"cvData/ComplexSimTest.rds")
+saveRDS(res$test,"cvData/ComplexSimTest.rds")
 
 
 k=3
@@ -154,7 +154,7 @@ for(i in 1:k){
   ))
   klist[[i]]= split(data, g)
 }
-#saveRDS(klist,"cvData/ComplexSimCV.rds")
+saveRDS(klist,"cvData/ComplexSimCV.rds")
 
 
 
@@ -171,15 +171,6 @@ layer2=c(10,25,50)
 nBatch=c(100,500)
 actv=c("relu","linear")#
 alp=c(0,0.5,1)
-
-lr=c(0.01)
-drpt=c(0.01)
-layer1=c(50)
-layer2=c(10)
-nBatch=c(100)
-actv=c("relu","linear")#
-alp=c(0)
-
 
 ```
 
@@ -209,7 +200,7 @@ cbnnPerformance<-optimCBNN(klist,lr,drpt,layer1,layer2,nBatch,actv)
 winners<-list(cbnn=cbnnPerformance,
               ds=bestDS,
               dh=bestDH)
-#saveRDS(winners,"cvData/complexOptimWins.rds")
+saveRDS(winners,"cvData/complexOptimWins.rds")
 ```
 
 ```{r bestFits,eval=T}
@@ -328,7 +319,9 @@ while (pos <= iteration) {
   actv=winners$ds$actv
   
   source_python('src/dsurv.py')
-  coxnnsurv=fitDeepSurv(train,fullTest,bsize,epochs=epo,valida=val,patience=patience,min_delta=min_delta,drpt=drpt,lay1=layer1,lay2=layer2,lr=lr,actv=actv)
+  coxnnsurv=fitDeepSurv(train,fullTest,bsize,epochs=epo,valida=val,
+                        patience=patience,min_delta=min_delta,drpt=drpt,
+                        lay1=layer1,lay2=layer2,lr=lr,actv=actv)
   coxnnsurv<-t(coxnnsurv)
   cnnCleaned<-pyProcess(coxnnsurv,times=times)
   colnames(cnnCleaned)<-times
@@ -477,9 +470,9 @@ while (pos <= iteration) {
 
   
   print(paste("current iter:",pos))
-  #saveRDS(BrierIPAList,'results/100complexBrier.rds')
-  #saveRDS(cScore,'results/100complexcidx.rds')
-  #saveRDS(AUClist,'results/100complexAuc.rds')
+  saveRDS(BrierIPAList,'results/100complexBrier.rds')
+  saveRDS(cScore,'results/100complexcidx.rds')
+  saveRDS(AUClist,'results/100complexAuc.rds')
   pos=pos+1
   rm(train,val,fullTest)
 }
@@ -587,8 +580,7 @@ paramTrials<-as.data.frame(tidyr::crossing(lr=c(0.001,0.01,0.1),
                                            alp=c(0,0.5,1),
                                            k=c(3,6,9),
                                            dist=c('weibull','lognormal'),
-                                           #IPA=NA,
-                                           #IPAse=NA,
+
                                            valLoss=NA,
                                            runtime=NA))
 
@@ -619,8 +611,7 @@ for(i in 1:nrow(paramTrials)){
     alp=paramTrials[i,]$alp
     k=paramTrials[i,]$k
     dist=paramTrials[i,]$dist
-    #=paramTrials[i,]$IPA
-    #=paramTrials[i,]$valLoss
+
     
     currentTime<-Sys.time() 
     
@@ -639,14 +630,12 @@ for(i in 1:nrow(paramTrials)){
   }
   rm(fitDeephit)
   
-  #paramTrials$IPA[i]<-mean(tempRes)
-  #paramTrials$IPAse[i]<-sd(tempRes)
+
   paramTrials$valLoss[i]<-mean(tempVal)
   paramTrials$runtime[i]<-mean(runTime)
   print(paste("trial",i))
   print(mean(runTime))
-  #print(as.character(paramTrials[i,]))
-  #rm(cbnn,fit,annPreds,covars_input,covars_output)
+
   gc()
 }
 
