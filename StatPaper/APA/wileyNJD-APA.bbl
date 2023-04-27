@@ -186,6 +186,37 @@ Dispenzieri, A.%
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
+Dispenzieri%
+\ \protect \BOthers {.}}{%
+Dispenzieri%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2009}}%
+}]{%
+mm2flc}
+\APACinsertmetastar {%
+mm2flc}%
+\begin{APACrefauthors}%
+Dispenzieri, A.%
+, Kyle, R.%
+, Merlini, G.%
+, Miguel, J.%
+, Ludwig, H.%
+, H{\'a}jek, R.%
+\BDBL {}others%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2009}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {International Myeloma Working Group guidelines for
+  serum-free light chain analysis in multiple myeloma and related disorders}
+  {International myeloma working group guidelines for serum-free light chain
+  analysis in multiple myeloma and related disorders}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Leukemia}{23}{2}{215--224}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
 Faraggi%
 \ \BBA {} Simon%
 }{%
@@ -438,32 +469,6 @@ Katzman, J\BPBI L.%
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
-Kleinbaum%
-\ \BBA {} Klein%
-}{%
-Kleinbaum%
-\ \BBA {} Klein%
-}{%
-{\protect \APACyear {2012}}%
-}]{%
-kleinbaum2012survival}
-\APACinsertmetastar {%
-kleinbaum2012survival}%
-\begin{APACrefauthors}%
-Kleinbaum, D\BPBI G.%
-\BCBT {}\ \BBA {} Klein, M.%
-\end{APACrefauthors}%
-\unskip\
-\newblock
-\APACrefYear{2012}.
-\newblock
-\APACrefbtitle {Survival analysis: a self-learning text} {Survival analysis: a
-  self-learning text}\ (\BVOL~3).
-\newblock
-\APACaddressPublisher{}{Springer}.
-\PrintBackRefs{\CurrentBib}
-
-\bibitem [\protect \citeauthoryear {%
 Kyle%
 }{%
 Kyle%
@@ -655,6 +660,8 @@ Rsoft}%
 \APACaddressPublisher{Vienna, Austria}{}.
 \newblock
 \begin{APACrefURL} \url{https://www.R-project.org/} \end{APACrefURL}
+\newblock
+\APACrefnote{Version 4.1.2}
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
@@ -795,7 +802,7 @@ Van~Rossum, G.%
 \newblock
 \APACaddressPublisher{Scotts Valley, CA}{CreateSpace}.
 \newblock
-\APACrefnote{Version 3.6.13}
+\APACrefnote{Version 3.8.12}
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%

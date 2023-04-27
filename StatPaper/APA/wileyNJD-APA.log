@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.3.30)  5 APR 2023 12:57
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.3.30)  27 APR 2023 12:12
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1075,60 +1075,60 @@ LaTeX Info: Redefining \BPBI on input line 129.
 LaTeX Info: Redefining \BHBI on input line 130.
 )
 \c@lstlisting=\count444
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 62
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 48
 .
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/t1lmr.fd
 File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 6
-2.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 4
+8.
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 6
-2.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 4
+8.
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-62.
+48.
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-62.
+48.
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 62.
+(Font)              <12> on input line 48.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 62.
+(Font)              <8> on input line 48.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 62.
+(Font)              <6> on input line 48.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 62.
+(Font)              <7> on input line 48.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 62.
+(Font)              <5> on input line 48.
 LaTeX Font Info:    Font shape `T1/lato-TLF/m/n' will be
-(Font)              scaled to size 7.0pt on input line 62.
+(Font)              scaled to size 7.0pt on input line 48.
 
-Overfull \hbox (346.99213pt too wide) in paragraph at lines 62--62
+Overfull \hbox (346.99213pt too wide) in paragraph at lines 48--48
 [][] | || []|[][] 
  []
 
-LaTeX Font Info:    Calculating math sizes for size <8.03> on input line 62.
+LaTeX Font Info:    Calculating math sizes for size <8.03> on input line 48.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8.03> on input line 62.
+(Font)              <8.03> on input line 48.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5.62097> on input line 62.
+(Font)              <5.62097> on input line 48.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <4.015> on input line 62.
+(Font)              <4.015> on input line 48.
 
 Overfull \vbox (4.76512pt too high) has occurred while \output is active []
 
@@ -1140,89 +1140,89 @@ ocal/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}
 
 {/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/lato/a_cl4kdn.enc}]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
-46.
+22.
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Font shape `T1/lato-TLF/m/it' will be
-(Font)              scaled to size 8.03pt on input line 157.
+(Font)              scaled to size 8.03pt on input line 131.
+LaTeX Font Info:    Font shape `T1/lato-TLF/m/n' will be
+(Font)              scaled to size 5.62097pt on input line 157.
+LaTeX Font Info:    Font shape `T1/lato-TLF/m/n' will be
+(Font)              scaled to size 7.5pt on input line 157.
+LaTeX Font Info:    Calculating math sizes for size <7.5> on input line 157.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7.5> on input line 157.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5.24997> on input line 157.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <3.75> on input line 157.
+LaTeX Font Info:    Font shape `T1/lato-TLF/m/n' will be
+(Font)              scaled to size 5.24997pt on input line 157.
  [2{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/l
 ocal/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2
-023/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}]
-LaTeX Font Info:    Font shape `T1/lato-TLF/m/n' will be
-(Font)              scaled to size 5.62097pt on input line 190.
-LaTeX Font Info:    Font shape `T1/lato-TLF/m/n' will be
-(Font)              scaled to size 7.5pt on input line 190.
-LaTeX Font Info:    Calculating math sizes for size <7.5> on input line 190.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7.5> on input line 190.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5.24997> on input line 190.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <3.75> on input line 190.
-LaTeX Font Info:    Font shape `T1/lato-TLF/m/n' will be
-(Font)              scaled to size 5.24997pt on input line 190.
-<../figures/nnarch2.png, id=110, 1927.2pt x 678.28406pt>
-File: ../figures/nnarch2.png Graphic file (type png)
-<use ../figures/nnarch2.png>
-Package pdftex.def Info: ../figures/nnarch2.png  used on input line 237.
-(pdftex.def)             Requested size: 507.50787pt x 178.61629pt.
+023/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2023/texmf-
+dist/fonts/enc/dvips/lm/lm-mathex.enc}]
+<../figures/Figure1.pdf, id=112, 10686.26263pt x 4078.09975pt>
+File: ../figures/Figure1.pdf Graphic file (type pdf)
+<use ../figures/Figure1.pdf>
+Package pdftex.def Info: ../figures/Figure1.pdf  used on input line 196.
+(pdftex.def)             Requested size: 507.50787pt x 193.64952pt.
 LaTeX Font Info:    Font shape `T1/lato-TLF/b/n' will be
-(Font)              scaled to size 8.03pt on input line 239.
- [3{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc} <../fi
-gures/nnarch2.png>]
+(Font)              scaled to size 8.03pt on input line 201.
+ [3 <../figures/Figure1.pdf>]
 LaTeX Font Info:    Font shape `T1/lato-TLF/m/n' will be
-(Font)              scaled to size 4.015pt on input line 276.
+(Font)              scaled to size 4.015pt on input line 233.
  [4]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <9> on input line 340.
+(Font)              <9> on input line 286.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 340.
+(hyperref)                removing `math shift' on input line 286.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `subscript' on input line 340.
+(hyperref)                removing `subscript' on input line 286.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 340.
+(hyperref)                removing `math shift' on input line 286.
 
-<../figures/winTable.pdf, id=180, 867.24pt x 433.62pt>
-File: ../figures/winTable.pdf Graphic file (type pdf)
-<use ../figures/winTable.pdf>
-Package pdftex.def Info: ../figures/winTable.pdf  used on input line 379.
+<../figures/Table1.pdf, id=194, 867.24pt x 433.62pt>
+File: ../figures/Table1.pdf Graphic file (type pdf)
+<use ../figures/Table1.pdf>
+Package pdftex.def Info: ../figures/Table1.pdf  used on input line 319.
 (pdftex.def)             Requested size: 507.50787pt x 253.756pt.
 [5]
-<../figures/megaPlot.pdf, id=213, 1156.32pt x 650.43pt>
-File: ../figures/megaPlot.pdf Graphic file (type pdf)
-<use ../figures/megaPlot.pdf>
-Package pdftex.def Info: ../figures/megaPlot.pdf  used on input line 421.
+<../figures/Figure2.pdf, id=232, 1156.32pt x 650.43pt>
+File: ../figures/Figure2.pdf Graphic file (type pdf)
+<use ../figures/Figure2.pdf>
+Package pdftex.def Info: ../figures/Figure2.pdf  used on input line 348.
 (pdftex.def)             Requested size: 507.50787pt x 285.46558pt.
- [6 <../figures/winTable.pdf>]
-<../figures/megaTable.pdf, id=255, 1011.78pt x 939.51pt>
-File: ../figures/megaTable.pdf Graphic file (type pdf)
-<use ../figures/megaTable.pdf>
-Package pdftex.def Info: ../figures/megaTable.pdf  used on input line 510.
+ [6 <../figures/Table1.pdf>]
+<../figures/Table2.pdf, id=270, 1011.78pt x 939.51pt>
+File: ../figures/Table2.pdf Graphic file (type pdf)
+<use ../figures/Table2.pdf>
+Package pdftex.def Info: ../figures/Table2.pdf  used on input line 424.
 (pdftex.def)             Requested size: 507.50787pt x 471.2591pt.
- [7 <../figures/megaPlot.pdf>] [8 <../figures/megaTable.pdf>] [9] [10] (./wiley
-NJD-APA.bbl [11])
-<empty.pdf, id=404, 114.43155pt x 86.162pt>
+ [7 <../figures/Figure2.pdf>] [8 <../figures/Table2.pdf>] [9] [10] (./wileyNJD-
+APA.bbl [11])
+<empty.pdf, id=430, 114.43155pt x 86.162pt>
  [12] (./wileyNJD-APA.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
- 19425 strings out of 476025
- 311751 string characters out of 5790017
+ 19418 strings out of 476025
+ 311429 string characters out of 5790017
  1877388 words of memory out of 5000000
- 39389 multiletter control sequences out of 15000+600000
+ 39381 multiletter control sequences out of 15000+600000
  801625 words of font info for 103 fonts, out of 8000000 for 9000
  1167 hyphenation exceptions out of 8191
- 90i,13n,90p,1523b,634s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 90i,13n,90p,1536b,626s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/typoland/lato/Lato-Bold.pfb><
 /usr/local/texlive/2023/texmf-dist/fonts/type1/typoland/lato/Lato-Italic.pfb></
 usr/local/texlive/2023/texmf-dist/fonts/type1/typoland/lato/Lato-Regular.pfb></
@@ -1243,10 +1243,10 @@ l/texlive/2023/texmf-dist/fonts/type1/public/lm/lmsy5.pfb></usr/local/texlive/2
 023/texmf-dist/fonts/type1/public/lm/lmsy6.pfb></usr/local/texlive/2023/texmf-d
 ist/fonts/type1/public/lm/lmsy8.pfb></usr/local/texlive/2023/texmf-dist/fonts/t
 ype1/public/lm/lmtt8.pfb>
-Output written on wileyNJD-APA.pdf (12 pages, 1011823 bytes).
+Output written on wileyNJD-APA.pdf (12 pages, 957940 bytes).
 PDF statistics:
- 613 PDF objects out of 1000 (max. 8388607)
- 523 compressed objects within 6 object streams
- 91 named destinations out of 1000 (max. 500000)
- 234 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 642 PDF objects out of 1000 (max. 8388607)
+ 549 compressed objects within 6 object streams
+ 93 named destinations out of 1000 (max. 500000)
+ 242 words of extra memory for PDF output out of 10000 (max. 10000000)
 

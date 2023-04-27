@@ -275,7 +275,7 @@ legend <- get_legend(
 )
 
 g<-plot_grid(pt, legend,ncol = 1, rel_heights = c(1, .1), rel_widths = c(3, .4))
-pdf(file="../StatPaper/figures/megaPlot.pdf",width=16,height=9)
+pdf(file="../StatPaper/figures/Figure2.pdf",width=16,height=9)
 g
 dev.off()
 ```
@@ -399,9 +399,9 @@ getMaxes<-function(Tab){
   for(i in 1:length(rows)){
     cols<-append(cols,rep(i,length(rows[[i]])))
   }
-  rows<-c(5,as.vector(unlist(rows)))
+  rows<-c(as.vector(unlist(rows)))
   picks<-data.frame(row=rows,
-                    col=c(0,cols))
+                    col=c(cols))
   return(picks)
 }
 
@@ -429,7 +429,8 @@ flexMaker<-function(tab,boldPicks=NA,title){
   #ft<-bold(ft, bold = TRUE, part = "header")
   
   #ft$header$styles$text$bold$data
-  ft <- add_header_row(x = ft,top=F, values = c("Method", 25,50,75,100,25,50,75,100),
+  ft <- add_header_row(x = ft,top=F, values = c("Method","25%","50%","75%","100%",
+                                                "25%","50%","75%","100%"),
                        colwidths = c(1,1,1,1,1,1,1,1,1))
   ft$header$styles$text$bold$data[1,1]<-T
   #ft <- add_header_row(
@@ -474,7 +475,7 @@ pFlex<-getFlex(prostate,"D: Prostate")
 
 
 
-pdf(file="../StatPaper/figures/megaTable.pdf",width=14,height=13)
+pdf(file="../StatPaper/figures/Table2.pdf",width=14,height=13)
 cowplot::plot_grid(cFlex,mFlex,fFlex,pFlex,ncol=1)
 dev.off()
 
@@ -521,7 +522,7 @@ fwtab<-getWinsTable("cvData/flchainWins.rds","C: FLC")
 pwtab<-getWinsTable("cvData/prostateWins.rds","D: Prostate")
 
 
-pdf(file="../StatPaper/figures/winTable.pdf",width=12,height=6)
+pdf(file="../StatPaper/figures/Table1.pdf",width=12,height=6)
 cowplot::plot_grid(cwtab,mwtab,fwtab,pwtab,ncol=2)
 dev.off()
 
