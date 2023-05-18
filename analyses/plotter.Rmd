@@ -123,6 +123,9 @@ plotPerformance<-function(metricSummary,xlab="Follow-up time",method='Metric',it
   if(method=="C-Index"){
     method=expression("C"["IPCW"])
   }   
+  #   if(method=="AUC"){
+  #   method=expression("C"["IPCW"])
+  # }   
   metricSummary#<- metricSummary[-which(metricSummary$model=="CBNN_Spline"),]
   #mainTitle<-paste(method,' : 95% P.I. over ', iterations, ' iterations',sep='')
   colnames(metricSummary)[1]<-"Models"
@@ -251,15 +254,18 @@ prostate<-getPlots('results/100prostateBrier.rds','results/100prostatecidx.rds',
 
 ```{r megaplot,fig.height=12,fig.width=12}
 #complex[[4]]$layers[[2]]<-NULL
-pt <- plot_grid(
-  complex[[1]]+ theme(legend.position="none")+ ggtitle("Complex simulation")+ labs(x = "")+coord_cartesian(ylim=c(-0.3,0.7)),
-  myeloma[[1]]+ theme(legend.position="none")+ ggtitle("MM")+ labs(x = "",y="")+coord_cartesian(ylim=c(-1,.1)),
-  flchain[[1]]+ theme(legend.position="none")+ ggtitle("FLC")+ labs(x = "",y="")+coord_cartesian(ylim=c(-0.025,.45)),
-  prostate[[1]]+ theme(legend.position="none")+ ggtitle("Prostate")+ labs(x = "",y="")+coord_cartesian(ylim=c(-0.02,0.205)),
-  complex[[5]]+ theme(legend.position="none")+ labs(x = "Follow-up time (years)")+coord_cartesian(ylim=c(0.68,1)),
-  myeloma[[5]]+ theme(legend.position="none")+ labs(x = "Follow-up time (years)",y="")+coord_cartesian(ylim=c(0.00,0.75)),
-  flchain[[5]]+ theme(legend.position="none")+ labs(x = "Follow-up time (years)",y="")+coord_cartesian(ylim=c(0.8,0.875)),
-  prostate[[5]]+ theme(legend.position="none")+ labs(x = "Follow-up time (years)",y="")+coord_cartesian(ylim=c(0.65,0.82)),
+
+sz<-18
+szx<-15
+pt <- plot_grid( 
+  complex[[1]]+ theme(legend.position="none")+ ggtitle("Complex simulation")+ labs(x = "")+coord_cartesian(ylim=c(-0.3,0.7))+theme(plot.title = element_text(size=sz)) +theme(axis.title.y=element_text(size=sz))+theme(axis.text=element_text(size=szx)),
+  myeloma[[1]]+ theme(legend.position="none")+ ggtitle("MM")+ labs(x = "",y="")+coord_cartesian(ylim=c(-1,.1)) + theme(plot.title = element_text(size=sz))+theme(axis.text=element_text(size=szx)),
+  flchain[[1]]+ theme(legend.position="none")+ ggtitle("FLC")+ labs(x = "",y="")+coord_cartesian(ylim=c(-0.025,.45)) + theme(plot.title = element_text(size=sz))+theme(axis.text=element_text(size=szx)),
+  prostate[[1]]+ theme(legend.position="none")+ ggtitle("Prostate")+ labs(x = "",y="")+coord_cartesian(ylim=c(-0.02,0.205)) + theme(plot.title = element_text(size=sz))+theme(axis.text=element_text(size=szx)),
+  complex[[5]]+ theme(legend.position="none")+ labs(x = "Follow-up time (years)",y=expression("AUC"["IPCW"]))+coord_cartesian(ylim=c(0.68,1)) +theme(axis.title.y=element_text(size=sz),axis.title.x=element_text(size=sz))+theme(axis.text=element_text(size=szx)),
+  myeloma[[5]]+ theme(legend.position="none")+ labs(x = "Follow-up time (years)",y="")+coord_cartesian(ylim=c(0.00,0.75)) +theme(axis.title.x=element_text(size=sz))+theme(axis.text=element_text(size=szx)),
+  flchain[[5]]+ theme(legend.position="none")+ labs(x = "Follow-up time (years)",y="")+coord_cartesian(ylim=c(0.8,0.875)) +theme(axis.title.x=element_text(size=sz))+theme(axis.text=element_text(size=szx)),
+  prostate[[5]]+ theme(legend.position="none")+ labs(x = "Follow-up time (years)",y="")+coord_cartesian(ylim=c(0.65,0.82)) +theme(axis.title.x=element_text(size=sz))+theme(axis.text=element_text(size=szx)),
   # complex[[4]]+ theme(legend.position="none")+ labs(x = "Follow-up time (years)")+coord_cartesian(ylim=c(0.5,0.8)),
   # myeloma[[4]]+ theme(legend.position="none")+ labs(x = "Follow-up time (years)",y="")+coord_cartesian(ylim=c(0.4,0.65)),
   # flchain[[4]]+ theme(legend.position="none")+ labs(x = "Follow-up time (years)",y="")+coord_cartesian(ylim=c(0.65,0.9)),
@@ -271,11 +277,11 @@ legend <- get_legend(
   complex$ipa  +
     guides(color = guide_legend(nrow = 2)) +
     theme(legend.position = "bottom")+
-    theme(legend.text=element_text(size=8))
+    theme(legend.text=element_text(size=sz))
 )
 
 g<-plot_grid(pt, legend,ncol = 1, rel_heights = c(1, .1), rel_widths = c(3, .4))
-pdf(file="../StatPaper/figures/Figure2.pdf",width=16,height=9)
+pdf(file="../StatPaper/figures/Figure2.pdf",width=18,height=10)
 g
 dev.off()
 ```
@@ -421,11 +427,11 @@ flexMaker<-function(tab,boldPicks=NA,title){
   tab<-cbind(rownames(tab),tab)
   ft<-delete_part(flextable(tab[-c(1,2),],cwidth=5,cheight=1), part = "header")
   
-  ft <- add_header_row(x = ft, values = c(title,"IPA","AUC"),
+  ft <- add_header_row(x = ft, values = c(title,"IPA", "AUC" ),
                        colwidths = c(1,4,4))
-  # ft <- compose(ft, part = "header", i = 1, j = 6,
-  #               value = as_paragraph("C",
-  #                                    as_sub("IPCW")))
+   ft <- compose(ft, part = "header", i = 1, j = 6,
+                 value = as_paragraph("AUC",
+                                      as_sub("IPCW")))
   #ft<-bold(ft, bold = TRUE, part = "header")
   
   #ft$header$styles$text$bold$data

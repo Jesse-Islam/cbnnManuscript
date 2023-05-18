@@ -62,6 +62,38 @@ Bhatnagar, S\BPBI R.%
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
+Bice%
+\ \protect \BOthers {.}}{%
+Bice%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2020}}%
+}]{%
+ds2}
+\APACinsertmetastar {%
+ds2}%
+\begin{APACrefauthors}%
+Bice, N.%
+, Kirby, N.%
+, Bahr, T.%
+, Rasmussen, K.%
+, Saenz, D.%
+, Wagner, T.%
+\BDBL {}Fakhreddine, M.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2020}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Deep learning-based survival analysis for brain
+  metastasis patients with the national cancer database} {Deep learning-based
+  survival analysis for brain metastasis patients with the national cancer
+  database}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Journal of applied clinical medical
+  physics}{21}{9}{187--192}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
 Blanche%
 \ \protect \BOthers {.}}{%
 Blanche%
@@ -469,6 +501,35 @@ Katzman, J\BPBI L.%
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
+Kim%
+\ \protect \BOthers {.}}{%
+Kim%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2019}}%
+}]{%
+ds3}
+\APACinsertmetastar {%
+ds3}%
+\begin{APACrefauthors}%
+Kim, D\BPBI W.%
+, Lee, S.%
+, Kwon, S.%
+, Nam, W.%
+, Cha, I\BHBI H.%
+\BCBL {}\ \BBA {} Kim, H\BPBI J.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2019}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Deep learning-based survival prediction of oral cancer
+  patients} {Deep learning-based survival prediction of oral cancer
+  patients}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Scientific reports}{9}{1}{1--10}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
 Kyle%
 }{%
 Kyle%
@@ -803,6 +864,38 @@ Van~Rossum, G.%
 \APACaddressPublisher{Scotts Valley, CA}{CreateSpace}.
 \newblock
 \APACrefnote{Version 3.8.12}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Yu%
+, Huang%
+, Feng%
+\BCBL {}\ \BBA {} Lyu%
+}{%
+Yu%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2022}}%
+}]{%
+ds1}
+\APACinsertmetastar {%
+ds1}%
+\begin{APACrefauthors}%
+Yu, H.%
+, Huang, T.%
+, Feng, B.%
+\BCBL {}\ \BBA {} Lyu, J.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2022}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Deep-learning model for predicting the survival of
+  rectal adenocarcinoma patients based on a surveillance, epidemiology, and end
+  results analysis} {Deep-learning model for predicting the survival of rectal
+  adenocarcinoma patients based on a surveillance, epidemiology, and end
+  results analysis}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{BMC cancer}{22}{1}{1--14}.
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
