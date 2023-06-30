@@ -33,7 +33,7 @@ library(tensorflow)
 library(ggrepel)
 
 library(dplyr)
-library(flextable)
+
 
 library(cowplot)
 library(matrixStats)
@@ -44,7 +44,7 @@ library(gtable)
 #tf$config$threading$set_intra_op_parallelism_threads(1)
 #tf$config$threading$set_inter_op_parallelism_threads(1)
 
-
+library(flextable)
 
 #set.seed(2)
 set.seed(1)
@@ -281,7 +281,7 @@ legend <- get_legend(
 )
 
 g<-plot_grid(pt, legend,ncol = 1, rel_heights = c(1, .1), rel_widths = c(3, .4))
-pdf(file="../StatPaper/figures/Figure2.pdf",width=18,height=10)
+pdf(file="../manuscript/figures/Figure2.pdf",width=18,height=10)
 g
 dev.off()
 ```
@@ -289,6 +289,7 @@ dev.off()
 
 ```{r flextableTablePrep,fig.height=46,fig.width=26}
 
+library(flextable)
 edit_cell <- function(table, row, col, name="core-fg", ...){
   l <- table$layout
   ids <- which(l$t %in% row & l$l %in% col & l$name==name)
@@ -420,6 +421,15 @@ convert0<-function(tab){
   return(tab)
 }
 
+convert1<-function(tab){
+  tempNames<-rownames(tab)
+  tab<-as.data.frame(lapply(tab, function(x){gsub("1 ","1.00 ", x,fixed=T)}))
+  tab<-as.data.frame(lapply(tab, function(x){gsub('(1,',"(1.00,", x,fixed=T)}))
+  tab<-as.data.frame(lapply(tab, function(x) gsub(",1)",",1.00)", x,fixed=T)))
+  rownames(tab)<-tempNames
+  return(tab)
+}
+
 flexMaker<-function(tab,boldPicks=NA,title){
   boldPicks$col=boldPicks$col+1 #makes finding the correct ones easier.
   bord<-fp_border_default(color="black",style="solid")
@@ -442,14 +452,14 @@ flexMaker<-function(tab,boldPicks=NA,title){
   #ft <- add_header_row(
   #  x = ft, values = c(title),
   #  colwidths = c(9))
-  ft <- align(ft, i = c(1,2), part = "header", align = "center")
+  ft <- flextable::align(ft, i = c(1,2), part = "header", align = "center")
   ft<-vline(ft, j = c(1,5), border = bord2, part = "body")
   ft<-hline(ft,i=c(1,2),border=bord2,part="header")
   #ft<-hline(ft,i=c(1),border=bord,part="body")
-  ft<-fontsize(ft, i = NULL, j = NULL, size =7, part = "all")
-  ft<-fontsize(ft, i = NULL, j = NULL, size =10, part = "header")
-  ft <- align(ft, i = NULL, part = "body", align = "center")
-  ft$body$styles$text$font.size$data[,1]<-10
+  ft<-fontsize(ft, i = NULL, j = NULL, size =12, part = "all")
+  ft<-fontsize(ft, i = NULL, j = NULL, size =14, part = "header")
+  ft <- flextable::align(ft, i = NULL, part = "body", align = "center")
+  ft$body$styles$text$font.size$data[,1]<-14
   
   if(is.data.frame(boldPicks)){
     for(i in 1:nrow(boldPicks)){
@@ -470,18 +480,19 @@ getFlex<-function(result,titler="X: study"){
   Picks<-getMaxes(Tab)
   Tab<-cleantables(Tab$tab)
   Tab<-convert0(Tab)
+  Tab<-convert1(Tab)
   Flex<-flexMaker(tab=Tab,boldPicks = Picks,title=titler)
   
 }
 
-cFlex<-getFlex(complex,"A: Complex")
-mFlex<-getFlex(myeloma,"B: MM")
-fFlex<-getFlex(flchain,"C: FLC")
-pFlex<-getFlex(prostate,"D: Prostate")
+cFlex<-getFlex(complex,"A:Complex")
+mFlex<-getFlex(myeloma,"B:MM")
+fFlex<-getFlex(flchain,"C:FLC")
+pFlex<-getFlex(prostate,"D:Prostate")
 
 
 
-pdf(file="../StatPaper/figures/Table2.pdf",width=14,height=13)
+pdf(file="../manuscript/figures/Table2.pdf",width=19,height=26)
 cowplot::plot_grid(cFlex,mFlex,fFlex,pFlex,ncol=1)
 dev.off()
 
@@ -528,7 +539,7 @@ fwtab<-getWinsTable("cvData/flchainWins.rds","C: FLC")
 pwtab<-getWinsTable("cvData/prostateWins.rds","D: Prostate")
 
 
-pdf(file="../StatPaper/figures/Table1.pdf",width=12,height=6)
+pdf(file="../manuscript/figures/Table1.pdf",width=12,height=6)
 cowplot::plot_grid(cwtab,mwtab,fwtab,pwtab,ncol=2)
 dev.off()
 
@@ -600,7 +611,7 @@ a<-plot(dat, add.competing.event = T) +scale_color_manual(labels = c("Time-const
   guides(color = "none")+labs(fill="Case-series events")
 
 
-pdf(file="../StatPaper/figures/ComplexPopTime.pdf",width=8,height=6)
+pdf(file="../manuscript/figures/ComplexPopTime.pdf",width=8,height=6)
 a
 dev.off()
 

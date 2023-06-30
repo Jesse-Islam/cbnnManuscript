@@ -1,0 +1,174 @@
+\begin{thebibliography}{10}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{hanley2009}
+J.~A. Hanley, O.~S. Miettinen, Fitting {smooth-in-time} prognostic risk
+  functions via logistic regression, The International Journal of Biostatistics
+  5~(1) (2009).
+
+\bibitem{coradini2000time}
+D.~Coradini, M.~G. Daidone, P.~Boracchi, E.~Biganzoli, S.~Oriana, G.~Bresciani,
+  C.~Pellizzaro, G.~Tomasic, G.~Di~Fronzo, E.~Marubini, Time-dependent
+  relevance of steroid receptors in breast cancer, Journal of clinical oncology
+  18~(14) (2000) 2702--2709.
+
+\bibitem{royston2002flexible}
+P.~Royston, M.~K. Parmar, Flexible parametric proportional-hazards and
+  proportional-odds models for censored survival data, with application to
+  prognostic modelling and estimation of treatment effects, Statistics in
+  medicine 21~(15) (2002) 2175--2197.
+
+\bibitem{katzman2018DeepSurv}
+J.~L. Katzman, U.~Shaham, A.~Cloninger, J.~Bates, T.~Jiang, Y.~Kluger,
+  Deepsurv: personalized treatment recommender system using a cox proportional
+  hazards deep neural network, BMC Medical Research Methodology 18~(1) (2018)
+  24.
+
+\bibitem{ds1}
+H.~Yu, T.~Huang, B.~Feng, J.~Lyu, Deep-learning model for predicting the
+  survival of rectal adenocarcinoma patients based on a surveillance,
+  epidemiology, and end results analysis, BMC cancer 22~(1) (2022) 1--14.
+
+\bibitem{ds2}
+N.~Bice, N.~Kirby, T.~Bahr, K.~Rasmussen, D.~Saenz, T.~Wagner, N.~Papanikolaou,
+  M.~Fakhreddine, Deep learning-based survival analysis for brain metastasis
+  patients with the national cancer database, Journal of applied clinical
+  medical physics 21~(9) (2020) 187--192.
+
+\bibitem{ds3}
+D.~W. Kim, S.~Lee, S.~Kwon, W.~Nam, I.-H. Cha, H.~J. Kim, Deep learning-based
+  survival prediction of oral cancer patients, Scientific reports 9~(1) (2019)
+  1--10.
+
+\bibitem{faraggi1995neural}
+D.~Faraggi, R.~Simon, A neural network model for survival data, Statistics in
+  medicine 14~(1) (1995) 73--82.
+
+\bibitem{lee2018DeepHit}
+C.~Lee, W.~R. Zame, J.~Yoon, M.~v.~d. Schaar, Deephit: A deep learning approach
+  to survival analysis with competing risks., AAAI Conference on Artificial
+  Intelligence (2018) 2314--2321Software from pycox version 0.2.2.
+
+\bibitem{mantel1}
+N.~Mantel, Synthetic retrospective studies and related topics, Biometrics
+  (1973) 479--486.
+
+\bibitem{saarela2015}
+O.~Saarela, J.~A. Hanley, Case-base methods for studying vaccination safety,
+  Biometrics 71~(1) (2015) 42--52.
+
+\bibitem{gulli2017}
+A.~Gulli, S.~Pal, Deep learning with Keras, Packt Publishing Ltd, 2017.
+
+\bibitem{hughes2020calculus}
+D.~Hughes-Hallett, A.~M. Gleason, W.~G. McCallum, Calculus: Single and
+  multivariable, John Wiley \& Sons, 2020.
+
+\bibitem{graf1999}
+E.~Graf, C.~Schmoor, W.~Sauerbrei, M.~Schumacher, Assessment and comparison of
+  prognostic classification schemes for survival data, Statistics in medicine
+  18~(17-18) (1999) 2529--2545.
+
+\bibitem{kattan2018index}
+M.~W. Kattan, T.~A. Gerds, The index of prediction accuracy: an intuitive
+  measure useful for evaluating risk prediction models, Diagnostic and
+  prognostic research 2~(1) (2018) 1--7.
+
+\bibitem{auc}
+P.~Blanche, C.~Proust-Lima, L.~Loubere, C.~Berr, J.-F. Dartigues,
+  H.~Jacqmin-Gadda, Quantifying and comparing dynamic predictive accuracy of
+  joint models for longitudinal marker and time-to-event in presence of
+  censoring and competing risks, Biometrics 71~(1) (2015) 102--113.
+
+\bibitem{Rsoft}
+{R Core Team}, \href{https://www.R-project.org/}{R: A Language and Environment
+  for Statistical Computing}, R Foundation for Statistical Computing, Vienna,
+  Austria, version 4.1.2 (2021).
+\newline\urlprefix\url{https://www.R-project.org/}
+
+\bibitem{py}
+G.~Van~Rossum, F.~L. Drake, Python 3 Reference Manual, CreateSpace, Scotts
+  Valley, CA, 2009, version 3.8.12.
+
+\bibitem{survpkg}
+{Terry M. Therneau}, {Patricia M. Grambsch}, Modeling Survival Data: Extending
+  the {C}ox Model, Springer, New York, 2000, r package version 3.2-11.
+
+\bibitem{cbpkg}
+S.~R. Bhatnagar, M.~Turgeon, J.~Islam, J.~A. Hanley, O.~Saarela, casebase: An
+  alternative framework for survival analysis and comparison of event rates,
+  arXiv preprint arXiv:2009.10264 (2020).
+
+\bibitem{keras}
+J.~Allaire, F.~Chollet, \href{https://CRAN.R-project.org/package=keras}{keras:
+  R Interface to 'Keras'}, r package version 2.7.0 (2021).
+\newline\urlprefix\url{https://CRAN.R-project.org/package=keras}
+
+\bibitem{simsurv}
+S.~L. Brilleman, R.~Wolfe, M.~Moreno-Betancur, M.~J. Crowther, Simulating
+  survival data using the {simsurv} {R} package, Journal of Statistical
+  Software 97~(3) (2020) 1--27.
+\newblock \href {https://doi.org/10.18637/jss.v097.i03}
+  {\path{doi:10.18637/jss.v097.i03}}.
+
+\bibitem{flexsurv}
+C.~Jackson, {flexsurv}: A platform for parametric survival modeling in {R},
+  Journal of Statistical Software 70~(8) (2016) 1--33, r package version 2.0.
+\newblock \href {https://doi.org/10.18637/jss.v070.i08}
+  {\path{doi:10.18637/jss.v070.i08}}.
+
+\bibitem{riskRegression}
+T.~A. Gerds, M.~W. Kattan, \href{https://doi.org/10.1201/9781138384484}{Medical
+  Risk Prediction Models: With Ties to Machine Learning (1st ed.)}, Chapman and
+  Hall/CRC, 2021, r package version 2021.10.10.
+\newline\urlprefix\url{https://doi.org/10.1201/9781138384484}
+
+\bibitem{reticulate}
+K.~Ushey, J.~Allaire, Y.~Tang,
+  \href{https://CRAN.R-project.org/package=reticulate}{reticulate: Interface to
+  'Python'}, r package version 1.22 (2021).
+\newline\urlprefix\url{https://CRAN.R-project.org/package=reticulate}
+
+\bibitem{myeloma}
+R.~Kyle, Long term survival in multiple myeloma, New Eng J Medicine (1997).
+
+\bibitem{mm2flc}
+A.~Dispenzieri, R.~Kyle, G.~Merlini, J.~Miguel, H.~Ludwig, R.~H{\'a}jek,
+  A.~Palumbo, S.~Jagannath, J.~Blad{\'e}, S.~Lonial, et~al., International
+  myeloma working group guidelines for serum-free light chain analysis in
+  multiple myeloma and related disorders, Leukemia 23~(2) (2009) 215--224.
+
+\bibitem{flc}
+A.~Dispenzieri, J.~A. Katzmann, R.~A. Kyle, D.~R. Larson, T.~M. Therneau, C.~L.
+  Colby, R.~J. Clark, G.~P. Mead, S.~Kumar, L.~J. Melton~III, et~al., Use of
+  nonclonal serum immunoglobulin free light chains to predict overall survival
+  in the general population, in: Mayo Clinic Proceedings, Vol.~87, Elsevier,
+  2012, pp. 517--523.
+
+\bibitem{prostate}
+G.~L. Lu-Yao, P.~C. Albertsen, D.~F. Moore, W.~Shih, Y.~Lin, R.~S. DiPaola,
+  M.~J. Barry, A.~Zietman, M.~O’Leary, E.~Walker-Corkery, et~al., Outcomes of
+  localized prostate cancer following conservative management, Jama 302~(11)
+  (2009) 1202--1209.
+
+\bibitem{asaur}
+D.~F. Moore, \href{https://CRAN.R-project.org/package=asaur}{asaur: Data Sets
+  for "Applied Survival Analysis Using R""}, r package version 0.50 (2016).
+\newline\urlprefix\url{https://CRAN.R-project.org/package=asaur}
+
+\bibitem{dsmPaper}
+C.~Nagpal, X.~R. Li, A.~Dubrawski, Deep survival machines: Fully parametric
+  survival regression and representation learning for censored data with
+  competing risks, IEEE Journal of Biomedical and Health InformaticsSoftware
+  downloaded March 10, 2021 (2021).
+
+\bibitem{interpret}
+Y.~Zhang, P.~Ti{\v{n}}o, A.~Leonardis, K.~Tang, A survey on neural network
+  interpretability, IEEE Transactions on Emerging Topics in Computational
+  Intelligence 5~(5) (2021) 726--742.
+
+\end{thebibliography}

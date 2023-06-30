@@ -383,7 +383,7 @@ IPA score to get an estimate of performance at each follow-up time for our studi
 
 The IPA is a function of time, based on the BS. The IPA score is given by \begin{align}
 \textrm{IPA}(t) &= 1-\frac{BS_{model}(t)}{BS_{null}(t)}, \nonumber
-\end{align} where \(BS_{model}(t)\) represents the BS over time \(t\) for the model of interest and \(BS_{null}(t)\) represents
+\end{align} where $(BS_{model}(t))$ represents the BS over time $(t)$ for the model of interest and $(BS_{null}(t))$ represents
 the BS if we use an unadjusted Kaplan-Meier (KM) curve as the prediction for all observations \citep{kattan2018index}. The
 IPA score has an upper bound of one, where positive values show an increase in performance over the null model and
 negative values show that the null model performs better. As an extension of BS, the IPA score assesses both model calibration
@@ -392,18 +392,17 @@ and discrimination and shows how performance changes over follow-up time \citep{
 
 
 
-\hypertarget{auc}{%
-\subsubsection{Inverse probability censoring weights-adjusted time-dependent area under the receiver operating characteristic curve ($AUC_{IPCW}$)}\label{auc}}
+\hypertarget{auc2}{%
+\subsubsection{Inverse probability censoring weights-adjusted time-dependent area under the receiver operating characteristic curve $AUC_{IPCW}$}\label{auc2}}
 
 The IPCW-adjusted AUC ($AUC_{IPCW}$) is a time-dependent metric that considers censoring \citep{auc}. For a given follow-up time of interest,
-\begin{align*}
-\resizebox{\textwidth}{!}
-{
-AUC_{IPCW}(t)=\frac{\sum^{n}_{i=1}\sum^{n}_{j=1} I \left(\widehat{F}(t|X_{i})>\widehat{F}(t|X_{j})\right) \cdot I(T_{i}\leq t,\delta_{i}=1) \cdot \left( 1-I(T_{j}\leq t,\delta_{j}=1) \right) \cdot W_{i}(t) \cdot W_{j}(t)} { \sum^{n}_{i=1}\sum^{n}_{j=1} I(T_{i}\leq t,\delta_{i}=1) \cdot \left( 1-I(T_{j}\leq t,\delta_{j}=1) \right) \cdot W_{i}(t) \cdot W_{j}(t) },
-}
-\end{align*}
+
+\begin{equation*}
+\resizebox{\hsize}{!}{$AUC_{IPCW}(t)=\frac{\sum^{n}_{i=1}\sum^{n}_{j=1} I_{\widehat{F}(t|X_{i})>\widehat{F}(t|X_{j})} \cdot I_{T_{i}\leq t,\delta_{i}=1} \cdot \left( 1-I_{T_{j}\leq t,\delta_{j}=1} \right) \cdot W_{i}(t) \cdot W_{j}(t)} { \sum^{n}_{i=1}\sum^{n}_{j=1} I_{T_{i}\leq t,\delta_{i}=1} \cdot \left( 1-I_{T_{j}\leq t,\delta_{j}=1} \right) \cdot W_{i}(t) \cdot W_{j}(t) },$}
+\end{equation*}
+
 where \begin{align*}
-W_{i}(t)=\frac{I(T_{i}\leq t,\delta_{i}=1)}{\widehat{G}(T_{i})} +\frac{I(T_{i}>t)}{\widehat{G}(t)}.
+W_{i}(t)=\frac{I_{T_{i}\leq t,\delta_{i}=1}}{\widehat{G}(T_{i})} +\frac{I_{T_{i}>t}}{\widehat{G}(t)}.
 \end{align*} The $AUC_{IPCW}$ measures discrimination \citep{auc}. By examining both IPA and $AUC_{IPCW}$,
 we can better understand whether a model performs better in terms of calibration or discrimination.
 
@@ -485,17 +484,15 @@ with neural network approaches that allow for approximations of non-linear inter
 interactions and 10\% random censoring. We simulate three covariates for 5000 individuals:
 
 
-\[
-\resizebox{\textwidth}{!}
-{
+\begin{equation*}
+\resizebox{\hsize}{!}{$
 z_{1} \sim \textrm{Bernoulli}(0.5) \qquad \qquad %technically a control and treatment group
 z_{2} \sim \begin{cases}
  N(0,0.5) & \textrm{if } z_{1}=0\\ 
  N(1,0.5) & \textrm{if } z_{1}=1
 \end{cases} \qquad \qquad
-z_{3} \sim N(1,0.5).
-}
-\]
+z_{3} \sim N(1,0.5).$}
+\end{equation*}
 
 In addition to the methods described above, we include the exact functional form of the covariates in a CBLR model (referred to as Optimal for simplicity)
 in the complex simulation. We obtain confidence intervals by conducting 100 bootstrap re-samples on the training data. We keep 15\% of the data for testing before
@@ -538,9 +535,7 @@ provide exact measures of performance. The models of interest are case-base with
 DeepHit, DeepSurv, and Optimal (in the complex simulation). The best score at each percent of follow-up time is highlighted in bold. If the average performance
 is tied, then all tied values are highlighted.}
 \label{tab:megaTable}
-
-\begin{center}\includegraphics[width=1\linewidth]{figures/Table2.pdf} \end{center}
-
+\begin{center}\includegraphics[scale=0.24]{figures/Table2.pdf} \end{center}
 \end{table}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -697,7 +692,7 @@ The authors declare no potential conflict of interests.
 %% bibitems, please use
 %%
  \bibliographystyle{elsarticle-num} 
- \bibliography{cas-refs}
+ \bibliography{manuscript}
 
 %% else use the following coding to input the bibitems directly in the
 %% TeX file.
