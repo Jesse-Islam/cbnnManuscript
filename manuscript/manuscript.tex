@@ -24,7 +24,9 @@
 %% $Id: elsarticle-template-num.tex 190 2020-11-23 11:12:32Z rishi $
 %%
 %%
-\documentclass[preprint,12pt]{elsarticle}
+\documentclass[preprint,12pt,authoryear]{elsarticle}
+
+
 \usepackage{hyperref}
  \usepackage{amsmath}
  \usepackage{float}
@@ -53,6 +55,7 @@
 %% \begin{linenumbers}, end it with \end{linenumbers}. Or switch it on
 %% for the whole article with \linenumbers.
 %% \usepackage{lineno}
+
 
 \journal{Machine learning with applications}
 
@@ -105,7 +108,7 @@ higher-order interactions}
 %% country={}}
 
 \author[inst1]{Jesse Islam}
-
+\ead{jesse.islam@mail.mcgill.ca}
 \affiliation[inst1]{organization={McGill University Department of Quantitative Life Sciences},%Department and Organization
  addressline={805 rue Sherbrooke O}, 
  city={Montréal},
@@ -114,8 +117,11 @@ higher-order interactions}
  country={Canada}}
 
 \author[inst2]{Maxime Turgeon}
+\ead{turgeon.maxime@gmail.com}
 \author[inst1,inst3]{Robert Sladek}
+\ead{rob.sladek@mcgill.ca}
 \author[inst4]{Sahir Bhatnagar}
+\ead{sahir.bhatnagar@gmail.com}
 
 
 \affiliation[inst2]{organization={University of Manitoba Department of Statistics},%Department and Organization
@@ -691,7 +697,7 @@ The authors declare no potential conflict of interests.
 %% If you have bibdatabase file and want bibtex to generate the
 %% bibitems, please use
 %%
- \bibliographystyle{elsarticle-num} 
+ \bibliographystyle{elsarticle-harv} 
  \bibliography{manuscript}
 
 %% else use the following coding to input the bibitems directly in the

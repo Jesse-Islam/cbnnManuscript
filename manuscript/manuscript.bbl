@@ -1,174 +1,297 @@
-\begin{thebibliography}{10}
-\expandafter\ifx\csname url\endcsname\relax
-  \def\url#1{\texttt{#1}}\fi
-\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
-\expandafter\ifx\csname href\endcsname\relax
-  \def\href#1#2{#2} \def\path#1{#1}\fi
-
-\bibitem{hanley2009}
-J.~A. Hanley, O.~S. Miettinen, Fitting {smooth-in-time} prognostic risk
-  functions via logistic regression, The International Journal of Biostatistics
-  5~(1) (2009).
-
-\bibitem{coradini2000time}
-D.~Coradini, M.~G. Daidone, P.~Boracchi, E.~Biganzoli, S.~Oriana, G.~Bresciani,
-  C.~Pellizzaro, G.~Tomasic, G.~Di~Fronzo, E.~Marubini, Time-dependent
-  relevance of steroid receptors in breast cancer, Journal of clinical oncology
-  18~(14) (2000) 2702--2709.
-
-\bibitem{royston2002flexible}
-P.~Royston, M.~K. Parmar, Flexible parametric proportional-hazards and
+\begin{thebibliography}{32}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\href}[2]{#2}
+\providecommand{\path}[1]{#1}
+\providecommand{\DOIprefix}{doi:}
+\providecommand{\ArXivprefix}{arXiv:}
+\providecommand{\URLprefix}{URL: }
+\providecommand{\Pubmedprefix}{pmid:}
+\providecommand{\doi}[1]{\href{http://dx.doi.org/#1}{\path{#1}}}
+\providecommand{\Pubmed}[1]{\href{pmid:#1}{\path{#1}}}
+\providecommand{\bibinfo}[2]{#2}
+\ifx\xfnm\relax \def\xfnm[#1]{\unskip,\space#1}\fi
+%Type = Manual
+\bibitem[{Allaire and Chollet(2021)}]{keras}
+\bibinfo{author}{Allaire, J.}, \bibinfo{author}{Chollet, F.},
+  \bibinfo{year}{2021}.
+\newblock \bibinfo{title}{keras: R Interface to 'Keras'}.
+\newblock \URLprefix \url{https://CRAN.R-project.org/package=keras}.
+  \bibinfo{note}{r package version 2.7.0}.
+%Type = Article
+\bibitem[{Bhatnagar et~al.(2020)Bhatnagar, Turgeon, Islam, Hanley and
+  Saarela}]{cbpkg}
+\bibinfo{author}{Bhatnagar, S.R.}, \bibinfo{author}{Turgeon, M.},
+  \bibinfo{author}{Islam, J.}, \bibinfo{author}{Hanley, J.A.},
+  \bibinfo{author}{Saarela, O.}, \bibinfo{year}{2020}.
+\newblock \bibinfo{title}{casebase: An alternative framework for survival
+  analysis and comparison of event rates}.
+\newblock \bibinfo{journal}{arXiv preprint arXiv:2009.10264} .
+%Type = Article
+\bibitem[{Bice et~al.(2020)Bice, Kirby, Bahr, Rasmussen, Saenz, Wagner,
+  Papanikolaou and Fakhreddine}]{ds2}
+\bibinfo{author}{Bice, N.}, \bibinfo{author}{Kirby, N.}, \bibinfo{author}{Bahr,
+  T.}, \bibinfo{author}{Rasmussen, K.}, \bibinfo{author}{Saenz, D.},
+  \bibinfo{author}{Wagner, T.}, \bibinfo{author}{Papanikolaou, N.},
+  \bibinfo{author}{Fakhreddine, M.}, \bibinfo{year}{2020}.
+\newblock \bibinfo{title}{Deep learning-based survival analysis for brain
+  metastasis patients with the national cancer database}.
+\newblock \bibinfo{journal}{Journal of applied clinical medical physics}
+  \bibinfo{volume}{21}, \bibinfo{pages}{187--192}.
+%Type = Article
+\bibitem[{Blanche et~al.(2015)Blanche, Proust-Lima, Loubere, Berr, Dartigues
+  and Jacqmin-Gadda}]{auc}
+\bibinfo{author}{Blanche, P.}, \bibinfo{author}{Proust-Lima, C.},
+  \bibinfo{author}{Loubere, L.}, \bibinfo{author}{Berr, C.},
+  \bibinfo{author}{Dartigues, J.F.}, \bibinfo{author}{Jacqmin-Gadda, H.},
+  \bibinfo{year}{2015}.
+\newblock \bibinfo{title}{Quantifying and comparing dynamic predictive accuracy
+  of joint models for longitudinal marker and time-to-event in presence of
+  censoring and competing risks}.
+\newblock \bibinfo{journal}{Biometrics} \bibinfo{volume}{71},
+  \bibinfo{pages}{102--113}.
+%Type = Article
+\bibitem[{Brilleman et~al.(2020)Brilleman, Wolfe, Moreno-Betancur and
+  Crowther}]{simsurv}
+\bibinfo{author}{Brilleman, S.L.}, \bibinfo{author}{Wolfe, R.},
+  \bibinfo{author}{Moreno-Betancur, M.}, \bibinfo{author}{Crowther, M.J.},
+  \bibinfo{year}{2020}.
+\newblock \bibinfo{title}{Simulating survival data using the {simsurv} {R}
+  package}.
+\newblock \bibinfo{journal}{Journal of Statistical Software}
+  \bibinfo{volume}{97}, \bibinfo{pages}{1--27}.
+\newblock \DOIprefix\doi{10.18637/jss.v097.i03}.
+%Type = Article
+\bibitem[{Coradini et~al.(2000)Coradini, Daidone, Boracchi, Biganzoli, Oriana,
+  Bresciani, Pellizzaro, Tomasic, Di~Fronzo and Marubini}]{coradini2000time}
+\bibinfo{author}{Coradini, D.}, \bibinfo{author}{Daidone, M.G.},
+  \bibinfo{author}{Boracchi, P.}, \bibinfo{author}{Biganzoli, E.},
+  \bibinfo{author}{Oriana, S.}, \bibinfo{author}{Bresciani, G.},
+  \bibinfo{author}{Pellizzaro, C.}, \bibinfo{author}{Tomasic, G.},
+  \bibinfo{author}{Di~Fronzo, G.}, \bibinfo{author}{Marubini, E.},
+  \bibinfo{year}{2000}.
+\newblock \bibinfo{title}{Time-dependent relevance of steroid receptors in
+  breast cancer}.
+\newblock \bibinfo{journal}{Journal of clinical oncology} \bibinfo{volume}{18},
+  \bibinfo{pages}{2702--2709}.
+%Type = Inproceedings
+\bibitem[{Dispenzieri et~al.(2012)Dispenzieri, Katzmann, Kyle, Larson,
+  Therneau, Colby, Clark, Mead, Kumar, Melton~III et~al.}]{flc}
+\bibinfo{author}{Dispenzieri, A.}, \bibinfo{author}{Katzmann, J.A.},
+  \bibinfo{author}{Kyle, R.A.}, \bibinfo{author}{Larson, D.R.},
+  \bibinfo{author}{Therneau, T.M.}, \bibinfo{author}{Colby, C.L.},
+  \bibinfo{author}{Clark, R.J.}, \bibinfo{author}{Mead, G.P.},
+  \bibinfo{author}{Kumar, S.}, \bibinfo{author}{Melton~III, L.J.}, et~al.,
+  \bibinfo{year}{2012}.
+\newblock \bibinfo{title}{Use of nonclonal serum immunoglobulin free light
+  chains to predict overall survival in the general population}, in:
+  \bibinfo{booktitle}{Mayo Clinic Proceedings},
+  \bibinfo{organization}{Elsevier}. pp. \bibinfo{pages}{517--523}.
+%Type = Article
+\bibitem[{Dispenzieri et~al.(2009)Dispenzieri, Kyle, Merlini, Miguel, Ludwig,
+  H{\'a}jek, Palumbo, Jagannath, Blad{\'e}, Lonial et~al.}]{mm2flc}
+\bibinfo{author}{Dispenzieri, A.}, \bibinfo{author}{Kyle, R.},
+  \bibinfo{author}{Merlini, G.}, \bibinfo{author}{Miguel, J.},
+  \bibinfo{author}{Ludwig, H.}, \bibinfo{author}{H{\'a}jek, R.},
+  \bibinfo{author}{Palumbo, A.}, \bibinfo{author}{Jagannath, S.},
+  \bibinfo{author}{Blad{\'e}, J.}, \bibinfo{author}{Lonial, S.}, et~al.,
+  \bibinfo{year}{2009}.
+\newblock \bibinfo{title}{International myeloma working group guidelines for
+  serum-free light chain analysis in multiple myeloma and related disorders}.
+\newblock \bibinfo{journal}{Leukemia} \bibinfo{volume}{23},
+  \bibinfo{pages}{215--224}.
+%Type = Article
+\bibitem[{Faraggi and Simon(1995)}]{faraggi1995neural}
+\bibinfo{author}{Faraggi, D.}, \bibinfo{author}{Simon, R.},
+  \bibinfo{year}{1995}.
+\newblock \bibinfo{title}{A neural network model for survival data}.
+\newblock \bibinfo{journal}{Statistics in medicine} \bibinfo{volume}{14},
+  \bibinfo{pages}{73--82}.
+%Type = Book
+\bibitem[{Gerds and Kattan(2021)}]{riskRegression}
+\bibinfo{author}{Gerds, T.A.}, \bibinfo{author}{Kattan, M.W.},
+  \bibinfo{year}{2021}.
+\newblock \bibinfo{title}{Medical Risk Prediction Models: With Ties to Machine
+  Learning (1st ed.)}.
+\newblock \bibinfo{publisher}{Chapman and Hall/CRC}.
+\newblock \URLprefix \url{https://doi.org/10.1201/9781138384484}.
+  \bibinfo{note}{r package version 2021.10.10}.
+%Type = Article
+\bibitem[{Graf et~al.(1999)Graf, Schmoor, Sauerbrei and Schumacher}]{graf1999}
+\bibinfo{author}{Graf, E.}, \bibinfo{author}{Schmoor, C.},
+  \bibinfo{author}{Sauerbrei, W.}, \bibinfo{author}{Schumacher, M.},
+  \bibinfo{year}{1999}.
+\newblock \bibinfo{title}{Assessment and comparison of prognostic
+  classification schemes for survival data}.
+\newblock \bibinfo{journal}{Statistics in medicine} \bibinfo{volume}{18},
+  \bibinfo{pages}{2529--2545}.
+%Type = Book
+\bibitem[{Gulli and Pal(2017)}]{gulli2017}
+\bibinfo{author}{Gulli, A.}, \bibinfo{author}{Pal, S.}, \bibinfo{year}{2017}.
+\newblock \bibinfo{title}{Deep learning with Keras}.
+\newblock \bibinfo{publisher}{Packt Publishing Ltd}.
+%Type = Article
+\bibitem[{Hanley and Miettinen(2009)}]{hanley2009}
+\bibinfo{author}{Hanley, J.A.}, \bibinfo{author}{Miettinen, O.S.},
+  \bibinfo{year}{2009}.
+\newblock \bibinfo{title}{Fitting {smooth-in-time} prognostic risk functions
+  via logistic regression}.
+\newblock \bibinfo{journal}{The International Journal of Biostatistics}
+  \bibinfo{volume}{5}.
+%Type = Book
+\bibitem[{Hughes-Hallett et~al.(2020)Hughes-Hallett, Gleason and
+  McCallum}]{hughes2020calculus}
+\bibinfo{author}{Hughes-Hallett, D.}, \bibinfo{author}{Gleason, A.M.},
+  \bibinfo{author}{McCallum, W.G.}, \bibinfo{year}{2020}.
+\newblock \bibinfo{title}{Calculus: Single and multivariable}.
+\newblock \bibinfo{publisher}{John Wiley \& Sons}.
+%Type = Article
+\bibitem[{Jackson(2016)}]{flexsurv}
+\bibinfo{author}{Jackson, C.}, \bibinfo{year}{2016}.
+\newblock \bibinfo{title}{{flexsurv}: A platform for parametric survival
+  modeling in {R}}.
+\newblock \bibinfo{journal}{Journal of Statistical Software}
+  \bibinfo{volume}{70}, \bibinfo{pages}{1--33}.
+\newblock \DOIprefix\doi{10.18637/jss.v070.i08}. \bibinfo{note}{r package
+  version 2.0}.
+%Type = Article
+\bibitem[{Kattan and Gerds(2018)}]{kattan2018index}
+\bibinfo{author}{Kattan, M.W.}, \bibinfo{author}{Gerds, T.A.},
+  \bibinfo{year}{2018}.
+\newblock \bibinfo{title}{The index of prediction accuracy: an intuitive
+  measure useful for evaluating risk prediction models}.
+\newblock \bibinfo{journal}{Diagnostic and prognostic research}
+  \bibinfo{volume}{2}, \bibinfo{pages}{1--7}.
+%Type = Article
+\bibitem[{Katzman et~al.(2018)Katzman, Shaham, Cloninger, Bates, Jiang and
+  Kluger}]{katzman2018DeepSurv}
+\bibinfo{author}{Katzman, J.L.}, \bibinfo{author}{Shaham, U.},
+  \bibinfo{author}{Cloninger, A.}, \bibinfo{author}{Bates, J.},
+  \bibinfo{author}{Jiang, T.}, \bibinfo{author}{Kluger, Y.},
+  \bibinfo{year}{2018}.
+\newblock \bibinfo{title}{Deepsurv: personalized treatment recommender system
+  using a cox proportional hazards deep neural network}.
+\newblock \bibinfo{journal}{BMC Medical Research Methodology}
+  \bibinfo{volume}{18}, \bibinfo{pages}{24}.
+%Type = Article
+\bibitem[{Kim et~al.(2019)Kim, Lee, Kwon, Nam, Cha and Kim}]{ds3}
+\bibinfo{author}{Kim, D.W.}, \bibinfo{author}{Lee, S.}, \bibinfo{author}{Kwon,
+  S.}, \bibinfo{author}{Nam, W.}, \bibinfo{author}{Cha, I.H.},
+  \bibinfo{author}{Kim, H.J.}, \bibinfo{year}{2019}.
+\newblock \bibinfo{title}{Deep learning-based survival prediction of oral
+  cancer patients}.
+\newblock \bibinfo{journal}{Scientific reports} \bibinfo{volume}{9},
+  \bibinfo{pages}{1--10}.
+%Type = Article
+\bibitem[{Kyle(1997)}]{myeloma}
+\bibinfo{author}{Kyle, R.}, \bibinfo{year}{1997}.
+\newblock \bibinfo{title}{Long term survival in multiple myeloma}.
+\newblock \bibinfo{journal}{New Eng J Medicine} .
+%Type = Article
+\bibitem[{Lee et~al.(2018)Lee, Zame, Yoon and Schaar}]{lee2018DeepHit}
+\bibinfo{author}{Lee, C.}, \bibinfo{author}{Zame, W.R.}, \bibinfo{author}{Yoon,
+  J.}, \bibinfo{author}{Schaar, M.v.d.}, \bibinfo{year}{2018}.
+\newblock \bibinfo{title}{Deephit: A deep learning approach to survival
+  analysis with competing risks.}
+\newblock \bibinfo{journal}{AAAI Conference on Artificial Intelligence} ,
+  \bibinfo{pages}{2314--2321}\bibinfo{note}{Software from pycox version 0.2.2}.
+%Type = Article
+\bibitem[{Lu-Yao et~al.(2009)Lu-Yao, Albertsen, Moore, Shih, Lin, DiPaola,
+  Barry, Zietman, O’Leary, Walker-Corkery et~al.}]{prostate}
+\bibinfo{author}{Lu-Yao, G.L.}, \bibinfo{author}{Albertsen, P.C.},
+  \bibinfo{author}{Moore, D.F.}, \bibinfo{author}{Shih, W.},
+  \bibinfo{author}{Lin, Y.}, \bibinfo{author}{DiPaola, R.S.},
+  \bibinfo{author}{Barry, M.J.}, \bibinfo{author}{Zietman, A.},
+  \bibinfo{author}{O’Leary, M.}, \bibinfo{author}{Walker-Corkery, E.},
+  et~al., \bibinfo{year}{2009}.
+\newblock \bibinfo{title}{Outcomes of localized prostate cancer following
+  conservative management}.
+\newblock \bibinfo{journal}{Jama} \bibinfo{volume}{302},
+  \bibinfo{pages}{1202--1209}.
+%Type = Article
+\bibitem[{Mantel(1973)}]{mantel1}
+\bibinfo{author}{Mantel, N.}, \bibinfo{year}{1973}.
+\newblock \bibinfo{title}{Synthetic retrospective studies and related topics}.
+\newblock \bibinfo{journal}{Biometrics} , \bibinfo{pages}{479--486}.
+%Type = Manual
+\bibitem[{Moore(2016)}]{asaur}
+\bibinfo{author}{Moore, D.F.}, \bibinfo{year}{2016}.
+\newblock \bibinfo{title}{asaur: Data Sets for "Applied Survival Analysis Using
+  R""}.
+\newblock \URLprefix \url{https://CRAN.R-project.org/package=asaur}.
+  \bibinfo{note}{r package version 0.50}.
+%Type = Article
+\bibitem[{Nagpal et~al.(2021)Nagpal, Li and Dubrawski}]{dsmPaper}
+\bibinfo{author}{Nagpal, C.}, \bibinfo{author}{Li, X.R.},
+  \bibinfo{author}{Dubrawski, A.}, \bibinfo{year}{2021}.
+\newblock \bibinfo{title}{Deep survival machines: Fully parametric survival
+  regression and representation learning for censored data with competing
+  risks}.
+\newblock \bibinfo{journal}{IEEE Journal of Biomedical and Health Informatics}
+  \bibinfo{note}{Software downloaded March 10, 2021}.
+%Type = Manual
+\bibitem[{{R Core Team}(2021)}]{Rsoft}
+\bibinfo{author}{{R Core Team}}, \bibinfo{year}{2021}.
+\newblock \bibinfo{title}{R: A Language and Environment for Statistical
+  Computing}.
+\newblock \bibinfo{organization}{R Foundation for Statistical Computing}.
+  \bibinfo{address}{Vienna, Austria}.
+\newblock \URLprefix \url{https://www.R-project.org/}. \bibinfo{note}{version
+  4.1.2}.
+%Type = Article
+\bibitem[{Royston and Parmar(2002)}]{royston2002flexible}
+\bibinfo{author}{Royston, P.}, \bibinfo{author}{Parmar, M.K.},
+  \bibinfo{year}{2002}.
+\newblock \bibinfo{title}{Flexible parametric proportional-hazards and
   proportional-odds models for censored survival data, with application to
-  prognostic modelling and estimation of treatment effects, Statistics in
-  medicine 21~(15) (2002) 2175--2197.
-
-\bibitem{katzman2018DeepSurv}
-J.~L. Katzman, U.~Shaham, A.~Cloninger, J.~Bates, T.~Jiang, Y.~Kluger,
-  Deepsurv: personalized treatment recommender system using a cox proportional
-  hazards deep neural network, BMC Medical Research Methodology 18~(1) (2018)
-  24.
-
-\bibitem{ds1}
-H.~Yu, T.~Huang, B.~Feng, J.~Lyu, Deep-learning model for predicting the
-  survival of rectal adenocarcinoma patients based on a surveillance,
-  epidemiology, and end results analysis, BMC cancer 22~(1) (2022) 1--14.
-
-\bibitem{ds2}
-N.~Bice, N.~Kirby, T.~Bahr, K.~Rasmussen, D.~Saenz, T.~Wagner, N.~Papanikolaou,
-  M.~Fakhreddine, Deep learning-based survival analysis for brain metastasis
-  patients with the national cancer database, Journal of applied clinical
-  medical physics 21~(9) (2020) 187--192.
-
-\bibitem{ds3}
-D.~W. Kim, S.~Lee, S.~Kwon, W.~Nam, I.-H. Cha, H.~J. Kim, Deep learning-based
-  survival prediction of oral cancer patients, Scientific reports 9~(1) (2019)
-  1--10.
-
-\bibitem{faraggi1995neural}
-D.~Faraggi, R.~Simon, A neural network model for survival data, Statistics in
-  medicine 14~(1) (1995) 73--82.
-
-\bibitem{lee2018DeepHit}
-C.~Lee, W.~R. Zame, J.~Yoon, M.~v.~d. Schaar, Deephit: A deep learning approach
-  to survival analysis with competing risks., AAAI Conference on Artificial
-  Intelligence (2018) 2314--2321Software from pycox version 0.2.2.
-
-\bibitem{mantel1}
-N.~Mantel, Synthetic retrospective studies and related topics, Biometrics
-  (1973) 479--486.
-
-\bibitem{saarela2015}
-O.~Saarela, J.~A. Hanley, Case-base methods for studying vaccination safety,
-  Biometrics 71~(1) (2015) 42--52.
-
-\bibitem{gulli2017}
-A.~Gulli, S.~Pal, Deep learning with Keras, Packt Publishing Ltd, 2017.
-
-\bibitem{hughes2020calculus}
-D.~Hughes-Hallett, A.~M. Gleason, W.~G. McCallum, Calculus: Single and
-  multivariable, John Wiley \& Sons, 2020.
-
-\bibitem{graf1999}
-E.~Graf, C.~Schmoor, W.~Sauerbrei, M.~Schumacher, Assessment and comparison of
-  prognostic classification schemes for survival data, Statistics in medicine
-  18~(17-18) (1999) 2529--2545.
-
-\bibitem{kattan2018index}
-M.~W. Kattan, T.~A. Gerds, The index of prediction accuracy: an intuitive
-  measure useful for evaluating risk prediction models, Diagnostic and
-  prognostic research 2~(1) (2018) 1--7.
-
-\bibitem{auc}
-P.~Blanche, C.~Proust-Lima, L.~Loubere, C.~Berr, J.-F. Dartigues,
-  H.~Jacqmin-Gadda, Quantifying and comparing dynamic predictive accuracy of
-  joint models for longitudinal marker and time-to-event in presence of
-  censoring and competing risks, Biometrics 71~(1) (2015) 102--113.
-
-\bibitem{Rsoft}
-{R Core Team}, \href{https://www.R-project.org/}{R: A Language and Environment
-  for Statistical Computing}, R Foundation for Statistical Computing, Vienna,
-  Austria, version 4.1.2 (2021).
-\newline\urlprefix\url{https://www.R-project.org/}
-
-\bibitem{py}
-G.~Van~Rossum, F.~L. Drake, Python 3 Reference Manual, CreateSpace, Scotts
-  Valley, CA, 2009, version 3.8.12.
-
-\bibitem{survpkg}
-{Terry M. Therneau}, {Patricia M. Grambsch}, Modeling Survival Data: Extending
-  the {C}ox Model, Springer, New York, 2000, r package version 3.2-11.
-
-\bibitem{cbpkg}
-S.~R. Bhatnagar, M.~Turgeon, J.~Islam, J.~A. Hanley, O.~Saarela, casebase: An
-  alternative framework for survival analysis and comparison of event rates,
-  arXiv preprint arXiv:2009.10264 (2020).
-
-\bibitem{keras}
-J.~Allaire, F.~Chollet, \href{https://CRAN.R-project.org/package=keras}{keras:
-  R Interface to 'Keras'}, r package version 2.7.0 (2021).
-\newline\urlprefix\url{https://CRAN.R-project.org/package=keras}
-
-\bibitem{simsurv}
-S.~L. Brilleman, R.~Wolfe, M.~Moreno-Betancur, M.~J. Crowther, Simulating
-  survival data using the {simsurv} {R} package, Journal of Statistical
-  Software 97~(3) (2020) 1--27.
-\newblock \href {https://doi.org/10.18637/jss.v097.i03}
-  {\path{doi:10.18637/jss.v097.i03}}.
-
-\bibitem{flexsurv}
-C.~Jackson, {flexsurv}: A platform for parametric survival modeling in {R},
-  Journal of Statistical Software 70~(8) (2016) 1--33, r package version 2.0.
-\newblock \href {https://doi.org/10.18637/jss.v070.i08}
-  {\path{doi:10.18637/jss.v070.i08}}.
-
-\bibitem{riskRegression}
-T.~A. Gerds, M.~W. Kattan, \href{https://doi.org/10.1201/9781138384484}{Medical
-  Risk Prediction Models: With Ties to Machine Learning (1st ed.)}, Chapman and
-  Hall/CRC, 2021, r package version 2021.10.10.
-\newline\urlprefix\url{https://doi.org/10.1201/9781138384484}
-
-\bibitem{reticulate}
-K.~Ushey, J.~Allaire, Y.~Tang,
-  \href{https://CRAN.R-project.org/package=reticulate}{reticulate: Interface to
-  'Python'}, r package version 1.22 (2021).
-\newline\urlprefix\url{https://CRAN.R-project.org/package=reticulate}
-
-\bibitem{myeloma}
-R.~Kyle, Long term survival in multiple myeloma, New Eng J Medicine (1997).
-
-\bibitem{mm2flc}
-A.~Dispenzieri, R.~Kyle, G.~Merlini, J.~Miguel, H.~Ludwig, R.~H{\'a}jek,
-  A.~Palumbo, S.~Jagannath, J.~Blad{\'e}, S.~Lonial, et~al., International
-  myeloma working group guidelines for serum-free light chain analysis in
-  multiple myeloma and related disorders, Leukemia 23~(2) (2009) 215--224.
-
-\bibitem{flc}
-A.~Dispenzieri, J.~A. Katzmann, R.~A. Kyle, D.~R. Larson, T.~M. Therneau, C.~L.
-  Colby, R.~J. Clark, G.~P. Mead, S.~Kumar, L.~J. Melton~III, et~al., Use of
-  nonclonal serum immunoglobulin free light chains to predict overall survival
-  in the general population, in: Mayo Clinic Proceedings, Vol.~87, Elsevier,
-  2012, pp. 517--523.
-
-\bibitem{prostate}
-G.~L. Lu-Yao, P.~C. Albertsen, D.~F. Moore, W.~Shih, Y.~Lin, R.~S. DiPaola,
-  M.~J. Barry, A.~Zietman, M.~O’Leary, E.~Walker-Corkery, et~al., Outcomes of
-  localized prostate cancer following conservative management, Jama 302~(11)
-  (2009) 1202--1209.
-
-\bibitem{asaur}
-D.~F. Moore, \href{https://CRAN.R-project.org/package=asaur}{asaur: Data Sets
-  for "Applied Survival Analysis Using R""}, r package version 0.50 (2016).
-\newline\urlprefix\url{https://CRAN.R-project.org/package=asaur}
-
-\bibitem{dsmPaper}
-C.~Nagpal, X.~R. Li, A.~Dubrawski, Deep survival machines: Fully parametric
-  survival regression and representation learning for censored data with
-  competing risks, IEEE Journal of Biomedical and Health InformaticsSoftware
-  downloaded March 10, 2021 (2021).
-
-\bibitem{interpret}
-Y.~Zhang, P.~Ti{\v{n}}o, A.~Leonardis, K.~Tang, A survey on neural network
-  interpretability, IEEE Transactions on Emerging Topics in Computational
-  Intelligence 5~(5) (2021) 726--742.
+  prognostic modelling and estimation of treatment effects}.
+\newblock \bibinfo{journal}{Statistics in medicine} \bibinfo{volume}{21},
+  \bibinfo{pages}{2175--2197}.
+%Type = Article
+\bibitem[{Saarela and Hanley(2015)}]{saarela2015}
+\bibinfo{author}{Saarela, O.}, \bibinfo{author}{Hanley, J.A.},
+  \bibinfo{year}{2015}.
+\newblock \bibinfo{title}{Case-base methods for studying vaccination safety}.
+\newblock \bibinfo{journal}{Biometrics} \bibinfo{volume}{71},
+  \bibinfo{pages}{42--52}.
+%Type = Book
+\bibitem[{{Terry M. Therneau} and {Patricia M. Grambsch}(2000)}]{survpkg}
+\bibinfo{author}{{Terry M. Therneau}}, \bibinfo{author}{{Patricia M.
+  Grambsch}}, \bibinfo{year}{2000}.
+\newblock \bibinfo{title}{Modeling Survival Data: Extending the {C}ox Model}.
+\newblock \bibinfo{publisher}{Springer}, \bibinfo{address}{New York}.
+\newblock \bibinfo{note}{R package version 3.2-11}.
+%Type = Manual
+\bibitem[{Ushey et~al.(2021)Ushey, Allaire and Tang}]{reticulate}
+\bibinfo{author}{Ushey, K.}, \bibinfo{author}{Allaire, J.},
+  \bibinfo{author}{Tang, Y.}, \bibinfo{year}{2021}.
+\newblock \bibinfo{title}{reticulate: Interface to 'Python'}.
+\newblock \URLprefix \url{https://CRAN.R-project.org/package=reticulate}.
+  \bibinfo{note}{r package version 1.22}.
+%Type = Book
+\bibitem[{Van~Rossum and Drake(2009)}]{py}
+\bibinfo{author}{Van~Rossum, G.}, \bibinfo{author}{Drake, F.L.},
+  \bibinfo{year}{2009}.
+\newblock \bibinfo{title}{Python 3 Reference Manual}.
+\newblock \bibinfo{publisher}{CreateSpace}, \bibinfo{address}{Scotts Valley,
+  CA}.
+\newblock \bibinfo{note}{Version 3.8.12}.
+%Type = Article
+\bibitem[{Yu et~al.(2022)Yu, Huang, Feng and Lyu}]{ds1}
+\bibinfo{author}{Yu, H.}, \bibinfo{author}{Huang, T.}, \bibinfo{author}{Feng,
+  B.}, \bibinfo{author}{Lyu, J.}, \bibinfo{year}{2022}.
+\newblock \bibinfo{title}{Deep-learning model for predicting the survival of
+  rectal adenocarcinoma patients based on a surveillance, epidemiology, and end
+  results analysis}.
+\newblock \bibinfo{journal}{BMC cancer} \bibinfo{volume}{22},
+  \bibinfo{pages}{1--14}.
+%Type = Article
+\bibitem[{Zhang et~al.(2021)Zhang, Ti{\v{n}}o, Leonardis and Tang}]{interpret}
+\bibinfo{author}{Zhang, Y.}, \bibinfo{author}{Ti{\v{n}}o, P.},
+  \bibinfo{author}{Leonardis, A.}, \bibinfo{author}{Tang, K.},
+  \bibinfo{year}{2021}.
+\newblock \bibinfo{title}{A survey on neural network interpretability}.
+\newblock \bibinfo{journal}{IEEE Transactions on Emerging Topics in
+  Computational Intelligence} \bibinfo{volume}{5}, \bibinfo{pages}{726--742}.
 
 \end{thebibliography}

@@ -1,0 +1,195 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\emailauthor{jesse.islam@mail.mcgill.ca}{Jesse Islam}
+\emailauthor{turgeon.maxime@gmail.com}{Maxime Turgeon}
+\emailauthor{rob.sladek@mcgill.ca}{Robert Sladek}
+\emailauthor{sahir.bhatnagar@gmail.com}{Sahir Bhatnagar}
+\Newlabel{inst1}{a}
+\Newlabel{inst2}{b}
+\Newlabel{inst3}{c}
+\Newlabel{inst4}{d}
+\citation{hanley2009}
+\citation{hanley2009}
+\citation{hanley2009}
+\citation{coradini2000time}
+\citation{coradini2000time}
+\citation{royston2002flexible}
+\citation{katzman2018DeepSurv}
+\citation{katzman2018DeepSurv}
+\citation{ds1}
+\citation{ds2}
+\citation{ds3}
+\citation{faraggi1995neural}
+\citation{lee2018DeepHit}
+\citation{lee2018DeepHit}
+\citation{lee2018DeepHit}
+\citation{katzman2018DeepSurv}
+\citation{lee2018DeepHit}
+\citation{lee2018DeepHit}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{2}{section.1}\protected@file@percent }
+\newlabel{introduction}{{1}{2}{Introduction}{section.1}{}}
+\citation{hanley2009}
+\citation{royston2002flexible}
+\citation{hanley2009}
+\citation{hanley2009}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Case-base neural network, metrics, hyperparameters and software}{3}{section.2}\protected@file@percent }
+\newlabel{methods}{{2}{3}{Case-base neural network, metrics, hyperparameters and software}{section.2}{}}
+\citation{hanley2009}
+\citation{hanley2009}
+\citation{mantel1}
+\citation{hanley2009}
+\citation{mantel1}
+\citation{saarela2015}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Case-base sampling}{4}{subsection.2.1}\protected@file@percent }
+\newlabel{case-base-sampling}{{2.1}{4}{Case-base sampling}{subsection.2.1}{}}
+\newlabel{eqn:main}{{1}{4}{Case-base sampling}{equation.2.1}{}}
+\newlabel{eqn:offset}{{2}{5}{Case-base sampling}{equation.2.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Neural networks to model the hazard function}{5}{subsection.2.2}\protected@file@percent }
+\newlabel{neural-networks-to-model-the-hazard-function}{{2.2}{5}{Neural networks to model the hazard function}{subsection.2.2}{}}
+\citation{gulli2017}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Methodological steps involved in CBNN. The first step, case-base sampling, is completed before training begins. Then, we pass this sampled data through a feed-forward neural network and add an offset to adjust for the bias inherent in case-base sampling and apply a sigmoid activation function to create a probability. Once the neural network model completes its training, we can convert the probability output to a hazard for the survival outcome of interest.}}{6}{figure.1}\protected@file@percent }
+\newlabel{fig:NNarch}{{1}{6}{Methodological steps involved in CBNN. The first step, case-base sampling, is completed before training begins. Then, we pass this sampled data through a feed-forward neural network and add an offset to adjust for the bias inherent in case-base sampling and apply a sigmoid activation function to create a probability. Once the neural network model completes its training, we can convert the probability output to a hazard for the survival outcome of interest}{figure.1}{}}
+\citation{gulli2017}
+\citation{gulli2017}
+\citation{hanley2009}
+\citation{hughes2020calculus}
+\citation{graf1999}
+\citation{kattan2018index}
+\citation{auc}
+\citation{graf1999}
+\newlabel{eqn:ci2}{{3}{7}{Neural networks to model the hazard function}{equation.2.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Performance metrics}{7}{subsection.2.3}\protected@file@percent }
+\newlabel{performance-metrics}{{2.3}{7}{Performance metrics}{subsection.2.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.1}Brier Score (BS)}{7}{subsubsection.2.3.1}\protected@file@percent }
+\newlabel{bs}{{2.3.1}{7}{Brier Score (BS)}{subsubsection.2.3.1}{}}
+\newlabel{eqn:bs}{{4}{7}{Brier Score (BS)}{equation.2.4}{}}
+\citation{graf1999}
+\citation{kattan2018index}
+\citation{graf1999}
+\citation{kattan2018index}
+\citation{auc}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.2}Integrated Brier Score (IBS)}{8}{subsubsection.2.3.2}\protected@file@percent }
+\newlabel{integrated-brier-score-ibs}{{2.3.2}{8}{Integrated Brier Score (IBS)}{subsubsection.2.3.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.3}Index of prediction accuracy (IPA)}{8}{subsubsection.2.3.3}\protected@file@percent }
+\newlabel{index-of-prediction-accuracy-ipa}{{2.3.3}{8}{Index of prediction accuracy (IPA)}{subsubsection.2.3.3}{}}
+\citation{auc}
+\citation{gulli2017}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.4}Inverse probability censoring weights-adjusted time-dependent area under the receiver operating characteristic curve $AUC_{IPCW}$}{9}{subsubsection.2.3.4}\protected@file@percent }
+\newlabel{auc2}{{2.3.4}{9}{Inverse probability censoring weights-adjusted time-dependent area under the receiver operating characteristic curve $AUC_{IPCW}$}{subsubsection.2.3.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Hyperparameter selection}{9}{subsection.2.4}\protected@file@percent }
+\newlabel{hyperparameter-selection}{{2.4}{9}{Hyperparameter selection}{subsection.2.4}{}}
+\citation{Rsoft}
+\citation{py}
+\citation{survpkg}
+\citation{cbpkg}
+\citation{lee2018DeepHit}
+\citation{cbpkg}
+\citation{keras}
+\citation{simsurv}
+\citation{flexsurv}
+\citation{riskRegression}
+\citation{reticulate}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Hyperparameters selected after three-fold cross-validated grid search along with the average IBS for each neural network model in the complex simulation (A); multiple myeloma (MM) case study (B); free light chain (FLC) case study (C); and prostate cancer (Prostate) case study (D).}}{10}{table.1}\protected@file@percent }
+\newlabel{tab:wins}{{1}{10}{Hyperparameters selected after three-fold cross-validated grid search along with the average IBS for each neural network model in the complex simulation (A); multiple myeloma (MM) case study (B); free light chain (FLC) case study (C); and prostate cancer (Prostate) case study (D)}{table.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Software implementation}{10}{subsection.2.5}\protected@file@percent }
+\newlabel{software-implementation}{{2.5}{10}{Software implementation}{subsection.2.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Performance of each model in the complex simulation (A, E), multiple myeloma (MM) case study (B, F), free light chain (FLC) case study (C, G) and prostate cancer (Prostate) case study (D, H). The first row shows the IPA for each model in each study over follow-up time. Negative values mean the model performs worse than the null model and positive values mean the model performs better. The second row shows the $AUC_{IPCW}$ for each model in each study over follow-up time, where higher is better. Each model-specific metric in each study shows a 95\% confidence interval over 100 iterations. Metrics are shown for six models: Case-Base with Logistic Regression (CBLR), Case-Base Neural Network (CBNN), Cox Proportional Hazard (Cox), DeepHit and DeepSurv. The Kaplan-Meier (KM) model serves as a baseline, predicting the average curve for all individuals. CBLR and Cox have near identical performance, resulting in curves that overlap. The Optimal model (a CBLR model with the exact interaction terms and baseline hazard specified) shows the best performance we can expect on the simulated data.}}{11}{figure.2}\protected@file@percent }
+\newlabel{fig:megaPlot}{{2}{11}{Performance of each model in the complex simulation (A, E), multiple myeloma (MM) case study (B, F), free light chain (FLC) case study (C, G) and prostate cancer (Prostate) case study (D, H). The first row shows the IPA for each model in each study over follow-up time. Negative values mean the model performs worse than the null model and positive values mean the model performs better. The second row shows the $AUC_{IPCW}$ for each model in each study over follow-up time, where higher is better. Each model-specific metric in each study shows a 95\% confidence interval over 100 iterations. Metrics are shown for six models: Case-Base with Logistic Regression (CBLR), Case-Base Neural Network (CBNN), Cox Proportional Hazard (Cox), DeepHit and DeepSurv. The Kaplan-Meier (KM) model serves as a baseline, predicting the average curve for all individuals. CBLR and Cox have near identical performance, resulting in curves that overlap. The Optimal model (a CBLR model with the exact interaction terms and baseline hazard specified) shows the best performance we can expect on the simulated data}{figure.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Simulation study}{11}{section.3}\protected@file@percent }
+\newlabel{sims}{{3}{11}{Simulation study}{section.3}{}}
+\citation{flexsurv}
+\citation{royston2002flexible}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Complex simulation: flexible baseline hazard, time-varying interactions}{12}{subsection.3.1}\protected@file@percent }
+\newlabel{complex-simulation-flexible-baseline-hazard-time-varying-interactions}{{3.1}{12}{Complex simulation: flexible baseline hazard, time-varying interactions}{subsection.3.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Performance comparison in complex simulation}{12}{subsection.3.2}\protected@file@percent }
+\newlabel{performance-comparison-in-complex-simulation}{{3.2}{12}{Performance comparison in complex simulation}{subsection.3.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Performance at certain percentages of follow-up time in the complex simulation (A), multiple myeloma (MM) case study (B), free light chain (FLC) case study (C) and prostate cancer (Prostate) case study (D). Each table shows performance for each method in each study at $25\%$, $50\%$, $75\%$ and $100\%$ of follow-up time. These tables are included to provide exact measures of performance. The models of interest are case-base with logistic regression (CBLR), Cox, Case-Base Neural Network (CBNN), DeepHit, DeepSurv, and Optimal (in the complex simulation). The best score at each percent of follow-up time is highlighted in bold. If the average performance is tied, then all tied values are highlighted.}}{13}{table.2}\protected@file@percent }
+\newlabel{tab:megaTable}{{2}{13}{Performance at certain percentages of follow-up time in the complex simulation (A), multiple myeloma (MM) case study (B), free light chain (FLC) case study (C) and prostate cancer (Prostate) case study (D). Each table shows performance for each method in each study at $25\%$, $50\%$, $75\%$ and $100\%$ of follow-up time. These tables are included to provide exact measures of performance. The models of interest are case-base with logistic regression (CBLR), Cox, Case-Base Neural Network (CBNN), DeepHit, DeepSurv, and Optimal (in the complex simulation). The best score at each percent of follow-up time is highlighted in bold. If the average performance is tied, then all tied values are highlighted}{table.2}{}}
+\citation{coradini2000time}
+\citation{myeloma}
+\citation{survpkg}
+\citation{myeloma}
+\citation{myeloma}
+\citation{mm2flc}
+\citation{flc}
+\citation{survpkg}
+\citation{flc}
+\citation{flc}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Case studies}{14}{section.4}\protected@file@percent }
+\newlabel{casestudies}{{4}{14}{Case studies}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Performance evaluation on multiple myeloma dataset}{14}{subsection.4.1}\protected@file@percent }
+\newlabel{pe-multiplemyeloma}{{4.1}{14}{Performance evaluation on multiple myeloma dataset}{subsection.4.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Performance evaluation on free light chain dataset}{14}{subsection.4.2}\protected@file@percent }
+\newlabel{pe-flc}{{4.2}{14}{Performance evaluation on free light chain dataset}{subsection.4.2}{}}
+\citation{prostate}
+\citation{asaur}
+\citation{prostate}
+\citation{katzman2018DeepSurv}
+\citation{lee2018DeepHit}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Performance evaluation on prostate cancer dataset}{15}{subsection.4.3}\protected@file@percent }
+\newlabel{pe-prostate}{{4.3}{15}{Performance evaluation on prostate cancer dataset}{subsection.4.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{15}{section.5}\protected@file@percent }
+\newlabel{discussion}{{5}{15}{Discussion}{section.5}{}}
+\citation{katzman2018DeepSurv}
+\citation{lee2018DeepHit}
+\citation{dsmPaper}
+\citation{gulli2017}
+\citation{lee2018DeepHit}
+\citation{interpret}
+\citation{hanley2009}
+\citation{survpkg}
+\citation{asaur}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusions}{17}{section.6}\protected@file@percent }
+\newlabel{sec5}{{6}{17}{Conclusions}{section.6}{}}
+\bibstyle{elsarticle-harv}
+\bibdata{manuscript}
+\bibcite{keras}{{1}{2021}{{Allaire and Chollet}}{{}}}
+\bibcite{cbpkg}{{2}{2020}{{Bhatnagar et~al.}}{{Bhatnagar, Turgeon, Islam, Hanley and Saarela}}}
+\bibcite{ds2}{{3}{2020}{{Bice et~al.}}{{Bice, Kirby, Bahr, Rasmussen, Saenz, Wagner, Papanikolaou and Fakhreddine}}}
+\newlabel{data-and-code-availability-statement}{{6}{18}{Data and code availability statement}{section*.1}{}}
+\@writefile{toc}{\contentsline {section}{Data and code availability statement}{18}{section*.1}\protected@file@percent }
+\newlabel{acknowledgements}{{6}{18}{Acknowledgements}{section*.2}{}}
+\@writefile{toc}{\contentsline {section}{Acknowledgements}{18}{section*.2}\protected@file@percent }
+\bibcite{auc}{{4}{2015}{{Blanche et~al.}}{{Blanche, Proust-Lima, Loubere, Berr, Dartigues and Jacqmin-Gadda}}}
+\bibcite{simsurv}{{5}{2020}{{Brilleman et~al.}}{{Brilleman, Wolfe, Moreno-Betancur and Crowther}}}
+\bibcite{coradini2000time}{{6}{2000}{{Coradini et~al.}}{{Coradini, Daidone, Boracchi, Biganzoli, Oriana, Bresciani, Pellizzaro, Tomasic, Di~Fronzo and Marubini}}}
+\bibcite{flc}{{7}{2012}{{Dispenzieri et~al.}}{{Dispenzieri, Katzmann, Kyle, Larson, Therneau, Colby, Clark, Mead, Kumar, Melton~III et~al.}}}
+\bibcite{mm2flc}{{8}{2009}{{Dispenzieri et~al.}}{{Dispenzieri, Kyle, Merlini, Miguel, Ludwig, H{\'a}jek, Palumbo, Jagannath, Blad{\'e}, Lonial et~al.}}}
+\bibcite{faraggi1995neural}{{9}{1995}{{Faraggi and Simon}}{{}}}
+\bibcite{riskRegression}{{10}{2021}{{Gerds and Kattan}}{{}}}
+\bibcite{graf1999}{{11}{1999}{{Graf et~al.}}{{Graf, Schmoor, Sauerbrei and Schumacher}}}
+\bibcite{gulli2017}{{12}{2017}{{Gulli and Pal}}{{}}}
+\bibcite{hanley2009}{{13}{2009}{{Hanley and Miettinen}}{{}}}
+\bibcite{hughes2020calculus}{{14}{2020}{{Hughes-Hallett et~al.}}{{Hughes-Hallett, Gleason and McCallum}}}
+\bibcite{flexsurv}{{15}{2016}{{Jackson}}{{}}}
+\bibcite{kattan2018index}{{16}{2018}{{Kattan and Gerds}}{{}}}
+\bibcite{katzman2018DeepSurv}{{17}{2018}{{Katzman et~al.}}{{Katzman, Shaham, Cloninger, Bates, Jiang and Kluger}}}
+\bibcite{ds3}{{18}{2019}{{Kim et~al.}}{{Kim, Lee, Kwon, Nam, Cha and Kim}}}
+\bibcite{myeloma}{{19}{1997}{{Kyle}}{{}}}
+\bibcite{lee2018DeepHit}{{20}{2018}{{Lee et~al.}}{{Lee, Zame, Yoon and Schaar}}}
+\bibcite{prostate}{{21}{2009}{{Lu-Yao et~al.}}{{Lu-Yao, Albertsen, Moore, Shih, Lin, DiPaola, Barry, Zietman, O’Leary, Walker-Corkery et~al.}}}
+\bibcite{mantel1}{{22}{1973}{{Mantel}}{{}}}
+\bibcite{asaur}{{23}{2016}{{Moore}}{{}}}
+\bibcite{dsmPaper}{{24}{2021}{{Nagpal et~al.}}{{Nagpal, Li and Dubrawski}}}
+\bibcite{Rsoft}{{25}{2021}{{R Core Team}}{{}}}
+\bibcite{royston2002flexible}{{26}{2002}{{Royston and Parmar}}{{}}}
+\bibcite{saarela2015}{{27}{2015}{{Saarela and Hanley}}{{}}}
+\bibcite{survpkg}{{28}{2000}{{{Terry M. Therneau} and {Patricia M. Grambsch}}}{{}}}
+\bibcite{reticulate}{{29}{2021}{{Ushey et~al.}}{{Ushey, Allaire and Tang}}}
+\bibcite{py}{{30}{2009}{{Van~Rossum and Drake}}{{}}}
+\bibcite{ds1}{{31}{2022}{{Yu et~al.}}{{Yu, Huang, Feng and Lyu}}}
+\bibcite{interpret}{{32}{2021}{{Zhang et~al.}}{{Zhang, Ti{\v {n}}o, Leonardis and Tang}}}
+\gdef \@abspage@last{22}
