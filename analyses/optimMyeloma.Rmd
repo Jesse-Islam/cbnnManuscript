@@ -8,6 +8,7 @@ params:
 ---
 
 ```{r}
+# First load reticulate , then initialize python environment for CUDA (I turn it off as we only had one gpu and the 4 analyses were run in parallel)
 library(reticulate)
 
 ```
@@ -34,37 +35,25 @@ source_python("src/cIndex.py")
 ##########################
 ###Shared Hyperparameters
 ##########################
-
 min_delta = 0
-
 epo=as.numeric(params$epo)
 patience <- as.numeric(params$patience)
 iteration<-as.numeric(params$iteration)
-
-
-
-
-
-reoptimize=FALSE
-
+reoptimize=T
 finalFit=T
 ```
 
 
-#5 fold cross validation to select best hyperparameters, average performance on a test set.
+# 3 fold cross validation to select best hyperparameters, average performance on a test set.
 
 ```{r myelomaPrep,eval=TRUE,hide=FALSE}
 
-
+##############################
+### Process data to prepare for analysis
+##############################
 
 library(survival)
-
 data("cancer", package="survival")
-
-
-
-
-
 preData<-data.frame(year=as.numeric(myeloma$year),
                     entry=as.numeric(myeloma$entry),
                     time=as.numeric(myeloma$futime),
@@ -85,12 +74,6 @@ g = sample(cut(
 ))
 
 res = split(data, g)
-
-
-
-
-
-
 saveRDS(res$test,"cvData/myelomaTest.rds")
 
 
@@ -98,11 +81,7 @@ k=3
 klist<-list()
 data<-res$train
 for(i in 1:k){
-  
-  
-  
   spec = c(train = .85, val = .15)
-  
   g = sample(cut(
     seq(nrow(data)), 
     nrow(data)*cumsum(c(0,spec)),
@@ -121,7 +100,9 @@ saveRDS(klist,"cvData/myelomaCV.rds")
 
 ```{r setFixedHyperparameters,eval=TRUE,hide=FALSE}
 
-
+##################################
+###Set up hyperparameter search space
+##################################
 
 lr=c(0.001,0.01)
 drpt=c(0.01,0.05,0.1)
@@ -135,6 +116,9 @@ alp=c(0,0.5,1)
 ```
 
 ```{r hyperOpDsurv,eval=TRUE,hide=FALSE}
+###############################
+### optimize hyperparameters for DeepSurv
+###############################
 source_python('src/dsurv.py')
 klist<-readRDS("cvData/myelomaCV.rds")
 bestDS<-optimDeepSurv(klist,lr,drpt,layer1,layer2,nBatch,actv)
@@ -142,6 +126,9 @@ bestDS<-optimDeepSurv(klist,lr,drpt,layer1,layer2,nBatch,actv)
 ```
 
 ```{r optimDeepHit,eval=TRUE,hide=FALSE}
+###############################
+### optimize hyperparameters for DeepHit
+###############################
 klist<-readRDS("cvData/myelomaCV.rds")
 bestDH<-optimDeepHit(klist,lr,drpt,layer1,layer2,nBatch,actv,alp)
 
@@ -149,13 +136,19 @@ bestDH<-optimDeepHit(klist,lr,drpt,layer1,layer2,nBatch,actv,alp)
 
 
 ```{r hyperopcbnn,eval=TRUE,hide=FALSE}
+###############################
+### optimize hyperparameters for CBNN
+###############################
 klist<-readRDS("cvData/myelomaCV.rds")
 cbnnPerformance<-optimCBNN(klist,lr,drpt,layer1,layer2,nBatch,actv)
-                           
+
 ```
 
 
 ```{r winners,eval=TRUE,hide=FALSE}
+###############################
+### save the best performaning hyperparameter sets
+###############################
 winners<-list(cbnn=cbnnPerformance,
               ds=bestDS,
               dh=bestDH)
@@ -164,7 +157,9 @@ saveRDS(winners,"cvData/myelomaWins.rds")
 ```
 
 ```{r bestFits,finalFit}
-
+#####################################
+### run 100 fold bootstrap on the training set for each method
+#####################################
 winners<-readRDS("cvData/myelomaWins.rds")
 
 
@@ -226,7 +221,7 @@ while (pos <= iteration) {
   
   
   linModelTrain<-as.data.frame(rbind(train,val))
-
+  
   times<-seq(from=min(train$time),
              to=max(train$time),
              length.out = 82
@@ -323,7 +318,7 @@ while (pos <= iteration) {
   layer2=winners$cbnn$layer2
   bsize=c(floor(nrow(train)/winners$cbnn$nBatch))
   actv=winners$cbnn$actv
-
+  
   
   currentTime<-Sys.time() 
   covars_input<-layer_input(shape=c(length(colnames(mod_cb_glm$data))-2),
@@ -376,7 +371,7 @@ while (pos <= iteration) {
                              se.fit = FALSE, metrics =c("auc", "brier"), contrasts = FALSE, times = times)
   BrierIPAList[[pos]]<-brierFinalResults$Brier$score
   AUClist[[pos]]<-brierFinalResults$AUC$score
-
+  
   rm(fit,cbnn,covars_input,covars_output)
   #######################
   ###Cox 
@@ -434,7 +429,9 @@ while (pos <= iteration) {
 
 ```{r plotmyeloma}
 
-
+#######################
+###plot IPA results
+#######################
 
 BrierIPAList<-readRDS('results/100myelomaBrier.rds')
 toRemove<-c()
@@ -484,6 +481,10 @@ ipa+coord_cartesian(ylim=c(-0.8,0.4))
 
 ```{r auc}
 
+#######################
+###plot AUC results
+#######################
+
 AUClist<-readRDS('results/100myelomaAuc.rds')
 aucSims=data.frame(model=AUClist[[1]]$model,times=AUClist[[1]]$times)
 for(sim in AUClist){
@@ -499,14 +500,12 @@ auc
 
 ```{r}
 
-
+#######################
+###plot C-index results
+#######################
 cidxList<-readRDS('results/100myelomacidx.rds')
-
-
 temp<-melt(setDT(as.data.frame(cidxList[[1]])), id.vars = c("times"), variable.name = "model")
 cidxSims=data.frame(model=temp$model,times=temp$times)
-
-
 count=1
 for(sim in cidxList){
   cidxSims<-cbind(cidxSims, melt(setDT(as.data.frame(sim)), id.vars = c("times"), variable.name = "model")$value)

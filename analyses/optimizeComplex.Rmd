@@ -8,6 +8,7 @@ params:
 ---
 
 ```{r}
+# First load reticulate , then initialize python environment for CUDA (I turn it off as we only had one gpu and the 4 analyses were run in parallel)
 library(reticulate)
 
 ```
@@ -34,24 +35,17 @@ source_python("src/cIndex.py")
 ##########################
 ###Shared Hyperparameters
 ##########################
-
 min_delta = 0 
-
 epo=as.numeric(params$epo)
 patience <- as.numeric(params$patience)
 iteration<-as.numeric(params$iteration)
-
 numSamp<-5000
-
-#baselineTrials<-2
-
 reoptimize=T
-
 finalFit=T
 ```
 
 
-#5 fold cross validation to select best hyperparameters, average performance on a test set.
+# 3 fold cross validation to select best hyperparameters, average performance on a test set.
 
 ```{r complexPrep,eval=TRUE,hide=FALSE}
 
@@ -163,7 +157,9 @@ saveRDS(klist,"cvData/ComplexSimCV.rds")
 
 
 ```{r setFixedHyperparameters,eval=TRUE,hide=FALSE}
-
+##################################
+###Set up hyperparameter search space
+##################################
 lr=c(0.001,0.01)
 drpt=c(0.01,0.05,0.1)
 layer1=c(50,75,100)
@@ -180,23 +176,36 @@ alp=c(0,0.5,1)
 
 
 ```{r hyperOpDsurv,eval=TRUE,hide=FALSE}
+###############################
+### optimize hyperparameters for DeepSurv
+###############################
 klist<-readRDS("cvData/ComplexSimCV.rds")
 bestDS<-optimDeepSurv(klist,lr,drpt,layer1,layer2,nBatch,actv)
 ```
 
 ```{r optimDeepHit,eval=TRUE,hide=FALSE}
+###############################
+### optimize hyperparameters for DeepHit
+###############################
 klist<-readRDS("cvData/ComplexSimCV.rds")
 bestDH<-optimDeepHit(klist,lr,drpt,layer1,layer2,nBatch,actv,alp)
 ```
 
 
 ```{r hyperopcbnn,eval=TRUE,hide=FALSE}
+###############################
+### optimize hyperparameters for CBNN
+###############################
 klist<-readRDS("cvData/ComplexSimCV.rds")
 cbnnPerformance<-optimCBNN(klist,lr,drpt,layer1,layer2,nBatch,actv)
 ```
 
 
 ```{r,eval=TRUE,hide=FALSE}
+
+###############################
+### save the best performaning hyperparameter sets
+###############################
 winners<-list(cbnn=cbnnPerformance,
               ds=bestDS,
               dh=bestDH)
@@ -204,25 +213,25 @@ saveRDS(winners,"cvData/complexOptimWins.rds")
 ```
 
 ```{r bestFits,eval=T}
-
+#####################################
+### run 100 fold bootstrap on the training set for each method
+#####################################
+#prepare data
 winners<-readRDS("cvData/complexOptimWins.rds")
-
-
-
 klist<-readRDS("cvData/ComplexSimCV.rds")
 data<-rbind(klist[[1]]$train,klist[[1]]$val)
 
 
 
 
-
+#initialize data
 start_time <- Sys.time()
 BrierIPAList<-list()
 AUClist<-list()
 cScore<-list()
 pos<-1
 
-
+# split training validation sets
 spec = c(train = .85, validate = .15)
 
 g = sample(cut(
@@ -238,31 +247,25 @@ while (pos <= iteration) {
   
   
   
-  
+  #prepare data
   trainOG<-res$train
-  
   numSamp<-nrow(trainOG)
   samp<-sample(seq(1,nrow(trainOG),by=1) , nrow(trainOG),replace = T) 
   train<-trainOG[samp,]
-  
-  
-
   val<-res$validate
-  
   sds<-sapply(train, function(x) (sd(x)))
   means<-sapply(train, function(x) (mean(x)))
   maxTime<-max(train$time)
-  
   fullTest<-readRDS("cvData/ComplexSimTest.rds")
   test<-fullTest[,-c(ncol(data))]
+  #normalize data
   test<-normalizer(fullTest,means,sds,maxTime)[,-c(ncol(data))]
   fullTest<-normalizer(fullTest,means,sds,maxTime)
-  
   val<-normalizer(res$validate,means,sds,maxTime)
-  
   train<-normalizer(train,means,sds,maxTime)
+  #prepare data for linear model
   linModelTrain<-as.data.frame(rbind(train,val))
- times<-seq(from=min(test$time),
+  times<-seq(from=min(test$time),
              to=max(test$time),
              length.out = 82
   )
@@ -372,10 +375,10 @@ while (pos <= iteration) {
   bsize=c(floor(nrow(train)/winners$cbnn$nBatch))
   actv=winners$cbnn$actv
   
-
+  
   
   currentTime<-Sys.time() 
-
+  
   covars_input<-layer_input(shape=c(length(colnames(mod_cb_glm$data))-2),
                             name = 'main_input')
   
@@ -448,7 +451,7 @@ while (pos <= iteration) {
                  trueGlmProper
   )
   
-    
+  
   tempTims<-   as.numeric(colnames(annProperpoly))
   tempTims<-head(tempTims, -1)
   tempTims<-tail(tempTims, -1)
@@ -456,7 +459,7 @@ while (pos <= iteration) {
   et_train<-as.matrix(tempTrain)[,c(ncol(tempTrain),ncol(tempTrain)-1)]
   et_test<-as.matrix(fullTest[,c(ncol(fullTest),ncol(fullTest)-1)])
   
-
+  
   
   colnames(cScoreTemp)<-c('times', "Cox_Lin",'CB_Logi','DeepSurv','DeepHit',
                           'cbnn',"Optimal")
@@ -467,7 +470,7 @@ while (pos <= iteration) {
                                riskList=riskList,
                                cScore=cScoreTemp
   )
-
+  
   
   print(paste("current iter:",pos))
   saveRDS(BrierIPAList,'results/100complexBrier.rds')
@@ -485,7 +488,9 @@ while (pos <= iteration) {
 
 ```{r plotComplex}
 
-
+#######################
+###plot IPA results
+#######################
 BrierIPAList<-readRDS('results/100complexBrier.rds')
 
 ipaSims=data.frame(model=BrierIPAList[[1]]$model,times=BrierIPAList[[1]]$times)
@@ -524,12 +529,14 @@ ipa+coord_cartesian(ylim=c(-1,1))
 ```
 
 ```{r auc}
-
+#######################
+###plot AUC results
+#######################
 AUClist<-readRDS('results/100complexAuc.rds')
 aucSims=data.frame(model=AUClist[[1]]$model,times=AUClist[[1]]$times)
 for(sim in AUClist){
-   aucSims<-cbind(aucSims,sim$AUC)
-   
+  aucSims<-cbind(aucSims,sim$AUC)
+  
 }
 aucSummary<-statCalcSim(aucSims)
 auc<-plotPerformance(aucSummary,method="AUC",iterations=iteration )
@@ -540,18 +547,17 @@ auc
 
 ```{r}
 
-
+#######################
+###plot C-index results
+#######################
 cidxList<-readRDS('results/100complexcidx.rds')
-
-
 temp<-melt(setDT(as.data.frame(cidxList[[1]])), id.vars = c("times"), variable.name = "model")
 cidxSims=data.frame(model=temp$model,times=temp$times)
-
 
 count=1
 for(sim in cidxList){
   cidxSims<-cbind(cidxSims, melt(setDT(as.data.frame(sim)), id.vars = c("times"), variable.name = "model")$value)
-
+  
   count<-count+1
 }
 
@@ -564,6 +570,14 @@ cidxC
 
 
 ```{r optimDSM,eval=F}
+
+
+
+################################
+### This is kept for transparency
+### As DSM did not converge with
+### Our hyperparameters and simulation setting 
+################################
 klist<-readRDS("cvData/ComplexSimCV.rds")
 test<-readRDS("cvData/ComplexSimTest.rds")
 times<-seq(from=min(test$time)+0.000001,
@@ -580,7 +594,7 @@ paramTrials<-as.data.frame(tidyr::crossing(lr=c(0.001,0.01,0.1),
                                            alp=c(0,0.5,1),
                                            k=c(3,6,9),
                                            dist=c('weibull','lognormal'),
-
+                                           
                                            valLoss=NA,
                                            runtime=NA))
 
@@ -611,7 +625,7 @@ for(i in 1:nrow(paramTrials)){
     alp=paramTrials[i,]$alp
     k=paramTrials[i,]$k
     dist=paramTrials[i,]$dist
-
+    
     
     currentTime<-Sys.time() 
     
@@ -630,12 +644,12 @@ for(i in 1:nrow(paramTrials)){
   }
   rm(fitDeephit)
   
-
+  
   paramTrials$valLoss[i]<-mean(tempVal)
   paramTrials$runtime[i]<-mean(runTime)
   print(paste("trial",i))
   print(mean(runTime))
-
+  
   gc()
 }
 

@@ -14,6 +14,7 @@ params:
 ---
 
 ```{r}
+# First load reticulate , then initialize python environment for CUDA (I turn it off as we only had one gpu and the 4 analyses were run in parallel)
 library(reticulate)
 
 ```
@@ -60,6 +61,9 @@ finalFit=T
 #5 fold cross validation to select best hyperparameters, average performance on a test set.
 
 ```{r prostatePrep,eval=TRUE,hide=FALSE}
+##############################
+### Process data to prepare for analysis
+##############################
 
 library(asaur)
 prostate<-prostateSurvival
@@ -126,7 +130,9 @@ saveRDS(klist,"cvData/prostateCV.rds")
 
 ```{r setFixedHyperparameters,eval=TRUE,hide=FALSE}
 
-
+##################################
+###Set up hyperparameter search space
+##################################
 lr=c(0.001,0.01)
 drpt=c(0.01,0.05,0.1)
 layer1=c(50,75,100)
@@ -139,8 +145,9 @@ alp=c(0,0.5,1)
 ```
 
 ```{r hyperOpDsurv,eval=TRUE,hide=FALSE}
-
-
+###############################
+### optimize hyperparameters for DeepSurv
+###############################
 klist<-readRDS("cvData/prostateCV.rds")
 source_python('src/dsurv.py')
 bestDS<-optimDeepSurv(klist,lr,drpt,layer1,layer2,nBatch,actv)
@@ -148,6 +155,9 @@ bestDS<-optimDeepSurv(klist,lr,drpt,layer1,layer2,nBatch,actv)
 ```
 
 ```{r optimDeepHit,eval=TRUE,hide=FALSE}
+###############################
+### optimize hyperparameters for DeepHit
+###############################
 klist<-readRDS("cvData/prostateCV.rds")
 bestDH<-optimDeepHit(klist,lr,drpt,layer1,layer2,nBatch,actv,alp)
 
@@ -155,6 +165,9 @@ bestDH<-optimDeepHit(klist,lr,drpt,layer1,layer2,nBatch,actv,alp)
 
 
 ```{r hyperopcbnn,eval=TRUE,hide=FALSE}
+###############################
+### optimize hyperparameters for CBNN
+###############################
 klist<-readRDS("cvData/prostateCV.rds")
 cbnnPerformance<-optimCBNN(klist,lr,drpt,layer1,layer2,nBatch,actv)
 
@@ -164,7 +177,9 @@ cbnnPerformance<-optimCBNN(klist,lr,drpt,layer1,layer2,nBatch,actv)
 
 ```{r winners,eval=TRUE,hide=FALSE}
 
-
+###############################
+### save the best performaning hyperparameter sets
+###############################
 winners<-list(cbnn=cbnnPerformance,
               ds=bestDS,
               dh=bestDH)
@@ -175,6 +190,9 @@ saveRDS(winners,"cvData/prostateWins.rds")
 
 ```{r bestFits,finalFit}
 
+#####################################
+### run 100 fold bootstrap on the training set for each method
+#####################################
 winners<-readRDS("cvData/prostateWins.rds")
 
 
@@ -437,6 +455,9 @@ while (pos <= iteration) {
 ```{r plotprostate}
 
 
+#######################
+###plot IPA results
+#######################
 
 #BrierIPAList<-readRDS('results/100prostateBrier.rds')
 
@@ -477,6 +498,9 @@ ipa+coord_cartesian(ylim=c(-0.1,0.5))
 
 ```{r auc}
 
+#######################
+###plot AUC results
+#######################
 AUClist<-readRDS('results/100prostateAuc.rds')
 aucSims=data.frame(model=AUClist[[1]]$model,times=AUClist[[1]]$times)
 for(sim in AUClist){
@@ -492,7 +516,9 @@ auc
 
 ```{r}
 
-
+#######################
+###plot C-index results
+#######################
 cidxList<-readRDS('results/100prostatecidx.rds')
 
 

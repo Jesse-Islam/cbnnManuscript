@@ -14,6 +14,7 @@ params:
 ---
 
 ```{r}
+# First load reticulate , then initialize python environment for CUDA (I turn it off as we only had one gpu and the 4 analyses were run in parallel)
 library(reticulate)
 
 ```
@@ -40,33 +41,23 @@ source_python("src/cIndex.py")
 ##########################
 ###Shared Hyperparameters
 ##########################
-#bsize=512
-min_delta = 0 #10^-7
-
+min_delta = 0
 epo=as.numeric(params$epo)
 patience <- as.numeric(params$patience)
 iteration<-as.numeric(params$iteration)
-
-
-
-#baselineTrials<-2
-
 reoptimize=T
-
 finalFit=T
 ```
 
 
-#5 fold cross validation to select best hyperparameters, average performance on a test set.
+# 3 fold cross validation to select best hyperparameters, average performance on a test set.
 
 ```{r flchainPrep,eval=TRUE,hide=FALSE}
-
+##############################
+### Process data to prepare for analysis
+##############################
 library(survival)
 flchain<-flchain
-
-
-
-
 preData<-data.frame(age=as.numeric(flchain$age),
                     sex=as.factor(flchain$sex),
                     flc=as.numeric(flchain$kappa)+as.numeric(flchain$lambda),
@@ -77,24 +68,14 @@ preData<-data.frame(age=as.numeric(flchain$age),
 )
 
 modData<-as.data.frame(model.matrix(~.,preData)[,-1])
-
-
 data<-as.data.frame(apply(modData,2,as.numeric))
-
 spec = c(train = .85, test = .15)
-
 g = sample(cut(
   seq(nrow(data)), 
   nrow(data)*cumsum(c(0,spec)),
   labels = names(spec)
 ))
-
 res = split(data, g)
-
-
-
-
-
 
 saveRDS(res$test,"cvData/flchainTest.rds")
 
@@ -103,11 +84,7 @@ k=3
 klist<-list()
 data<-res$train
 for(i in 1:k){
-  
-  
-  
   spec = c(train = .85, val = .15)
-  
   g = sample(cut(
     seq(nrow(data)), 
     nrow(data)*cumsum(c(0,spec)),
@@ -125,7 +102,9 @@ saveRDS(klist,"cvData/flchainCV.rds")
 
 
 ```{r setFixedHyperparameters,eval=TRUE,hide=FALSE}
-
+##################################
+###Set up hyperparameter search space
+##################################
 
 klist<-readRDS("cvData/flchainCV.rds")
 
@@ -140,6 +119,10 @@ alp=c(0,0.5,1)
 ```
 
 ```{r hyperOpDsurv,eval=TRUE,hide=FALSE}
+
+###############################
+### optimize hyperparameters for DeepSurv
+###############################
 klist<-readRDS("cvData/flchainCV.rds")
 source_python('src/dsurv.py')
 bestDS<-optimDeepSurv(klist,lr,drpt,layer1,layer2,nBatch,actv)
@@ -147,6 +130,10 @@ bestDS<-optimDeepSurv(klist,lr,drpt,layer1,layer2,nBatch,actv)
 ```
 
 ```{r optimDeepHit,eval=TRUE,hide=FALSE}
+
+###############################
+### optimize hyperparameters for DeepHit
+###############################
 klist<-readRDS("cvData/flchainCV.rds")
 bestDH<-optimDeepHit(klist,lr,drpt,layer1,layer2,nBatch,actv,alp)
 
@@ -154,6 +141,10 @@ bestDH<-optimDeepHit(klist,lr,drpt,layer1,layer2,nBatch,actv,alp)
 
 
 ```{r hyperopcbnn,eval=TRUE,hide=FALSE}
+
+###############################
+### optimize hyperparameters for CBNN
+###############################
 klist<-readRDS("cvData/flchainCV.rds")
 cbnnPerformance<-optimCBNN(klist,lr,drpt,layer1,layer2,nBatch,actv)
 
@@ -161,6 +152,11 @@ cbnnPerformance<-optimCBNN(klist,lr,drpt,layer1,layer2,nBatch,actv)
 
 
 ```{r winners,eval=TRUE,hide=FALSE}
+
+
+###############################
+### save the best performaning hyperparameter sets
+###############################
 winners<-list(cbnn=cbnnPerformance,
               ds=bestDS,
               dh=bestDH)
@@ -171,68 +167,59 @@ saveRDS(winners,"cvData/flchainWins.rds")
 
 ```{r bestFits,finalFit}
 
+#####################################
+### run 100 fold bootstrap on the training set for each method
+#####################################
+
+#prepare data
 winners<-readRDS("cvData/flchainWins.rds")
-
-
 klist<-readRDS("cvData/flchainCV.rds")
 data<-rbind(klist[[1]]$train,klist[[1]]$val)
 
 
-
+#initialize data
 start_time <- Sys.time()
 BrierIPAList<-list()
 cScore<-list()
 AUClist<-list()
 pos<-1
 
-
+# split training validation sets
 spec = c(train = .85, validate = .15)
-
 g = sample(cut(
   seq(nrow(data)), 
   nrow(data)*cumsum(c(0,spec)),
   labels = names(spec)
 ))
-
 res = split(data, g)
 
 
 while (pos <= iteration) {
   
-  
-  
-  
-  
-  
+  #prepare data
   trainOG<-res$train
-  
   numSamp<-nrow(trainOG)
   samp<-sample(seq(1,nrow(trainOG),by=1) , nrow(trainOG),replace = T) 
   train<-trainOG[samp,]
-  
-  
   val<-res$validate
-  
   sds<-sapply(train, function(x) (sd(x)))
   means<-sapply(train, function(x) (mean(x)))
   maxTime<-max(train$time)
-  
   fullTest<-readRDS("cvData/flchainTest.rds")
   test<-fullTest[,-c(ncol(data))]
+  
+  #normalize data
   test<-normalizer(fullTest,means,sds,maxTime)[,-c(ncol(data))]
   fullTest<-normalizer(fullTest,means,sds,maxTime)
-  
   val<-normalizer(res$validate,means,sds,maxTime)
-  
   train<-normalizer(train,means,sds,maxTime)
   
-  
+  #prepare data for linear model
   linModelTrain<-as.data.frame(rbind(train,val))
   times<-seq(from=min(test$time),
              to=max(test$time),
              length.out = 82
   )
-  
   times<-head(times, -1)
   times<-tail(times, -1)
   
@@ -324,7 +311,7 @@ while (pos <= iteration) {
   layer2=winners$cbnn$layer2
   bsize=c(floor(nrow(train)/winners$cbnn$nBatch))
   actv=winners$cbnn$actv
-
+  
   
   currentTime<-Sys.time() 
   covars_input<-layer_input(shape=c(length(colnames(mod_cb_glm$data))-2),
@@ -434,7 +421,9 @@ while (pos <= iteration) {
 
 ```{r plotflchain}
 
-
+#######################
+###plot IPA results
+#######################
 
 BrierIPAList<-readRDS('results/100flchainBrier.rds')
 
@@ -474,12 +463,14 @@ ipa+coord_cartesian(ylim=c(-0.1,0.5))
 
 
 ```{r auc}
-
+#######################
+###plot AUC results
+#######################
 AUClist<-readRDS('results/100flchainAuc.rds')
 aucSims=data.frame(model=AUClist[[1]]$model,times=AUClist[[1]]$times)
 for(sim in AUClist){
-   aucSims<-cbind(aucSims,sim$AUC)
-   
+  aucSims<-cbind(aucSims,sim$AUC)
+  
 }
 aucSummary<-statCalcSim(aucSims)
 auc<-plotPerformance(aucSummary,method="AUC",iterations=iteration )
@@ -491,6 +482,10 @@ auc
 ```{r}
 
 
+#######################
+###plot C-index results
+#######################
+
 cidxList<-readRDS('results/100flchaincidx.rds')
 
 
@@ -501,7 +496,7 @@ cidxSims=data.frame(model=temp$model,times=temp$times)
 count=1
 for(sim in cidxList){
   cidxSims<-cbind(cidxSims, melt(setDT(as.data.frame(sim)), id.vars = c("times"), variable.name = "model")$value)
-
+  
   count<-count+1
 }
 
