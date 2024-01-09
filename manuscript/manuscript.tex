@@ -173,7 +173,7 @@ For each person-moment sampled, let \(X_i\) be the corresponding covariate profi
 Now, let \(b\) be the (user-defined) size of the \emph{base series} and let \(B\) be the sum of all follow-up times for the individuals in the study. Let $c$ be the number of events in the \emph{case series}. A reasonable concern is determining how large $b$ should be relative to $c$, since the size of \(b\) influences how much information is lost in the sampling process \citep{hanley2009}. The relative information when comparing two averages is measured by $\frac{cb}{c+b}=\left[\left( \frac{1}{c}+\frac{1}{b}\right)\right]$, where $b$ is the sample size of the \emph{base series} and $c$ is the sample size of the \emph{case series} \citep{hanley2009} \citep{mantel1}. If $b=100c$, then we expect learned weights to be at most one percent higher than if the entire study base $B$ was used, as they are proportional to $\frac{1}{c}+\frac{1}{100c}$ rather than $\frac{1}{c}+\frac{1}{\infty c}$ \citep{hanley2009} \citep{mantel1}.
 
 If we sample the \emph{base series} uniformly across the study base, then the hazard function of the sampling process is equal to \(b/B\). Therefore, we have the following equality \citep{saarela2015}
-[For a rigorous treatment, see Saarela \& Hanley (2015) section 3].:
+[For a rigorous treatment, see Saarela \& Hanley (2015) section 3]:
 \begin{align}\label{eqn:main}
 \frac{P\left(Y_i=1 \mid X_i, T_i\right)}{P\left(Y_i = 0 \mid X_i, T_i\right)} = \frac{h\left(T_i \mid X_i\right)}{b/B}.
 \end{align} The odds of a person-moment being in the \emph{case
