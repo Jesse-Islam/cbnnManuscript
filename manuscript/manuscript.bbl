@@ -1,4 +1,4 @@
-\begin{thebibliography}{32}
+\begin{thebibliography}{64}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \providecommand{\url}[1]{\texttt{#1}}
 \providecommand{\href}[2]{#2}
@@ -19,6 +19,18 @@
 \newblock \URLprefix \url{https://CRAN.R-project.org/package=keras}.
   \bibinfo{note}{r package version 2.7.0}.
 %Type = Article
+\bibitem[{Barbieri et~al.(2022)Barbieri, Mehta, Wu, Bharat, Poppe, Jorm and
+  Jackson}]{barbieri2022predicting}
+\bibinfo{author}{Barbieri, S.}, \bibinfo{author}{Mehta, S.},
+  \bibinfo{author}{Wu, B.}, \bibinfo{author}{Bharat, C.},
+  \bibinfo{author}{Poppe, K.}, \bibinfo{author}{Jorm, L.},
+  \bibinfo{author}{Jackson, R.}, \bibinfo{year}{2022}.
+\newblock \bibinfo{title}{Predicting cardiovascular risk from national
+  administrative databases using a combined survival analysis and deep learning
+  approach}.
+\newblock \bibinfo{journal}{International Journal of Epidemiology}
+  \bibinfo{volume}{51}, \bibinfo{pages}{931--944}.
+%Type = Article
 \bibitem[{Bhatnagar et~al.(2020)Bhatnagar, Turgeon, Islam, Hanley and
   Saarela}]{cbpkg}
 \bibinfo{author}{Bhatnagar, S.R.}, \bibinfo{author}{Turgeon, M.},
@@ -27,6 +39,18 @@
 \newblock \bibinfo{title}{casebase: An alternative framework for survival
   analysis and comparison of event rates}.
 \newblock \bibinfo{journal}{arXiv preprint arXiv:2009.10264} .
+%Type = Article
+\bibitem[{Bhatnagar* et~al.(2022)Bhatnagar*, Turgeon*, Islam, Hanley and
+  Saarela}]{RJ-2022-052}
+\bibinfo{author}{Bhatnagar*, S.R.}, \bibinfo{author}{Turgeon*, M.},
+  \bibinfo{author}{Islam, J.}, \bibinfo{author}{Hanley, J.A.},
+  \bibinfo{author}{Saarela, O.}, \bibinfo{year}{2022}.
+\newblock \bibinfo{title}{The r journal: casebase: An alternative framework for
+  survival analysis and comparison of event rates}.
+\newblock \bibinfo{journal}{The R Journal} \bibinfo{volume}{14},
+  \bibinfo{pages}{59--79}.
+\newblock \DOIprefix\doi{10.32614/RJ-2022-052}.
+  \bibinfo{note}{https://doi.org/10.32614/RJ-2022-052}.
 %Type = Article
 \bibitem[{Bice et~al.(2020)Bice, Kirby, Bahr, Rasmussen, Saenz, Wagner,
   Papanikolaou and Fakhreddine}]{ds2}
@@ -62,6 +86,37 @@
   \bibinfo{volume}{97}, \bibinfo{pages}{1--27}.
 \newblock \DOIprefix\doi{10.18637/jss.v097.i03}.
 %Type = Article
+\bibitem[{Chen et~al.(2023)Chen, Cao, Li, Liu, Liu, Tian, Sun, Wang, Gao, Kang
+  et~al.}]{chen2023pathological}
+\bibinfo{author}{Chen, C.}, \bibinfo{author}{Cao, Y.}, \bibinfo{author}{Li,
+  W.}, \bibinfo{author}{Liu, Z.}, \bibinfo{author}{Liu, P.},
+  \bibinfo{author}{Tian, X.}, \bibinfo{author}{Sun, C.}, \bibinfo{author}{Wang,
+  W.}, \bibinfo{author}{Gao, H.}, \bibinfo{author}{Kang, S.}, et~al.,
+  \bibinfo{year}{2023}.
+\newblock \bibinfo{title}{The pathological risk score: A new deep
+  learning-based signature for predicting survival in cervical cancer}.
+\newblock \bibinfo{journal}{Cancer Medicine} \bibinfo{volume}{12},
+  \bibinfo{pages}{1051--1063}.
+%Type = Article
+\bibitem[{Chen et~al.(2020)Chen, Lu, Wang, Williamson, Rodig, Lindeman and
+  Mahmood}]{chen2020pathomic}
+\bibinfo{author}{Chen, R.J.}, \bibinfo{author}{Lu, M.Y.},
+  \bibinfo{author}{Wang, J.}, \bibinfo{author}{Williamson, D.F.},
+  \bibinfo{author}{Rodig, S.J.}, \bibinfo{author}{Lindeman, N.I.},
+  \bibinfo{author}{Mahmood, F.}, \bibinfo{year}{2020}.
+\newblock \bibinfo{title}{Pathomic fusion: an integrated framework for fusing
+  histopathology and genomic features for cancer diagnosis and prognosis}.
+\newblock \bibinfo{journal}{IEEE Transactions on Medical Imaging}
+  \bibinfo{volume}{41}, \bibinfo{pages}{757--770}.
+%Type = Article
+\bibitem[{Ching et~al.(2018)Ching, Zhu and Garmire}]{ching2018cox}
+\bibinfo{author}{Ching, T.}, \bibinfo{author}{Zhu, X.},
+  \bibinfo{author}{Garmire, L.X.}, \bibinfo{year}{2018}.
+\newblock \bibinfo{title}{Cox-nnet: an artificial neural network method for
+  prognosis prediction of high-throughput omics data}.
+\newblock \bibinfo{journal}{PLoS computational biology} \bibinfo{volume}{14},
+  \bibinfo{pages}{e1006076}.
+%Type = Article
 \bibitem[{Coradini et~al.(2000)Coradini, Daidone, Boracchi, Biganzoli, Oriana,
   Bresciani, Pellizzaro, Tomasic, Di~Fronzo and Marubini}]{coradini2000time}
 \bibinfo{author}{Coradini, D.}, \bibinfo{author}{Daidone, M.G.},
@@ -74,6 +129,12 @@
   breast cancer}.
 \newblock \bibinfo{journal}{Journal of clinical oncology} \bibinfo{volume}{18},
   \bibinfo{pages}{2702--2709}.
+%Type = Article
+\bibitem[{Cox(1972)}]{cox1972regression}
+\bibinfo{author}{Cox, D.R.}, \bibinfo{year}{1972}.
+\newblock \bibinfo{title}{Regression models and life-tables}.
+\newblock \bibinfo{journal}{Journal of the Royal Statistical Society: Series B
+  (Methodological)} \bibinfo{volume}{34}, \bibinfo{pages}{187--202}.
 %Type = Inproceedings
 \bibitem[{Dispenzieri et~al.(2012)Dispenzieri, Katzmann, Kyle, Larson,
   Therneau, Colby, Clark, Mead, Kumar, Melton~III et~al.}]{flc}
@@ -101,12 +162,23 @@
 \newblock \bibinfo{journal}{Leukemia} \bibinfo{volume}{23},
   \bibinfo{pages}{215--224}.
 %Type = Article
-\bibitem[{Faraggi and Simon(1995)}]{faraggi1995neural}
-\bibinfo{author}{Faraggi, D.}, \bibinfo{author}{Simon, R.},
-  \bibinfo{year}{1995}.
-\newblock \bibinfo{title}{A neural network model for survival data}.
-\newblock \bibinfo{journal}{Statistics in medicine} \bibinfo{volume}{14},
-  \bibinfo{pages}{73--82}.
+\bibitem[{Gao et~al.(2006)Gao, Grunwald, Rumsfeld, Schooley, MacKenzie and
+  Shroyer}]{gao2006time}
+\bibinfo{author}{Gao, D.}, \bibinfo{author}{Grunwald, G.K.},
+  \bibinfo{author}{Rumsfeld, J.S.}, \bibinfo{author}{Schooley, L.},
+  \bibinfo{author}{MacKenzie, T.}, \bibinfo{author}{Shroyer, A.L.W.},
+  \bibinfo{year}{2006}.
+\newblock \bibinfo{title}{Time-varying risk factors for long-term mortality
+  after coronary artery bypass graft surgery}.
+\newblock \bibinfo{journal}{The Annals of thoracic surgery}
+  \bibinfo{volume}{81}, \bibinfo{pages}{793--799}.
+%Type = Article
+\bibitem[{Gensheimer and Narasimhan(2019)}]{gensheimer2019scalable}
+\bibinfo{author}{Gensheimer, M.F.}, \bibinfo{author}{Narasimhan, B.},
+  \bibinfo{year}{2019}.
+\newblock \bibinfo{title}{A scalable discrete-time survival model for neural
+  networks}.
+\newblock \bibinfo{journal}{PeerJ} \bibinfo{volume}{7}, \bibinfo{pages}{e6257}.
 %Type = Book
 \bibitem[{Gerds and Kattan(2021)}]{riskRegression}
 \bibinfo{author}{Gerds, T.A.}, \bibinfo{author}{Kattan, M.W.},
@@ -116,6 +188,16 @@
 \newblock \bibinfo{publisher}{Chapman and Hall/CRC}.
 \newblock \URLprefix \url{https://doi.org/10.1201/9781138384484}.
   \bibinfo{note}{r package version 2021.10.10}.
+%Type = Inproceedings
+\bibitem[{Giunchiglia et~al.(2018)Giunchiglia, Nemchenko and van~der
+  Schaar}]{giunchiglia2018rnn}
+\bibinfo{author}{Giunchiglia, E.}, \bibinfo{author}{Nemchenko, A.},
+  \bibinfo{author}{van~der Schaar, M.}, \bibinfo{year}{2018}.
+\newblock \bibinfo{title}{Rnn-surv: A deep recurrent model for survival
+  analysis}, in: \bibinfo{booktitle}{Artificial Neural Networks and Machine
+  Learning--ICANN 2018: 27th International Conference on Artificial Neural
+  Networks, Rhodes, Greece, October 4-7, 2018, Proceedings, Part III 27},
+  \bibinfo{organization}{Springer}. pp. \bibinfo{pages}{23--32}.
 %Type = Article
 \bibitem[{Graf et~al.(1999)Graf, Schmoor, Sauerbrei and Schumacher}]{graf1999}
 \bibinfo{author}{Graf, E.}, \bibinfo{author}{Schmoor, C.},
@@ -138,6 +220,34 @@
   via logistic regression}.
 \newblock \bibinfo{journal}{The International Journal of Biostatistics}
   \bibinfo{volume}{5}.
+%Type = Article
+\bibitem[{Hao et~al.(2021)Hao, Kim, Kwon and Ha}]{hao2021deep}
+\bibinfo{author}{Hao, L.}, \bibinfo{author}{Kim, J.}, \bibinfo{author}{Kwon,
+  S.}, \bibinfo{author}{Ha, I.D.}, \bibinfo{year}{2021}.
+\newblock \bibinfo{title}{Deep learning-based survival analysis for
+  high-dimensional survival data}.
+\newblock \bibinfo{journal}{Mathematics} \bibinfo{volume}{9},
+  \bibinfo{pages}{1244}.
+%Type = Article
+\bibitem[{Hao et~al.(2022)Hao, Jing and Sun}]{hao2022joint}
+\bibinfo{author}{Hao, Y.}, \bibinfo{author}{Jing, X.Y.}, \bibinfo{author}{Sun,
+  Q.}, \bibinfo{year}{2022}.
+\newblock \bibinfo{title}{Joint learning sample similarity and correlation
+  representation for cancer survival prediction}.
+\newblock \bibinfo{journal}{BMC bioinformatics} \bibinfo{volume}{23},
+  \bibinfo{pages}{553}.
+%Type = Article
+\bibitem[{Huang et~al.(2020)Huang, Johnson, Han, Helm, Cao, Zhang, Salama,
+  Rizkalla, Yu, Cheng et~al.}]{huang2020deep}
+\bibinfo{author}{Huang, Z.}, \bibinfo{author}{Johnson, T.S.},
+  \bibinfo{author}{Han, Z.}, \bibinfo{author}{Helm, B.}, \bibinfo{author}{Cao,
+  S.}, \bibinfo{author}{Zhang, C.}, \bibinfo{author}{Salama, P.},
+  \bibinfo{author}{Rizkalla, M.}, \bibinfo{author}{Yu, C.Y.},
+  \bibinfo{author}{Cheng, J.}, et~al., \bibinfo{year}{2020}.
+\newblock \bibinfo{title}{Deep learning-based cancer survival prognosis from
+  rna-seq data: approaches and evaluations}.
+\newblock \bibinfo{journal}{BMC medical genomics} \bibinfo{volume}{13},
+  \bibinfo{pages}{1--12}.
 %Type = Book
 \bibitem[{Hughes-Hallett et~al.(2020)Hughes-Hallett, Gleason and
   McCallum}]{hughes2020calculus}
@@ -154,6 +264,16 @@
   \bibinfo{volume}{70}, \bibinfo{pages}{1--33}.
 \newblock \DOIprefix\doi{10.18637/jss.v070.i08}. \bibinfo{note}{r package
   version 2.0}.
+%Type = Article
+\bibitem[{Jia et~al.(2023)Jia, Ren, Wu, Zhao, Qiang and Yang}]{jia2023dccafn}
+\bibinfo{author}{Jia, L.}, \bibinfo{author}{Ren, X.}, \bibinfo{author}{Wu, W.},
+  \bibinfo{author}{Zhao, J.}, \bibinfo{author}{Qiang, Y.},
+  \bibinfo{author}{Yang, Q.}, \bibinfo{year}{2023}.
+\newblock \bibinfo{title}{Dccafn: deep convolution cascade attention fusion
+  network based on imaging genomics for prediction survival analysis of lung
+  cancer}.
+\newblock \bibinfo{journal}{Complex \& Intelligent Systems} ,
+  \bibinfo{pages}{1--16}.
 %Type = Article
 \bibitem[{Kattan and Gerds(2018)}]{kattan2018index}
 \bibinfo{author}{Kattan, M.W.}, \bibinfo{author}{Gerds, T.A.},
@@ -174,6 +294,17 @@
 \newblock \bibinfo{journal}{BMC Medical Research Methodology}
   \bibinfo{volume}{18}, \bibinfo{pages}{24}.
 %Type = Article
+\bibitem[{Kaynar et~al.(2023)Kaynar, Cakmakci, Bund, Todeschi, Namer and
+  Cicek}]{kaynar2023pideel}
+\bibinfo{author}{Kaynar, G.}, \bibinfo{author}{Cakmakci, D.},
+  \bibinfo{author}{Bund, C.}, \bibinfo{author}{Todeschi, J.},
+  \bibinfo{author}{Namer, I.J.}, \bibinfo{author}{Cicek, A.E.},
+  \bibinfo{year}{2023}.
+\newblock \bibinfo{title}{Pideel: metabolic pathway-informed deep learning
+  model for survival analysis and pathological classification of gliomas}.
+\newblock \bibinfo{journal}{Bioinformatics} \bibinfo{volume}{39},
+  \bibinfo{pages}{btad684}.
+%Type = Article
 \bibitem[{Kim et~al.(2019)Kim, Lee, Kwon, Nam, Cha and Kim}]{ds3}
 \bibinfo{author}{Kim, D.W.}, \bibinfo{author}{Lee, S.}, \bibinfo{author}{Kwon,
   S.}, \bibinfo{author}{Nam, W.}, \bibinfo{author}{Cha, I.H.},
@@ -182,6 +313,21 @@
   cancer patients}.
 \newblock \bibinfo{journal}{Scientific reports} \bibinfo{volume}{9},
   \bibinfo{pages}{1--10}.
+%Type = Article
+\bibitem[{Kingma and Ba(2014)}]{kingma2014adam}
+\bibinfo{author}{Kingma, D.P.}, \bibinfo{author}{Ba, J.}, \bibinfo{year}{2014}.
+\newblock \bibinfo{title}{Adam: A method for stochastic optimization}.
+\newblock \bibinfo{journal}{arXiv preprint arXiv:1412.6980} .
+%Type = Inproceedings
+\bibitem[{Kopper et~al.(2022)Kopper, Wiegrebe, Bischl, Bender and
+  R{\"u}gamer}]{kopper2022deeppamm}
+\bibinfo{author}{Kopper, P.}, \bibinfo{author}{Wiegrebe, S.},
+  \bibinfo{author}{Bischl, B.}, \bibinfo{author}{Bender, A.},
+  \bibinfo{author}{R{\"u}gamer, D.}, \bibinfo{year}{2022}.
+\newblock \bibinfo{title}{Deeppamm: Deep piecewise exponential additive mixed
+  models for complex hazard structures in survival analysis}, in:
+  \bibinfo{booktitle}{Pacific-Asia Conference on Knowledge Discovery and Data
+  Mining}, \bibinfo{organization}{Springer}. pp. \bibinfo{pages}{249--261}.
 %Type = Article
 \bibitem[{Kyle(1997)}]{myeloma}
 \bibinfo{author}{Kyle, R.}, \bibinfo{year}{1997}.
@@ -195,6 +341,14 @@
   analysis with competing risks.}
 \newblock \bibinfo{journal}{AAAI Conference on Artificial Intelligence} ,
   \bibinfo{pages}{2314--2321}\bibinfo{note}{Software from pycox version 0.2.2}.
+%Type = Article
+\bibitem[{Li et~al.(2022)Li, Wu, Li and Wang}]{li2022hfbsurv}
+\bibinfo{author}{Li, R.}, \bibinfo{author}{Wu, X.}, \bibinfo{author}{Li, A.},
+  \bibinfo{author}{Wang, M.}, \bibinfo{year}{2022}.
+\newblock \bibinfo{title}{Hfbsurv: hierarchical multimodal fusion with
+  factorized bilinear models for cancer survival prediction}.
+\newblock \bibinfo{journal}{Bioinformatics} \bibinfo{volume}{38},
+  \bibinfo{pages}{2587--2594}.
 %Type = Article
 \bibitem[{Lu-Yao et~al.(2009)Lu-Yao, Albertsen, Moore, Shih, Lin, DiPaola,
   Barry, Zietman, O’Leary, Walker-Corkery et~al.}]{prostate}
@@ -213,6 +367,29 @@
 \bibinfo{author}{Mantel, N.}, \bibinfo{year}{1973}.
 \newblock \bibinfo{title}{Synthetic retrospective studies and related topics}.
 \newblock \bibinfo{journal}{Biometrics} , \bibinfo{pages}{479--486}.
+%Type = Article
+\bibitem[{Meng et~al.(2022)Meng, Wang, Zhang, Zhang, Zhang, Zhang and
+  Wang}]{meng2022novel}
+\bibinfo{author}{Meng, X.}, \bibinfo{author}{Wang, X.}, \bibinfo{author}{Zhang,
+  X.}, \bibinfo{author}{Zhang, C.}, \bibinfo{author}{Zhang, Z.},
+  \bibinfo{author}{Zhang, K.}, \bibinfo{author}{Wang, S.},
+  \bibinfo{year}{2022}.
+\newblock \bibinfo{title}{A novel attention-mechanism based cox survival model
+  by exploiting pan-cancer empirical genomic information}.
+\newblock \bibinfo{journal}{Cells} \bibinfo{volume}{11}, \bibinfo{pages}{1421}.
+%Type = Article
+\bibitem[{Mobadersany et~al.(2018)Mobadersany, Yousefi, Amgad, Gutman,
+  Barnholtz-Sloan, Vel{\'a}zquez~Vega, Brat and
+  Cooper}]{mobadersany2018predicting}
+\bibinfo{author}{Mobadersany, P.}, \bibinfo{author}{Yousefi, S.},
+  \bibinfo{author}{Amgad, M.}, \bibinfo{author}{Gutman, D.A.},
+  \bibinfo{author}{Barnholtz-Sloan, J.S.}, \bibinfo{author}{Vel{\'a}zquez~Vega,
+  J.E.}, \bibinfo{author}{Brat, D.J.}, \bibinfo{author}{Cooper, L.A.},
+  \bibinfo{year}{2018}.
+\newblock \bibinfo{title}{Predicting cancer outcomes from histology and
+  genomics using convolutional networks}.
+\newblock \bibinfo{journal}{Proceedings of the National Academy of Sciences}
+  \bibinfo{volume}{115}, \bibinfo{pages}{E2970--E2979}.
 %Type = Manual
 \bibitem[{Moore(2016)}]{asaur}
 \bibinfo{author}{Moore, D.F.}, \bibinfo{year}{2016}.
@@ -221,9 +398,26 @@
 \newblock \URLprefix \url{https://CRAN.R-project.org/package=asaur}.
   \bibinfo{note}{r package version 0.50}.
 %Type = Article
-\bibitem[{Nagpal et~al.(2021)Nagpal, Li and Dubrawski}]{dsmPaper}
+\bibitem[{Na et~al.(2020)Na, Cho, Kim, Choi and Han}]{na2020time}
+\bibinfo{author}{Na, E.}, \bibinfo{author}{Cho, S.}, \bibinfo{author}{Kim,
+  D.J.}, \bibinfo{author}{Choi, J.}, \bibinfo{author}{Han, E.},
+  \bibinfo{year}{2020}.
+\newblock \bibinfo{title}{Time-varying and dose-dependent effect of long-term
+  statin use on risk of type 2 diabetes: a retrospective cohort study}.
+\newblock \bibinfo{journal}{Cardiovascular diabetology} \bibinfo{volume}{19},
+  \bibinfo{pages}{1--11}.
+%Type = Inproceedings
+\bibitem[{Nagpal et~al.(2021a)Nagpal, Jeanselme and Dubrawski}]{nagpal2021deep}
+\bibinfo{author}{Nagpal, C.}, \bibinfo{author}{Jeanselme, V.},
+  \bibinfo{author}{Dubrawski, A.}, \bibinfo{year}{2021}a.
+\newblock \bibinfo{title}{Deep parametric time-to-event regression with
+  time-varying covariates}, in: \bibinfo{booktitle}{Survival
+  Prediction-Algorithms, Challenges and Applications},
+  \bibinfo{organization}{PMLR}. pp. \bibinfo{pages}{184--193}.
+%Type = Article
+\bibitem[{Nagpal et~al.(2021b)Nagpal, Li and Dubrawski}]{dsmPaper}
 \bibinfo{author}{Nagpal, C.}, \bibinfo{author}{Li, X.R.},
-  \bibinfo{author}{Dubrawski, A.}, \bibinfo{year}{2021}.
+  \bibinfo{author}{Dubrawski, A.}, \bibinfo{year}{2021}b.
 \newblock \bibinfo{title}{Deep survival machines: Fully parametric survival
   regression and representation learning for censored data with competing
   risks}.
@@ -248,12 +442,62 @@
 \newblock \bibinfo{journal}{Statistics in medicine} \bibinfo{volume}{21},
   \bibinfo{pages}{2175--2197}.
 %Type = Article
+\bibitem[{Saarela(2016)}]{saarela2016case}
+\bibinfo{author}{Saarela, O.}, \bibinfo{year}{2016}.
+\newblock \bibinfo{title}{A case-base sampling method for estimating recurrent
+  event intensities}.
+\newblock \bibinfo{journal}{Lifetime data analysis} \bibinfo{volume}{22},
+  \bibinfo{pages}{589--605}.
+%Type = Article
 \bibitem[{Saarela and Hanley(2015)}]{saarela2015}
 \bibinfo{author}{Saarela, O.}, \bibinfo{author}{Hanley, J.A.},
   \bibinfo{year}{2015}.
 \newblock \bibinfo{title}{Case-base methods for studying vaccination safety}.
 \newblock \bibinfo{journal}{Biometrics} \bibinfo{volume}{71},
   \bibinfo{pages}{42--52}.
+%Type = Article
+\bibitem[{Salmon and Melendez-Torres(2023)}]{salmon2023clinical}
+\bibinfo{author}{Salmon, D.}, \bibinfo{author}{Melendez-Torres, G.},
+  \bibinfo{year}{2023}.
+\newblock \bibinfo{title}{Clinical effectiveness reporting of novel cancer
+  drugs in the context of non-proportional hazards: a review of nice single
+  technology appraisals}.
+\newblock \bibinfo{journal}{International Journal of Technology Assessment in
+  Health Care} \bibinfo{volume}{39}, \bibinfo{pages}{e16}.
+%Type = Article
+\bibitem[{She et~al.(2020)She, Jin, Wu, Deng, Zhang, Su, Jiang, Liu, Xie, Cao
+  et~al.}]{she2020development}
+\bibinfo{author}{She, Y.}, \bibinfo{author}{Jin, Z.}, \bibinfo{author}{Wu, J.},
+  \bibinfo{author}{Deng, J.}, \bibinfo{author}{Zhang, L.}, \bibinfo{author}{Su,
+  H.}, \bibinfo{author}{Jiang, G.}, \bibinfo{author}{Liu, H.},
+  \bibinfo{author}{Xie, D.}, \bibinfo{author}{Cao, N.}, et~al.,
+  \bibinfo{year}{2020}.
+\newblock \bibinfo{title}{Development and validation of a deep learning model
+  for non-small cell lung cancer survival}.
+\newblock \bibinfo{journal}{JAMA network open} \bibinfo{volume}{3},
+  \bibinfo{pages}{e205842--e205842}.
+%Type = Article
+\bibitem[{Srivastava et~al.(2014)Srivastava, Hinton, Krizhevsky, Sutskever and
+  Salakhutdinov}]{srivastava2014dropout}
+\bibinfo{author}{Srivastava, N.}, \bibinfo{author}{Hinton, G.},
+  \bibinfo{author}{Krizhevsky, A.}, \bibinfo{author}{Sutskever, I.},
+  \bibinfo{author}{Salakhutdinov, R.}, \bibinfo{year}{2014}.
+\newblock \bibinfo{title}{Dropout: A simple way to prevent neural networks from
+  overfitting}.
+\newblock \bibinfo{journal}{The Journal of Machine Learning Research}
+  \bibinfo{volume}{15}, \bibinfo{pages}{1929--1958}.
+%Type = Article
+\bibitem[{Tang et~al.(2023)Tang, Liu, Chen, Ma, Dong, Sun, Zhang, Li, Zheng,
+  Yang et~al.}]{tang2023explainable}
+\bibinfo{author}{Tang, Z.}, \bibinfo{author}{Liu, L.}, \bibinfo{author}{Chen,
+  Z.}, \bibinfo{author}{Ma, G.}, \bibinfo{author}{Dong, J.},
+  \bibinfo{author}{Sun, X.}, \bibinfo{author}{Zhang, X.}, \bibinfo{author}{Li,
+  C.}, \bibinfo{author}{Zheng, Q.}, \bibinfo{author}{Yang, L.}, et~al.,
+  \bibinfo{year}{2023}.
+\newblock \bibinfo{title}{Explainable survival analysis with uncertainty using
+  convolution-involved vision transformer}.
+\newblock \bibinfo{journal}{Computerized Medical Imaging and Graphics}
+  \bibinfo{volume}{110}, \bibinfo{pages}{102302}.
 %Type = Book
 \bibitem[{{Terry M. Therneau} and {Patricia M. Grambsch}(2000)}]{survpkg}
 \bibinfo{author}{{Terry M. Therneau}}, \bibinfo{author}{{Patricia M.
@@ -268,6 +512,14 @@
 \newblock \bibinfo{title}{reticulate: Interface to 'Python'}.
 \newblock \URLprefix \url{https://CRAN.R-project.org/package=reticulate}.
   \bibinfo{note}{r package version 1.22}.
+%Type = Article
+\bibitem[{Vale-Silva and Rohr(2021)}]{vale2021long}
+\bibinfo{author}{Vale-Silva, L.A.}, \bibinfo{author}{Rohr, K.},
+  \bibinfo{year}{2021}.
+\newblock \bibinfo{title}{Long-term cancer survival prediction using multimodal
+  deep learning}.
+\newblock \bibinfo{journal}{Scientific Reports} \bibinfo{volume}{11},
+  \bibinfo{pages}{13505}.
 %Type = Book
 \bibitem[{Van~Rossum and Drake(2009)}]{py}
 \bibinfo{author}{Van~Rossum, G.}, \bibinfo{author}{Drake, F.L.},
@@ -276,6 +528,36 @@
 \newblock \bibinfo{publisher}{CreateSpace}, \bibinfo{address}{Scotts Valley,
   CA}.
 \newblock \bibinfo{note}{Version 3.8.12}.
+%Type = Article
+\bibitem[{Wang et~al.(2021)Wang, Li, Wang and Li}]{wang2021gpdbn}
+\bibinfo{author}{Wang, Z.}, \bibinfo{author}{Li, R.}, \bibinfo{author}{Wang,
+  M.}, \bibinfo{author}{Li, A.}, \bibinfo{year}{2021}.
+\newblock \bibinfo{title}{Gpdbn: deep bilinear network integrating both genomic
+  data and pathological images for breast cancer prognosis prediction}.
+\newblock \bibinfo{journal}{Bioinformatics} \bibinfo{volume}{37},
+  \bibinfo{pages}{2963--2970}.
+%Type = Article
+\bibitem[{Wulczyn et~al.(2020)Wulczyn, Steiner, Xu, Sadhwani, Wang,
+  Flament-Auvigne, Mermel, Chen, Liu and Stumpe}]{wulczyn2020deep}
+\bibinfo{author}{Wulczyn, E.}, \bibinfo{author}{Steiner, D.F.},
+  \bibinfo{author}{Xu, Z.}, \bibinfo{author}{Sadhwani, A.},
+  \bibinfo{author}{Wang, H.}, \bibinfo{author}{Flament-Auvigne, I.},
+  \bibinfo{author}{Mermel, C.H.}, \bibinfo{author}{Chen, P.H.C.},
+  \bibinfo{author}{Liu, Y.}, \bibinfo{author}{Stumpe, M.C.},
+  \bibinfo{year}{2020}.
+\newblock \bibinfo{title}{Deep learning-based survival prediction for multiple
+  cancer types using histopathology images}.
+\newblock \bibinfo{journal}{PloS one} \bibinfo{volume}{15},
+  \bibinfo{pages}{e0233678}.
+%Type = Inproceedings
+\bibitem[{Yin et~al.(2022)Yin, Chen, Wu and Wei}]{yin2022cox}
+\bibinfo{author}{Yin, Q.}, \bibinfo{author}{Chen, W.}, \bibinfo{author}{Wu,
+  R.}, \bibinfo{author}{Wei, Z.}, \bibinfo{year}{2022}.
+\newblock \bibinfo{title}{Cox-resnet: A survival analysis model based on
+  residual neural networks for gene expression data}, in:
+  \bibinfo{booktitle}{2022 IEEE International Conference on Networking, Sensing
+  and Control (ICNSC)}, \bibinfo{organization}{IEEE}. pp.
+  \bibinfo{pages}{1--6}.
 %Type = Article
 \bibitem[{Yu et~al.(2022)Yu, Huang, Feng and Lyu}]{ds1}
 \bibinfo{author}{Yu, H.}, \bibinfo{author}{Huang, T.}, \bibinfo{author}{Feng,
@@ -286,6 +568,17 @@
 \newblock \bibinfo{journal}{BMC cancer} \bibinfo{volume}{22},
   \bibinfo{pages}{1--14}.
 %Type = Article
+\bibitem[{Zadeh~Shirazi et~al.(2020)Zadeh~Shirazi, Fornaciari, Bagherian,
+  Ebert, Koszyca and Gomez}]{zadeh2020DeepSurvnet}
+\bibinfo{author}{Zadeh~Shirazi, A.}, \bibinfo{author}{Fornaciari, E.},
+  \bibinfo{author}{Bagherian, N.S.}, \bibinfo{author}{Ebert, L.M.},
+  \bibinfo{author}{Koszyca, B.}, \bibinfo{author}{Gomez, G.A.},
+  \bibinfo{year}{2020}.
+\newblock \bibinfo{title}{Deepsurvnet: deep survival convolutional network for
+  brain cancer survival rate classification based on histopathological images}.
+\newblock \bibinfo{journal}{Medical \& biological engineering \& computing}
+  \bibinfo{volume}{58}, \bibinfo{pages}{1031--1045}.
+%Type = Article
 \bibitem[{Zhang et~al.(2021)Zhang, Ti{\v{n}}o, Leonardis and Tang}]{interpret}
 \bibinfo{author}{Zhang, Y.}, \bibinfo{author}{Ti{\v{n}}o, P.},
   \bibinfo{author}{Leonardis, A.}, \bibinfo{author}{Tang, K.},
@@ -293,5 +586,25 @@
 \newblock \bibinfo{title}{A survey on neural network interpretability}.
 \newblock \bibinfo{journal}{IEEE Transactions on Emerging Topics in
   Computational Intelligence} \bibinfo{volume}{5}, \bibinfo{pages}{726--742}.
+%Type = Article
+\bibitem[{Zhu et~al.(2022)Zhu, Liu, Zhang, Li, Chen, Huang, Li, Yu, Xu and
+  Qin}]{zhu2022time}
+\bibinfo{author}{Zhu, J.}, \bibinfo{author}{Liu, X.}, \bibinfo{author}{Zhang,
+  J.}, \bibinfo{author}{Li, J.}, \bibinfo{author}{Chen, L.},
+  \bibinfo{author}{Huang, C.}, \bibinfo{author}{Li, J.}, \bibinfo{author}{Yu,
+  Y.}, \bibinfo{author}{Xu, H.}, \bibinfo{author}{Qin, G.},
+  \bibinfo{year}{2022}.
+\newblock \bibinfo{title}{Time-varying association between body mass index and
+  all-cause mortality in patients with hypertension}.
+\newblock \bibinfo{journal}{International Journal of Obesity}
+  \bibinfo{volume}{46}, \bibinfo{pages}{316--324}.
+%Type = Inproceedings
+\bibitem[{Zhu et~al.(2017)Zhu, Yao, Zhu and Huang}]{zhu2017wsisa}
+\bibinfo{author}{Zhu, X.}, \bibinfo{author}{Yao, J.}, \bibinfo{author}{Zhu,
+  F.}, \bibinfo{author}{Huang, J.}, \bibinfo{year}{2017}.
+\newblock \bibinfo{title}{Wsisa: Making survival prediction from whole slide
+  histopathological images}, in: \bibinfo{booktitle}{Proceedings of the IEEE
+  conference on computer vision and pattern recognition}, pp.
+  \bibinfo{pages}{7234--7242}.
 
 \end{thebibliography}
